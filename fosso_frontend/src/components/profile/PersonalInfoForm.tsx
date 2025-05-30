@@ -22,13 +22,13 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
   const [emailError, setEmailError] = React.useState<string | null>(null);
 
   const [isPhoneNumberPrivate, setIsPhoneNumberPrivate] = React.useState(
-    user.phoneNumberPrivate
+    user.isPhoneNumberPrivate
   );
   const [isDateOfBirthPrivate, setIsDateOfBirthPrivate] = React.useState(
-    user.dateOfBirthPrivate
+    user.isDateOfBirthPrivate
   );
   const [isGenderPrivate, setIsGenderPrivate] = React.useState(
-    user.genderPrivate
+    user.isGenderPrivate
   );
 
   const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

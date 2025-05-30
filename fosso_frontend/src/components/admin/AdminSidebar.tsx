@@ -24,7 +24,7 @@ const AdminSidebar = () => {
     <div className="w-full md:w-1/4">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
         <div className="px-4 py-3 bg-gray-100 dark:bg-gray-700">
-          <h3 className="text-lg font-medium">{t("admin.dashboard")}</h3>
+          <h3 className="text-lg font-medium">{t("admin.adminDashboard")}</h3>
         </div>
 
         {/* User Management Links */}

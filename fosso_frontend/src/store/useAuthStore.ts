@@ -18,8 +18,8 @@ const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       token: localStorage.getItem("token"),
-      avatar: localStorage.getItem("avatar")
-        ? JSON.parse(localStorage.getItem("avatar")!)
+      avatar: localStorage.getItem("avatarUrl")
+        ? JSON.parse(localStorage.getItem("avatarUrl")!)
         : null,
       setUser: (user) => set({ user }),
       setToken: (token) => {

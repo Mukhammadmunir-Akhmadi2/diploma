@@ -131,7 +131,7 @@ const ProfileSidebar: React.FC<{ user: UserProfileDTO }> = ({ user }) => {
               className={getMerchantLinkClasses("products")}
             >
               <Package size={18} />
-              <span>{t("merchant.activeProducts")}</span>
+              <span>{t("merchant.products")}</span>
             </Link>
             <Link
               to="/merchant/create-product"
@@ -153,6 +153,11 @@ const ProfileSidebar: React.FC<{ user: UserProfileDTO }> = ({ user }) => {
 
         {isAdmin && (
           <>
+            <div className="px-4 py-2 bg-gray-100 dark:bg-gray-700">
+              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                {t("admin.adminDashboard")}
+              </h3>
+            </div>
             <Link
               to="/admin/users"
               className={getMerchantLinkClasses("products")}

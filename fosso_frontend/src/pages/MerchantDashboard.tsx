@@ -11,6 +11,7 @@ import { getMerchantProducts } from "../api/Product";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { ProductMerchantDTO } from "../types/product";
 import { Spin } from "antd";
+import type { ErrorResponse } from "../types/error";
 
 // This is a mock function that would be replaced by real auth
 
@@ -35,8 +36,17 @@ const MerchantDashboard: React.FC = () => {
         );
         setPaginatedProducts(response);
       } catch (err) {
-        console.error("Error fetching products:", err);
-        toast({
+        const errorResponse: ErrorResponse = err as ErrorResponse
+        console.error("Error fetching products:", errorResponse);
+        if (errorResponse.status === 404) {
+          toast({
+            title: t("merchant.noProducts"),
+            description: t("merchant.noProductsDesc", {
+              defaultValue: "No products found for your account.",
+            }),
+          });
+        } else {
+           toast({
           title: t("error.fetchProduct", {
             defaultValue: "Error Fetching Products",
           }),
@@ -45,6 +55,7 @@ const MerchantDashboard: React.FC = () => {
           }),
           variant: "destructive",
         });
+        }
       } finally {
         setIsLoading(false);
       }

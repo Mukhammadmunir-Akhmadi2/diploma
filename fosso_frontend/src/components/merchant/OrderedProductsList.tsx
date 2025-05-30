@@ -47,9 +47,9 @@ import type { OrderMerchantDTO } from "../../types/order";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { Spin } from "antd";
 import { getOrdersByMerchant, updateProductStatus } from "../../api/Order";
-import type { ErrorResponse } from "react-router-dom";
 import { getUserProfileById } from "../../api/User";
 import { Modal, Input } from "antd";
+import type { ErrorResponse } from "../../types/error";
 
 const OrderedProductsList: React.FC = () => {
   const { t } = useLanguage();
@@ -94,12 +94,21 @@ const OrderedProductsList: React.FC = () => {
           products: productsWithCustomer,
         });
       } catch (error) {
-        console.error("Error fetching merchant orders:", error);
-        toast({
+        const errorResponse = error as ErrorResponse
+        console.error("Error fetching merchant orders:", errorResponse);
+        if (errorResponse.status === 404) {
+          toast({
+            title: t("merchant.noOrders"),
+            description: t("merchant.noOrdersDesc"),
+          });
+        } else {
+          toast({
           title: t("merchant.errorFetchingOrders"),
           description: t("merchant.errorFetchingOrdersDesc"),
           variant: "destructive",
         });
+        }
+      
       } finally {
         setIsLoading(false);
       }

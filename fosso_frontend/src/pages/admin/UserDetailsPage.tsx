@@ -400,7 +400,7 @@ const UserDetailsPage = () => {
           </Button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-8 w-full">
           {/* Admin Sidebar */}
           <AdminSidebar />
 

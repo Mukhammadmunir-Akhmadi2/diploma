@@ -20,7 +20,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-import { FileImage, Plus, Trash, Upload, X } from "lucide-react";
+import { Plus, Trash, Upload, X } from "lucide-react";
 import CategorySelect from "./CategorySelect";
 import BrandSelect from "./BrandSelect";
 import type {
@@ -38,10 +38,11 @@ import {
 import type { UserDTO } from "../../types/user";
 import type { ImageType } from "../../types/enums";
 import { createProduct, updateProduct } from "../../api/Product";
+import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
 
 interface ProductFormProps {
   onSuccess: (data: ProductMerchantDTO) => void;
-  initialData?: ProductMerchantDTO;
+  initialData?: ProductMerchantDTO | AdminProductDetailedDTO;
   user: UserDTO;
 }
 

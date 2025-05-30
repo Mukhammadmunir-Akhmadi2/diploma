@@ -221,7 +221,7 @@ const ProductsPage = () => {
   return (
     <>
       <div className="container mx-auto px-4 py-8 flex-grow">
-        <div className="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-8 w-full">
           {/* Admin Sidebar */}
           <AdminSidebar />
 
@@ -230,7 +230,7 @@ const ProductsPage = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="text-2xl font-bold">
-                  {t("admin.disabledProducts")}
+                  {t("admin.products")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -308,7 +308,11 @@ const ProductsPage = () => {
                                       product.enabled
                                     )
                                   }
-                                  className={product.enabled ? "text-green-500" : "text-red-500"}
+                                  className={
+                                    product.enabled
+                                      ? "text-green-500"
+                                      : "text-red-500"
+                                  }
                                 >
                                   {product.enabled ? (
                                     <CheckCircle size={16} className="mr-1" />

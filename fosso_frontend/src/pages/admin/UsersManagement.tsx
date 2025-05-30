@@ -111,7 +111,7 @@ const UsersManagement = () => {
   return (
     <>
       <div className="container mx-auto px-4 py-8 flex-grow">
-        <div className="flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-8 w-full">
           {/* Admin Sidebar */}
           <AdminSidebar />
 

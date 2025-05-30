@@ -16,7 +16,7 @@ const CreateProduct: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [product, setProduct] = useState<ProductMerchantDTO>();
+  const [product, setProduct] = useState<ProductMerchantDTO | AdminProductDetailedDTO>();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -26,8 +26,15 @@ const CreateProduct: React.FC = () => {
       }
 
       try {
-        const fetchedProduct = await getMerchantProductById(id);
-        setProduct(fetchedProduct);
+        if (user?.roles.includes("ADMIN")) {
+          // Fetch product using admin API
+          const fetchedProduct = await getProductById(id);
+          setProduct(fetchedProduct);
+        } else if (user?.roles.includes("MERCHANT")) {
+          // Fetch product using merchant API
+          const fetchedProduct = await getMerchantProductById(id);
+          setProduct(fetchedProduct);
+        }
       } catch (error) {
         console.error("Error fetching product:", error);
         toast({

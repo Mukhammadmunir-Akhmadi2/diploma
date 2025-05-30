@@ -357,6 +357,9 @@ const translations: Record<SupportedLanguage, Translations> = {
         "There was an error deactivating your account. Please try again.",
       incorrectPassword: "Incorrect Password",
       incorrectPasswordDesc: "The current password you entered is incorrect.",
+      updateSuccess: "Profile Updated",
+      updateSuccessMessage:
+        "Your personal information has been updated successfully.",
     },
     common: {
       cancel: "Cancel",
@@ -377,6 +380,9 @@ const translations: Record<SupportedLanguage, Translations> = {
       disable: "Disable",
     },
     merchant: {
+      noOrders: "No orders found.",
+      noOrdersDesc: "You have no recent orders.",
+      products: "products",
       merchantDashboard: "Merchant Dashboard",
       activeProducts: "Active Products",
       inactiveProducts: "Inactive Products",
@@ -515,6 +521,7 @@ const translations: Record<SupportedLanguage, Translations> = {
       productCreated: "Product Created",
       productCreatedDesc:
         "Your product has been successfully created and is now available in your store.",
+      noProductsDesc: "No products found for your account.",
     },
     payment: {
       addNew: "Add New Payment Method",
@@ -721,6 +728,8 @@ const translations: Record<SupportedLanguage, Translations> = {
       fetchData: "Error Fetching Data",
       fetchDataDesc: "Could not retrieve the necessary information",
       fetchOrder: "Error Fetching Order",
+      emailValidationFailed:
+        "Email validation failed. This email might already be in use or is invalid.",
     },
     order: {
       tracking: "Tracking Number",
@@ -1335,8 +1344,13 @@ const translations: Record<SupportedLanguage, Translations> = {
         "При деактивации вашей учетной записи произошла ошибка. Пожалуйста, попробуйте еще раз.",
       incorrectPassword: "Неверный пароль",
       incorrectPasswordDesc: "Введенный вами текущий пароль неверен.",
+      updateSuccess: "Профиль обновлен",
+      updateSuccessMessage: "Ваша личная информация успешно обновлена.",
     },
     merchant: {
+      noOrders: "Заказы не найдены.",
+      noOrdersDesc: "У вас нет недавних заказов.",
+      products: "товары",
       merchantDashboard: "Панель продавца",
       activeProducts: "Активные товары",
       inactiveProducts: "Неактивные товары",
@@ -1477,6 +1491,7 @@ const translations: Record<SupportedLanguage, Translations> = {
       productCreated: "Товар создан",
       productCreatedDesc:
         "Ваш товар успешно создан и теперь доступен в вашем магазине.",
+      noProductsDesc: "Для вашего аккаунта не найдено товаров.",
     },
     common: {
       cancel: "Отмена",
@@ -1702,6 +1717,8 @@ const translations: Record<SupportedLanguage, Translations> = {
       fetchData: "Ошибка при загрузке данных",
       fetchDataDesc: "Не удалось получить необходимую информацию",
       fetchOrder: "Ошибка при загрузке заказа",
+      emailValidationFailed:
+        "Проверка электронной почты не удалась. Этот адрес электронной почты уже используется или недействителен.",
     },
     order: {
       tracking: "Номер отслеживания",
@@ -2323,8 +2340,14 @@ const translations: Record<SupportedLanguage, Translations> = {
         "Hisobingizni o'chirishda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
       incorrectPassword: "Noto'g'ri parol",
       incorrectPasswordDesc: "Siz kiritgan joriy parol noto'g'ri.",
+      updateSuccess: "Profil yangilandi",
+      updateSuccessMessage:
+        "Shaxsiy ma'lumotlaringiz muvaffaqiyatli yangilandi.",
     },
     merchant: {
+      noOrders: "Buyurtmalar topilmadi.",
+      noOrdersDesc: "Sizda so'nggi buyurtmalar yo'q.",
+      products: "mahsulotlar",
       merchantDashboard: "Savdogar paneli",
       activeProducts: "Faol mahsulotlar",
       inactiveProducts: "Faol bo'lmagan mahsulotlar",
@@ -2466,6 +2489,7 @@ const translations: Record<SupportedLanguage, Translations> = {
       productCreated: "Mahsulot yaratildi",
       productCreatedDesc:
         "Mahsulotingiz muvaffaqiyatli yaratildi va endi do'koningizda mavjud.",
+      noProductsDesc: "Hisobingiz uchun mahsulotlar topilmadi.",
     },
     common: {
       cancel: "Bekor qilish",
@@ -2689,6 +2713,8 @@ const translations: Record<SupportedLanguage, Translations> = {
       fetchData: "Ma'lumotlarni yuklashda xatolik",
       fetchDataDesc: "Kerakli ma'lumotlarni olib bo'lmadi",
       fetchOrder: "Buyurtmani yuklashda xatolik",
+      emailValidationFailed:
+        "Elektron pochta tekshiruvi muvaffaqiyatsiz tugadi. Ushbu elektron pochta manzili allaqachon ishlatilayotgan yoki yaroqsiz bo'lishi mumkin.",
     },
     order: {
       tracking: "Kuzatuv raqami",

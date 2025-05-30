@@ -56,14 +56,6 @@ const Footer: React.FC = () => {
                   {t("nav.men")}
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/sale"
-                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
-                >
-                  {t("footer.sale")}
-                </Link>
-              </li>
             </ul>
           </div>
 
