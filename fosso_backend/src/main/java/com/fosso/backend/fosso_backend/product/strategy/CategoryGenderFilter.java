@@ -21,7 +21,6 @@ import static com.fosso.backend.fosso_backend.common.utils.FilterUtils.hasValue;
 public class CategoryGenderFilter implements ProductFilterStrategy {
 
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
 
     @Override
     public boolean isApplicable(ProductFilterCriteria criteria) {

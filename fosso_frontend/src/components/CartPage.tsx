@@ -195,7 +195,7 @@ const CartPage = () => {
                     <img
                       src={`data:${item.productImage.contentType};base64,${item.productImage.base64Data}`}
                       alt={item.productName}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </div>
 

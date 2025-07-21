@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-public class
-CategoryController {
+public class CategoryController {
 
     private final CategoryService categoryService;
     private final CategoryHierarchyManager hierarchyManager;
@@ -46,13 +45,6 @@ CategoryController {
                 () -> new ResourceNotFoundException("Category not found with id: " + id)
         );
         return ResponseEntity.ok(CategoryMapper.toDTO(category));
-    }
-
-    @PostMapping("/save")
-    public ResponseEntity<CategoryDTO> saveCategory(@RequestBody @Valid CategoryDTO category, BindingResult bindingResult) {
-        ValidationUtils.validate(bindingResult);
-        Category savedCategory = categoryService.saveCategory(CategoryMapper.toEntity(category));
-        return ResponseEntity.ok(CategoryMapper.toDTO(savedCategory));
     }
 
     @GetMapping("/parent/{parentId}")
@@ -90,17 +82,6 @@ CategoryController {
 
         return ResponseEntity.ok(PaginationUtil.buildPageResponse(pageCategories, categoryDTOs));
     }
-    @GetMapping("/check_unique")
-    public ResponseEntity<String> checkUnique(
-            @RequestParam(required = false) String id,
-            @RequestParam String name) {
-
-        boolean isUnique = categoryService.isNameUnique(name, id);
-        if(categoryService.isNameUnique(name, id)) {
-            throw new DuplicateResourceException("Category already exists: " + name);
-        }
-        return ResponseEntity.ok("Category name is unique");
-    }
 
     @GetMapping("/hierarchical")
     public ResponseEntity<List<CategoryDTO>> listHierarchicalCategories() {
@@ -120,6 +101,5 @@ CategoryController {
 
         return ResponseEntity.ok(categoryDTOs);
     }
-
 
 }

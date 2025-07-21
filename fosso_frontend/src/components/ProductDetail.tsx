@@ -391,7 +391,7 @@ const ProductDetail = () => {
                 <img
                   src={`data:${images[currentImageIndex].contentType};base64,${images[currentImageIndex].base64Data}`}
                   alt={product?.productName}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               )}
 

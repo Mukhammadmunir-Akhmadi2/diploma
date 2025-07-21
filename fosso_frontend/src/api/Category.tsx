@@ -27,16 +27,6 @@ export async function getCategoryById(id: string): Promise<Category> {
   }
 }
 
-// Save a new category
-export async function saveCategory(category: Category): Promise<Category> {
-  try {
-    const response = await apiClient.post<Category>(`${baseUrl}/save`, category);
-    return response.data;
-  } catch (error: any) {
-    const errorResponse: ErrorResponse = error.response?.data;
-    throw errorResponse;
-  }
-}
 
 // List subcategories by parent ID
 export async function listSubcategories(parentId: string | null): Promise<Category[]> {
@@ -70,22 +60,6 @@ export async function listCategoriesByPage(
   try {
     const response = await apiClient.get<PaginatedResponse<Category>>(`${baseUrl}/page`, {
       params: { keyword, page, size, sort },
-    });
-    return response.data;
-  } catch (error: any) {
-    const errorResponse: ErrorResponse = error.response?.data;
-    throw errorResponse;
-  }
-}
-
-// Check if category name is unique
-export async function checkUnique(
-  id: string | undefined,
-  name: string
-): Promise<string> {
-  try {
-    const response = await apiClient.get<string>(`${baseUrl}/check_unique`, {
-      params: { id, name },
     });
     return response.data;
   } catch (error: any) {

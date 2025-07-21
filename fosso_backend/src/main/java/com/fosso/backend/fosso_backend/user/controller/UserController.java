@@ -106,6 +106,7 @@ public class UserController {
 
         return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
     }
+
     @PutMapping("/me/password")
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeRequest request) {
         return ResponseEntity.ok(userService.changePassword(request));

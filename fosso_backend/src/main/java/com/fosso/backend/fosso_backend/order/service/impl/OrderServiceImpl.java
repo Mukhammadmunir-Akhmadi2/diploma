@@ -60,16 +60,6 @@ public class OrderServiceImpl implements OrderService {
     private final ActionLogService actionLogService;
     private final ImageRepository imageRepository;
 
-
-    @Value("${telegram.webhook.url}")
-    private String telegramWebhookUrl;
-    @Value("${telegram.webhook.secret}")
-    private String telegramWebhookSecret;
-
-    public List<Order> listAll() {
-        return orderRepository.findAll();
-    }
-
     public Page<Order> listByPage(String keyword, Pageable pageable) {
         if (keyword != null && !keyword.isEmpty()) {
             return orderRepository.findByKeyword(keyword, pageable);
@@ -93,10 +83,6 @@ public class OrderServiceImpl implements OrderService {
             throw new ResourceNotFoundException("Order not found with customer ID: " + customerId);
         }
         return orderPage;
-    }
-
-    public Page<Order> listByStatus(OrderStatus status, Pageable pageable) {
-        return orderRepository.findByStatus(status, pageable);
     }
 
     public Order createOrder(CheckoutRequest checkoutRequest) {
@@ -156,7 +142,12 @@ public class OrderServiceImpl implements OrderService {
 
             orderDetail.setQuantity(item.getQuantity());
 
-            orderDetail.setPrice(product.getDiscountPrice() != null ? product.getDiscountPrice() : product.getPrice());
+            BigDecimal discountPrice = product.getDiscountPrice();
+            BigDecimal unitPrice = (discountPrice != null && discountPrice.compareTo(BigDecimal.ZERO) > 0)
+                    ? discountPrice
+                    : product.getPrice();
+
+            orderDetail.setPrice(unitPrice);
             orderDetail.setColor(item.getColor());
             orderDetail.setSize(item.getSize());
 

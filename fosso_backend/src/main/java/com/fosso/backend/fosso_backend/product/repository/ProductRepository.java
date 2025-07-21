@@ -251,6 +251,16 @@ public interface ProductRepository extends MongoRepository<Product, String> {
     @Query("{'$and': [" +
             "{'productVariants.color': {'$regex': ?0, '$options': 'i'}}," +
             "{'gender': ?1}," +
+            "{'brandId': ?2}," +
+            "{'price': {'$gte': ?3, '$lte': ?4}}," +
+            "{'enabled': true}," +
+            "{'isDeleted': false}" +
+            "]}")
+    Page<Product> findByColorGenderBrandPriceRangeForUser(String color, Gender gender, String brandId, BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+
+    @Query("{'$and': [" +
+            "{'productVariants.color': {'$regex': ?0, '$options': 'i'}}," +
+            "{'gender': ?1}," +
             "{'price': {'$gte': ?2, '$lte': ?3}}," +
             "{'enabled': true}," +
             "{'isDeleted': false}" +

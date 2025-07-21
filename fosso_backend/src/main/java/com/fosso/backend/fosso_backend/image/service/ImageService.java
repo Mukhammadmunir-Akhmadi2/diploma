@@ -14,5 +14,4 @@ public interface ImageService {
     String deleteImage(String ownerId, String imageId, ImageType type);
     Image getImageById(String imageId, ImageType type);
     String uploadMainImages(String productId, MultipartFile[] mainImages, ImageType type);
-    String deleteImageById(String imageId);
 }

@@ -58,31 +58,10 @@ public class BrandController {
         return ResponseEntity.ok(BrandMapper.toDTO(brand));
     }
 
-    @PutMapping("/{categoryId}/brand/{brandId}")
-    public ResponseEntity<String> addCategoryToBrand(@PathVariable String categoryId, @PathVariable String brandId) {
-        return ResponseEntity.ok(brandService.addCategory(brandId, categoryId));
-    }
-
     @GetMapping("/{brandId}")
     public ResponseEntity<BrandDTO> getBrandById(@PathVariable String brandId) {
         Brand brand = brandService.getByBrandId(brandId);
         return ResponseEntity.ok(BrandMapper.toDTO(brand));
-    }
-
-    @PostMapping
-    public ResponseEntity<BrandDTO> createBrand(@RequestBody @Valid BrandDTO brandDTO, BindingResult bindingResult) {
-        ValidationUtils.validate(bindingResult);
-        Brand brand = BrandMapper.toEntity(brandDTO);
-        Brand savedBrand = brandService.saveBrand(brand);
-        return ResponseEntity.ok(BrandMapper.toDTO(savedBrand));
-    }
-
-    @GetMapping("check-name")
-    public ResponseEntity<String> checkBrandName(@RequestParam String name, @RequestParam(required = false) String brandId) {
-        if(brandService.isNameUnique(name, brandId)) {
-            throw new DuplicateResourceException("Brand name already exists");
-        }
-        return ResponseEntity.ok("Brand name is unique");
     }
 
 }

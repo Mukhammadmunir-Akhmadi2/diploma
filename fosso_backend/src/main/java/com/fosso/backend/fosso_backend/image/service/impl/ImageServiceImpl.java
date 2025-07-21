@@ -132,10 +132,4 @@ public class ImageServiceImpl implements ImageService {
 
         return "Main images uploaded successfully";
     }
-
-    @Override
-    public String deleteImageById(String imageId) {
-        imageRepository.deleteById(imageId);
-        return "Image deleted successfully";
-    }
 }

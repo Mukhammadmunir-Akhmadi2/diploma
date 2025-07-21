@@ -49,7 +49,7 @@ import type { ReviewDTO } from "../../types/review";
 import { Spin } from "antd";
 import { getProductsByMerchant } from "../../api/admin/AdminProduct";
 import type { AdminProductBriefDTO } from "../../types/admin/adminProduct";
-import { deleteImageById } from "../../api/Image";
+import { deleteImageByOwnerId } from "../../api/Image";
 import type { ImageDTO } from "../../types/image";
 
 const UserDetailsPage = () => {
@@ -277,11 +277,11 @@ const UserDetailsPage = () => {
     }
   };
 
-  const handleDeleteAvatar = async (image: ImageDTO) => {
+  const handleDeleteAvatar = async (userId: string ,image: ImageDTO) => {
     try {
       if (!userId) return;
 
-      await deleteImageById(image.imageId);
+      await deleteImageByOwnerId(userId, image.imageId, "USER_AVATAR");
 
       setUserData((prev) => ({
         ...prev,
@@ -518,7 +518,7 @@ const UserDetailsPage = () => {
                           <Button
                             variant="outline"
                             onClick={() =>
-                              handleDeleteAvatar(userData.user?.image)
+                              handleDeleteAvatar(userData.user?.userId ,userData.user?.image)
                             }
                             className="text-red-500 px-4 py-2"
                           >

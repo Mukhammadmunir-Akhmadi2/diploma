@@ -49,24 +49,6 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body( orderService.cancelProductFromOrder(orderId, productId, color, size, notes));
     }
 
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllOrders(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "orderDateTime,desc") String[] sort) {
-
-        Pageable pageable = PaginationUtil.createPageable(page, size, sort);
-
-        Page<Order> pageOrders = orderService.listByPage(keyword, pageable);
-
-        List<OrderBriefDTO> orders = pageOrders.getContent().stream()
-                .map(OrderMapper::convertToBriefDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(PaginationUtil.buildPageResponse(pageOrders, orders));
-    }
-
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDetailedDTO> getOrderById(@PathVariable String orderId) {
         Order order = orderService.getOrder(orderId);
@@ -96,37 +78,6 @@ public class OrderController {
         return ResponseEntity.ok(PaginationUtil.buildPageResponse(pageOrders, orders));
     }
 
-    @GetMapping("/status/{status}")
-    public ResponseEntity<Map<String, Object>> getOrdersByStatus(
-            @PathVariable OrderStatus status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "orderDateTime,desc") String[] sort) {
-
-        Pageable pageable = PaginationUtil.createPageable(page, size, sort);
-        Page<Order> pageOrders = orderService.listByStatus(status, pageable);
-
-        List<OrderBriefDTO> orders = pageOrders.getContent().stream()
-                .map(OrderMapper::convertToBriefDTO)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(PaginationUtil.buildPageResponse(pageOrders, orders));
-    }
-
-    @GetMapping("/merchant")
-    public ResponseEntity<Map<String, Object>> getOrdersByMerchant(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "orderDateTime,desc") String[] sort) {
-
-        Pageable pageable = PaginationUtil.createPageable(page, size, sort);
-        Page<OrderMerchantDTO> pageOrders = orderService.listByMerchant(pageable);
-        List<OrderMerchantDTO> orders = pageOrders.getContent();
-
-        return ResponseEntity.ok(PaginationUtil.buildPageResponse(pageOrders, orders));
-    }
-
-
     @GetMapping("/date-range")
     public ResponseEntity<List<OrderBriefDTO>> getOrdersByDateRange(
             @RequestParam String startDate,
@@ -141,26 +92,5 @@ public class OrderController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(orderDTOs);
-    }
-
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity<OrderDetailedDTO> updateOrderStatus(
-            @PathVariable String orderId,
-            @Valid @RequestBody OrderStatusUpdateRequest statusUpdate) {
-
-        Order updatedOrder = orderService.updateStatus(orderId, statusUpdate.getStatus(), statusUpdate.getNotes());
-        return ResponseEntity.ok(OrderMapper.convertToDetailedDTO(updatedOrder));
-    }
-
-    @PutMapping("/{orderId}/product/{productId}/status")
-    public ResponseEntity<OrderDetailedDTO> updateProductStatus(
-            @PathVariable String orderId,
-            @PathVariable String productId,
-            @Valid @RequestBody OrderStatusUpdateRequest statusUpdate,
-            @RequestParam String color,
-            @RequestParam String size) {
-
-        Order updatedOrder = orderService.updateProductStatus(orderId, productId, color, size, statusUpdate.getStatus(), statusUpdate.getNotes());
-        return ResponseEntity.ok(OrderMapper.convertToDetailedDTO(updatedOrder));
     }
 }

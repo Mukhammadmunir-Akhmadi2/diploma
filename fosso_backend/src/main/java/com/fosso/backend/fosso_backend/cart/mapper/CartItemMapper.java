@@ -25,8 +25,10 @@ public class CartItemMapper {
             dto.setProductName(product.getProductName());
             dto.setBrandName(brand != null ? brand.getName() : null);
             dto.setProductImage(ImageMapper.convertToDTO(image));
-            BigDecimal unitPrice = product.getDiscountPrice() != null ?
-                    product.getDiscountPrice() : product.getPrice();
+            BigDecimal discountPrice = product.getDiscountPrice();
+            BigDecimal unitPrice = (discountPrice != null && discountPrice.compareTo(BigDecimal.ZERO) > 0)
+                    ? discountPrice
+                    : product.getPrice();
             dto.setUnitPrice(unitPrice);
 
             BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));

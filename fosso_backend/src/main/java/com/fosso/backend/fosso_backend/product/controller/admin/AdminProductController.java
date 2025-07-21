@@ -1,7 +1,5 @@
 package com.fosso.backend.fosso_backend.product.controller.admin;
 
-import com.fosso.backend.fosso_backend.common.utils.ValidationUtils;
-import com.fosso.backend.fosso_backend.product.dto.ProductUpdateDTO;
 import com.fosso.backend.fosso_backend.product.dto.admin.AdminProductBriefDTO;
 import com.fosso.backend.fosso_backend.product.dto.admin.AdminProductDetailedDTO;
 import com.fosso.backend.fosso_backend.product.mapper.AdminProductMapper;
@@ -9,14 +7,12 @@ import com.fosso.backend.fosso_backend.product.model.Product;
 import com.fosso.backend.fosso_backend.product.service.ProductService;
 import com.fosso.backend.fosso_backend.product.service.admin.AdminProductService;
 import com.fosso.backend.fosso_backend.common.utils.PaginationUtil;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

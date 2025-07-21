@@ -37,7 +37,10 @@ import {
 } from "../../api/Image";
 import type { UserDTO } from "../../types/user";
 import type { ImageType } from "../../types/enums";
-import { createProduct, updateProduct } from "../../api/Product";
+import {
+  createProduct,
+  updateProduct,
+} from "../../api/merchant/MerchantProduct";
 import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
 
 interface ProductFormProps {
@@ -655,7 +658,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Main images */}
-                {mainImage.length > 0 && (
+                {(mainImage.length > 0 || imageFiles) && (
                   <>
                     {mainImage.map((image) => (
                       <div
@@ -744,7 +747,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {/* Gallery images */}
-                {images.length > 0 && (
+                {(images.length > 0 || imageFiles) && (
                   <>
                     {images.map((image) => (
                       <div

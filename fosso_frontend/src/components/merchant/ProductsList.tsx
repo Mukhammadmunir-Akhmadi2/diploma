@@ -18,7 +18,7 @@ import {
 } from "../../components/ui/pagination";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import type { ProductMerchantDTO } from "../../types/product";
-import { updateProduct, updateProductEnabledStatus } from "../../api/Product";
+import { updateProduct, updateProductEnabledStatus } from "../../api/merchant/MerchantProduct";
 import ProductRow from "./ProductRow";
 import { useToast } from "../ui/use-toast";
 

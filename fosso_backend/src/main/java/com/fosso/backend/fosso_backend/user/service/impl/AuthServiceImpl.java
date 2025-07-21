@@ -30,24 +30,32 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String login(AuthRequest authRequest) {
-        authRequest.setEmail(authRequest.getEmail().toLowerCase());
-      authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getEmail(),
-                        authRequest.getPassword()
-                )
-        );
-        User user = userService.getUserByEmail(authRequest.getEmail()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        String email = authRequest.getEmail().toLowerCase();
+        authRequest.setEmail(email);
 
-        if (user.isEnabled()) {
-            if (user.getBanExpirationTime() != null && user.getBanExpirationTime().isAfter(LocalDateTime.now())) {
-                throw new ResourceNotFoundException("User is banned until: " + user.getBanExpirationTime());
-            }
-            user.setEnabled(true);
+        User user = userService.getUserByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user.isDeleted()) {
+            throw new ResourceNotFoundException("User not found");
+        }
+
+        if (user.getBanExpirationTime() != null && user.getBanExpirationTime().isAfter(LocalDateTime.now())) {
+            throw new ResourceNotFoundException("User is banned until: " + user.getBanExpirationTime());
+        }
+
+        if (!user.isEnabled()) {
+            throw new ResourceNotFoundException("User account is disabled");
+        }
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, authRequest.getPassword())
+        );
+
+        if (user.getBanExpirationTime() != null) {
             user.setBanExpirationTime(null);
             userService.saveUser(user);
         }
-
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getUserId());
         claims.put("email", user.getEmail());
@@ -65,6 +73,8 @@ public class AuthServiceImpl implements AuthService {
 
         User user = UserMapper.toUser(registerRequest, passwordEncoder.encode(registerRequest.getPassword()));
         user.setUserId(UUID.randomUUID().toString());
+        user.setCreatedTime(LocalDateTime.now());
+        user.setUpdatedTime(LocalDateTime.now());
 
         userService.saveUser(user);
         return "User registered successfully";

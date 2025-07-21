@@ -46,7 +46,7 @@ import type { OrderStatus } from "../../types/enums";
 import type { OrderMerchantDTO } from "../../types/order";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { Spin } from "antd";
-import { getOrdersByMerchant, updateProductStatus } from "../../api/Order";
+import { getOrdersByMerchant, updateProductStatus } from "../../api/merchant/MerchantOrder";
 import { getUserProfileById } from "../../api/User";
 import { Modal, Input } from "antd";
 import type { ErrorResponse } from "../../types/error";
@@ -473,7 +473,7 @@ const OrderedProductsList: React.FC = () => {
                       <img
                         src={`data:${item.productImage.contentType};base64,${item.productImage.base64Data}`}
                         alt={item.productName}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
                     </div>
                     <CardTitle className="text-base font-medium">
@@ -628,11 +628,11 @@ const OrderedProductsList: React.FC = () => {
                   >
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <div className="h-10 w-10 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
+                        <div className="h-16 w-16 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
                           <img
                             src={`data:${item.productImage.contentType};base64,${item.productImage.base64Data}`}
                             alt={item.productName}
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-contain"
                           />
                         </div>
                         <span className="font-medium">{item.productName}</span>

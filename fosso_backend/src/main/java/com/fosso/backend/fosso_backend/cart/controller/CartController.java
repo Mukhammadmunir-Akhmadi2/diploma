@@ -3,7 +3,6 @@ package com.fosso.backend.fosso_backend.cart.controller;
 import com.fosso.backend.fosso_backend.cart.dto.CartItemCreateDTO;
 import com.fosso.backend.fosso_backend.cart.dto.CartItemDTO;
 import com.fosso.backend.fosso_backend.common.utils.ValidationUtils;
-import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
 import com.fosso.backend.fosso_backend.cart.service.CartItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import java.util.Map;
 public class CartController {
 
     private final CartItemService cartItemService;
-    private final ProductRepository productRepository;
 
     @GetMapping("/{customerId}")
     public ResponseEntity<Map<String, Object>> getCartItems(@PathVariable String customerId) {
@@ -70,5 +68,4 @@ public class CartController {
         cartItemService.clearCart();
         return ResponseEntity.noContent().build();
     }
-
 }

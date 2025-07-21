@@ -7,7 +7,7 @@ import ProductsList from "../components/merchant/ProductsList";
 import { Button } from "../components/ui/button";
 import { Plus, ShoppingCart } from "lucide-react";
 import useAuthStore from "../store/useAuthStore";
-import { getMerchantProducts } from "../api/Product";
+import { getMerchantProducts } from "../api/merchant/MerchantProduct";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { ProductMerchantDTO } from "../types/product";
 import { Spin } from "antd";

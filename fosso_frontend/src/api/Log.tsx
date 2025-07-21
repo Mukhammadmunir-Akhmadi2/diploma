@@ -2,7 +2,7 @@ import apiClient from "./ApiClient";
 import { type ActionLog } from "../types/log";
 import { type ErrorResponse } from "../types/error";
 
-const baseUrl = "actions";
+const baseUrl = "admin/actions";
 
 // Log a new action
 export async function logAction(

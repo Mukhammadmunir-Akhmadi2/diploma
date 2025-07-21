@@ -62,7 +62,7 @@ const ProductRow: React.FC<{
           <img
             src={`data:${image?.contentType};base64,${image?.base64Data}`}
             alt={product.productName}
-            className="w-25 h-25 object-cover rounded"
+            className="w-25 h-25 object-contain rounded"
           />
         </TableCell>
         <TableCell className="font-medium">{product.productName}</TableCell>

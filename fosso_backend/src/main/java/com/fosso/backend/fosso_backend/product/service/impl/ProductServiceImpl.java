@@ -68,7 +68,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateProduct(String productId, ProductUpdateDTO product) {
         User currentUser = userProvider.getAuthenticatedUser();
-        if (!currentUser.getRoles().contains(Role.ADMIN) || !currentUser.getUserId().equals(product.getMerchantId())) {
+
+        boolean isAdmin = currentUser.getRoles().contains(Role.ADMIN);
+        boolean isMerchant = currentUser.getRoles().contains(Role.MERCHANT);
+        boolean isOwner = currentUser.getUserId().equals(product.getMerchantId());
+
+        if (!(isAdmin || (isMerchant && isOwner))) {
             throw new UnauthorizedException("You do not have permission to update this product");
         }
         Product existingProduct = productRepository.findById(productId)

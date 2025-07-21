@@ -345,7 +345,7 @@ const OrderDetailPage: React.FC = () => {
                           <img
                             src={`data:${item.image.contentType};base64,${item.image.base64Data}`}
                             alt={item.productName}
-                            className="w-full h-full object-cover rounded-md"
+                            className="w-full h-full object-contain rounded-md"
                           />
                         </div>
                       )}
@@ -401,7 +401,7 @@ const OrderDetailPage: React.FC = () => {
                                 <dt className="text-gray-600 dark:text-gray-400">
                                   {t("order.sellerName")}:
                                 </dt>
-                                <dd>{`${item?.merchant?.first_name} ${item.merchant?.lastName}`}</dd>
+                                <dd>{`${item?.merchant?.firstName} ${item.merchant?.lastName}`}</dd>
                               </div>
                               <div className="grid grid-cols-2">
                                 <dt className="text-gray-600 dark:text-gray-400">

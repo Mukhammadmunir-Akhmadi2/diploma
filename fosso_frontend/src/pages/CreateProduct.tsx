@@ -4,7 +4,7 @@ import { useToast } from "../hooks/use-toast";
 import { useLanguage } from "../contexts/LanguageContext";
 import ProductForm from "../components/merchant/ProductForm";
 import useAuthStore from "../store/useAuthStore";
-import { getMerchantProductById } from "../api/Product";
+import { getMerchantProductById } from "../api/merchant/MerchantProduct";
 import type { ProductMerchantDTO } from "../types/product";
 import { getProductById } from "../api/admin/AdminProduct";
 import type { AdminProductDetailedDTO } from "../types/admin/adminProduct";

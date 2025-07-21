@@ -11,7 +11,7 @@ export async function getImageById(
   type: ImageType
 ): Promise<ImageDTO> {
   try {
-    const response = await apiClient.get<ImageDTO>(`${baseUrl}/${imageId}`, {
+    const response = await apiClient.get<ImageDTO>(`${baseUrl}/user/${imageId}`, {
       params: { type },
     });
     return response.data;
@@ -28,7 +28,7 @@ export async function getImageByOwnerId(
 ): Promise<ImageDTO> {
   try {
     const response = await apiClient.get<ImageDTO>(
-      `${baseUrl}/owner/${ownerId}`,
+      `${baseUrl}/user/owner/${ownerId}`,
       {
         params: { imageType },
       }
@@ -51,11 +51,15 @@ export async function uploadProductImages(
     images.forEach((image) => formData.append("images", image));
     formData.append("imageType", imageType);
 
-    await apiClient.post(`${baseUrl}/products/${productId}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    await apiClient.post(
+      `${baseUrl}/merchant/products/${productId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   } catch (error: any) {
     const errorResponse: ErrorResponse = error.response?.data;
     throw errorResponse;
@@ -74,7 +78,7 @@ export async function uploadImage(
     formData.append("imageType", imageType);
 
     const response = await apiClient.post<ImageDTO>(
-      `${baseUrl}/${ownerId}/upload`,
+      `${baseUrl}/merchant/${ownerId}/upload`,
       formData,
       {
         headers: {
@@ -96,19 +100,12 @@ export async function deleteImageByOwnerId(
   type: ImageType
 ): Promise<string> {
   try {
-    const response = await apiClient.delete(`${baseUrl}/${ownerId}/${imageId}/delete`, {
-      params: { type },
-    });
-    return response.data;
-  } catch (error: any) {
-    const errorResponse: ErrorResponse = error.response?.data;
-    throw errorResponse;
-  }
-}
-
-export async function deleteImageById(imageId: string): Promise<string> {
-  try {
-    const response = await apiClient.delete(`${baseUrl}/${imageId}`);
+    const response = await apiClient.delete(
+      `${baseUrl}/merchant/${ownerId}/${imageId}/delete`,
+      {
+        params: { type },
+      }
+    );
     return response.data;
   } catch (error: any) {
     const errorResponse: ErrorResponse = error.response?.data;
@@ -123,7 +120,7 @@ export async function getAllImagesForOwner(
 ): Promise<ImageDTO[]> {
   try {
     const response = await apiClient.get<ImageDTO[]>(
-      `${baseUrl}/${ownerId}/all`,
+      `${baseUrl}/user/${ownerId}/all`,
       {
         params: { type },
       }

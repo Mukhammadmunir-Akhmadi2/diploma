@@ -12,12 +12,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderService {
-    List<Order> listAll();
     Page<Order> listByPage(String keyword, Pageable pageable);
     Order getOrder(String orderId);
     Order getByTrackingNumber(String trackingNumber);
     Page<Order> listByCustomer(String customerId, Pageable pageable);
-    Page<Order> listByStatus(OrderStatus status, Pageable pageable);
     Order createOrder(CheckoutRequest checkoutRequest);
     Order updateStatus(String orderId, OrderStatus status, String notes);
     Order updateProductStatus(String orderId, String productId, String color, String size, OrderStatus status, String notes);

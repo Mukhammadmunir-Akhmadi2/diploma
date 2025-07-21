@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { uploadImage } from "../api/Image";
-import { saveCategory } from "../api/Category";
+import { saveCategory } from "../api/merchant/MerchantCategory";
 import type { Category } from "../types/category";
 import type { ImageDTO } from "../types/image";
 import { useToast } from "../hooks/use-toast";

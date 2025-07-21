@@ -153,7 +153,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   : placeholder
               }
               alt={product.productName}
-              className="h-full w-full object-cover object-center group-hover:opacity-90 transition-all duration-300"
+              className="h-full w-full object-contain object-center group-hover:opacity-90 transition-all duration-300"
               loading="lazy"
             />
 

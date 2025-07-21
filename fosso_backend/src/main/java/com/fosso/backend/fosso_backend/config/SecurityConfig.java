@@ -50,7 +50,7 @@ public class SecurityConfig {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String userEmail) throws UsernameNotFoundException {
-                return userRepository.findByEmailAndNotDeleted(userEmail).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
+                return userRepository.findByEmail(userEmail).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userEmail));
             }
         };
     }
@@ -77,26 +77,35 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilet, AuthenticationProvider authenticationProvider) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requset ->
-                        requset.requestMatchers("/auth/login",
-                                        "/auth/register",
-                                        "/auth/check-email",
-                                        "/user/{userId}",
-                                        "/images/{imageId}",
-                                        "/images/owner/{ownerId}",
-                                        "/images/{ownerId}/all",
+                        requset.requestMatchers("/auth/**",
                                         "/categories",
                                         "/categories/**",
-                                        "/products/**",
-                                        "/products",
+                                        "/user/**",
+                                        "/images",
+                                        "/images/user",
+                                        "/images/user/**",
                                         "/brands",
                                         "/brands/**",
-                                        "/reviews/product/**").permitAll()
-                                .requestMatchers("/products/merchant/**").hasRole("MERCHANT")
-                                .requestMatchers("/admin","/admin/**").hasRole("ADMIN")
+                                        "/products",
+                                        "/products/**",
+                                        "/reviews",
+                                        "/reviews/**").permitAll()
+                                .requestMatchers("/user/me",
+                                        "/user/me**",
+                                        "/cart",
+                                        "/cart/**",
+                                        "/orders",
+                                        "/orders/**").hasRole("USER")
+                                .requestMatchers("/merchant",
+                                        "/merchant/**",
+                                        "/images/merchant",
+                                        "/images/merchant/**").hasRole("MERCHANT")
+                                .requestMatchers("/admin", "/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 ).sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).authenticationProvider(authenticationProvider)
+                ).userDetailsService(userDetailsService())
+                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilet, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
