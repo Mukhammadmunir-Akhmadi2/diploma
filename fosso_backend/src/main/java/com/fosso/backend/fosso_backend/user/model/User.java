@@ -39,6 +39,7 @@ public class User implements UserDetails {
     private boolean enabled = true;
     private Set<Role> roles = new HashSet<>();
     private List<Address> addresses = new ArrayList<>();
+    private List<PaymentCard> paymentCards = new ArrayList<>();
     private Set<String> productsId = new HashSet<>();
     private String updatedBy;
     private LocalDateTime banExpirationTime;
@@ -51,6 +52,12 @@ public class User implements UserDetails {
             this.roles = new HashSet<>();
         }
         this.roles.add(role);
+    }
+    public void setPaymentCard(PaymentCard paymentCard) {
+        if (this.paymentCards == null) {
+            this.paymentCards = new ArrayList<>();
+        }
+        this.paymentCards.add(paymentCard);
     }
     public void setAdress(Address address) {
         if (this.addresses == null) {

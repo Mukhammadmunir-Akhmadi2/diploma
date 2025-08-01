@@ -56,7 +56,6 @@ const App = () => (
                     element={<Index gender="FEMALE" />}
                   />
                   <Route path="/menswear" element={<Index gender="MALE" />} />
-                  <Route path="/profile" element={<Profile />} />
                   {/* Profile Routes */}
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/profile/addresses" element={<Profile />} />
