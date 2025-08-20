@@ -144,6 +144,7 @@ const SelectSeparator = React.forwardRef<
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
+const SelectIcon = SelectPrimitive.Icon;
 export {
   Select,
   SelectGroup,
@@ -155,4 +156,5 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
+  SelectIcon,
 };

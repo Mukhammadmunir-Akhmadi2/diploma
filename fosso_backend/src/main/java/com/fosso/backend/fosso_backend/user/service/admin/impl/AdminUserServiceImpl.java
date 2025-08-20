@@ -191,9 +191,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         if (user.getUserId().equals(currentAdmin.getUserId())) {
             throw new IllegalStateException("Cannot change your own role");
         }
-        if(user.getRoles().contains(role)) {
-            throw new IllegalStateException("User already has this role");
-        }
+
         user.getRoles().clear();
         switch (role) {
             case ADMIN:

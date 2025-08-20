@@ -18,7 +18,7 @@ import {
 } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Search, User, Edit } from "lucide-react";
+import { Search, User, Edit, ChevronDown } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -34,9 +34,24 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../../components/ui/carousel";
+import {
+  Select,
+  SelectGroup,
+  SelectItem,
+  SelectValue,
+  SelectIcon,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
+  SelectContent,
+  SelectTrigger,
+} from "../../components/ui/select";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import type { AdminUserBriefDTO } from "../../types/admin/adminUser";
-import { getAllUsersByPage, searchUsers } from "../../api/admin/AdminUser";
+import {
+  getAllUsersByPage,
+  searchUsers,
+  updateUserRole,
+} from "../../api/admin/AdminUser";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { Spin } from "antd";
 import { useToast } from "../../hooks/use-toast";
@@ -55,7 +70,7 @@ const UsersManagement = () => {
   const navigate = useNavigate();
 
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
-  
+
   useEffect(() => {
     setIsLoading(true);
     const fetchUsers = async () => {
@@ -94,6 +109,35 @@ const UsersManagement = () => {
 
   const handleUserClick = (userId: string) => {
     navigate(`/admin/users/${userId}`);
+  };
+
+  const handleRoleChange = async (
+    userId: string,
+    newRole: "USER" | "MERCHANT" | "ADMIN") => {
+    setIsLoading(true);
+    try {
+      await updateUserRole(userId, newRole);
+      toast({
+        title: t("admin.roleUpdated"),
+        description: t("admin.roleUpdatedDescription"),})
+      setPaginatedUsers((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          products: prev.products.map((user) =>
+            user.userId === userId ? { ...user, roles: [newRole] } : user
+          ),
+        };
+      });
+    } catch (error: any) {
+      console.error("Error updating user role:", error);
+      toast({
+        title: t("admin.errorUpdatingRole"),
+        description: error.message || t("admin.somethingWentWrong"),
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
   };
 
   if (isLoading) {
@@ -185,21 +229,40 @@ const UsersManagement = () => {
                                 </div>
                               </TableCell>
                               <TableCell>
-                                <span
-                                  className={`px-2 py-1 rounded-full text-xs ${
+                                <Select
+                                  value={
                                     user.roles.includes("ADMIN")
-                                      ? "bg-purple-100 text-purple-800"
+                                      ? t("admin.admin").toUpperCase()
                                       : user.roles.includes("MERCHANT")
-                                      ? "bg-blue-100 text-blue-800"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
+                                      ? t("admin.merchant").toUpperCase()
+                                      : t("admin.user").toUpperCase()
+                                  }
+                                  onValueChange={(value) =>
+                                    handleRoleChange(
+                                      user.userId,
+                                      value as "USER" | "MERCHANT" | "ADMIN"
+                                    )
+                                  }
                                 >
-                                  {user.roles.includes("ADMIN")
-                                    ? t("admin.admin").toUpperCase()
-                                    : user.roles.includes("MERCHANT")
-                                    ? t("admin.merchant").toUpperCase()
-                                    : t("admin.user").toUpperCase()}
-                                </span>
+                                  <SelectTrigger
+                                    className={`px-2 py-1 rounded-xl text-xs ${
+                                      user.roles.includes("ADMIN")
+                                        ? "bg-purple-100 text-purple-800"
+                                        : user.roles.includes("MERCHANT")
+                                        ? "bg-blue-100 text-blue-800"
+                                        : "bg-gray-100 text-gray-800"
+                                    }`}
+                                  >
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="USER">USER</SelectItem>
+                                    <SelectItem value="MERCHANT">
+                                      MERCHANT
+                                    </SelectItem>
+                                    <SelectItem value="ADMIN">ADMIN</SelectItem>
+                                  </SelectContent>
+                                </Select>
                               </TableCell>
                               <TableCell>
                                 {new Date(

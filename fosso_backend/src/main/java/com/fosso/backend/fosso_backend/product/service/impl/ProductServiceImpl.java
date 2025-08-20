@@ -17,6 +17,7 @@ import com.fosso.backend.fosso_backend.user.model.User;
 import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
 import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
 import com.fosso.backend.fosso_backend.product.service.ProductService;
+import jakarta.servlet.ServletRequestListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
