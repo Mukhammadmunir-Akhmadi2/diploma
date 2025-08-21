@@ -2,24 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "../hooks/useLanguage";
 import type { ProductBriefDTO, ProductFilterCriteria } from "../types/product";
 import { getAllProducts } from "../api/Product";
-import ProductCard from "../components/ProductCard";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../components/ui/pagination";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
+import type { ErrorResponse } from "../types/error";
+import ProductPagination from "../components/ProductsPagination";
 
 const NewInPage: React.FC = () => {
   const { t } = useLanguage();
   const [page, setPage] = useState<number>(1);
   const [paginatedProduct, setPaginatedProduct] =
-    useState<PaginatedResponse<ProductBriefDTO>>();
+    useState<PaginatedResponse<ProductBriefDTO> | null>(null);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -35,12 +28,21 @@ const NewInPage: React.FC = () => {
 
         setPaginatedProduct(data);
       } catch (error) {
-        toast({
-          title: t("error.fetchProduct"),
-          description: t("error.tryAgain"),
-          variant: "destructive",
-        });
-        console.error("Error fetching categories:", error);
+        const errorResponse = error as ErrorResponse;
+        if (errorResponse.status === 404) {
+          console.error("Error fetching products:", errorResponse);
+          toast({
+            title: t("products.noProductsTitle"),
+            description: t("products.noProductsMessage"),
+          });
+        } else {
+           toast({
+             title: t("error.fetchProduct"),
+             description: t("error.tryAgain"),
+             variant: "destructive",
+           });
+           console.error("Error fetching categories:", error);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -49,8 +51,6 @@ const NewInPage: React.FC = () => {
     fetchProducts();
   }, [page]);
 
-  const totalPages = paginatedProduct?.totalPages || 0;
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   if (isLoading) {
     // Show Ant Design's Spin component while loading
@@ -76,63 +76,17 @@ const NewInPage: React.FC = () => {
               defaultValue: "Latest arrivals from the past week",
             })}
           </p>
-
-          {paginatedProduct?.products &&
-          paginatedProduct?.products?.length > 0 ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {paginatedProduct.products.map((product) => (
-                  <div key={product.productId}>
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
-
-              {totalPages > 1 && (
-                <Pagination className="mt-8">
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                        className={
-                          page === 1 ? "pointer-events-none opacity-50" : ""
-                        }
-                      />
-                    </PaginationItem>
-
-                    {pageNumbers.map((number) => (
-                      <PaginationItem key={number}>
-                        <PaginationLink
-                          onClick={() => setPage(number)}
-                          isActive={page === number}
-                        >
-                          {number}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-
-                    <PaginationItem>
-                      <PaginationNext
-                        onClick={() =>
-                          setPage((prev) => Math.min(prev + 1, totalPages))
-                        }
-                        className={
-                          page === totalPages
-                            ? "pointer-events-none opacity-50"
-                            : ""
-                        }
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              )}
-            </>
+          {paginatedProduct && paginatedProduct.products.length > 0 ? (
+            <ProductPagination
+              paginatedProduct={paginatedProduct}
+              page={page}
+              setPage={setPage}
+            />
           ) : (
             <div className="text-center py-16">
               <p className="text-lg text-muted-foreground">
                 {t("newIn.noProducts", {
-                  defaultValue:
-                    "No new products have been added in the past week.",
+                  defaultValue: "No new arrivals found.",
                 })}
               </p>
             </div>

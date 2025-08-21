@@ -94,7 +94,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 items-stretch">
           {products && products.products.length > 0 ? (
             products.products.map((product, index) => (
               <div key={index} className="w-full">

@@ -11,19 +11,11 @@ import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { Gender } from "../types/enums";
 import { useToast } from "../hooks/useToast";
 import type { Category } from "../types/category";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "../components/ui/pagination";
-import ProductCard from "../components/ProductCard";
 import type { BrandDTO } from "../types/brand";
 import { listAllBrands } from "../api/Brand";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../types/error";
+import ProductPagination from "../components/ProductsPagination";
 
 const colors = [
   { id: "1", name: "Black", hex: "#000000" },
@@ -105,7 +97,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
             maxPrice: priceRange[1],
           },
           page,
-          12,
+          4,
           isPopular ? "rating,desc" : undefined
         );
 
@@ -154,10 +146,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
       }
     };
     fetchProducts();
-  }, [applyFilters, categoryId, brandId, keyword]);
-
-  const totalPages = pageProducts?.totalPages || 0;
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  }, [applyFilters, categoryId, brandId, keyword, page]);
 
   const handlePriceChange = (value: number[]) => {
     if (!value[0]) {
@@ -373,59 +362,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
               </div>
 
               {pageProducts?.products && pageProducts?.products.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {pageProducts?.products.map((product) => (
-                    <>
-                      <div key={product.productId} className="w-full">
-                        <ProductCard product={product} />
-                      </div>
-                      {totalPages > 1 && (
-                        <Pagination className="mt-8">
-                          <PaginationContent>
-                            <PaginationItem>
-                              <PaginationPrevious
-                                onClick={() =>
-                                  setPage((prev) => Math.max(prev - 1, 1))
-                                }
-                                className={
-                                  page === 1
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
-                              />
-                            </PaginationItem>
-
-                            {pageNumbers.map((number) => (
-                              <PaginationItem key={number}>
-                                <PaginationLink
-                                  onClick={() => setPage(number)}
-                                  isActive={page === number}
-                                >
-                                  {number}
-                                </PaginationLink>
-                              </PaginationItem>
-                            ))}
-
-                            <PaginationItem>
-                              <PaginationNext
-                                onClick={() =>
-                                  setPage((prev) =>
-                                    Math.min(prev + 1, totalPages)
-                                  )
-                                }
-                                className={
-                                  page === totalPages
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
-                              />
-                            </PaginationItem>
-                          </PaginationContent>
-                        </Pagination>
-                      )}
-                    </>
-                  ))}
-                </div>
+                <ProductPagination paginatedProduct={pageProducts} page={page} setPage={setPage}/>
               ) : (
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
                   <p className="text-gray-700 dark:text-gray-300">
