@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { Button } from "../../components/ui/button";
 import { ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -19,7 +19,7 @@ import {
 } from "../../components/ui/pagination";
 import { Card, CardContent } from "../../components/ui/card";
 import type { OrderStatus } from "../../types/enums";
-import { useIsMobile } from "../../hooks/use-mobile";
+import { useIsMobile } from "../../hooks/useMobile";
 import type { UserBriefDTO } from "../../types/user";
 import { getUserById } from "../../api/User";
 
@@ -46,7 +46,7 @@ const OrdersSection: React.FC<{ userId: string }> = ({ userId }) => {
         setPaginatedOrder(data);
       } catch (error: any) {
         const errorResponse = error as ErrorResponse;
-        if(errorResponse.status === 404) {
+        if (errorResponse.status === 404) {
           toast({
             title: t("error.notFoundTitle", {
               defaultValue: "Orders Not Found",
@@ -57,11 +57,11 @@ const OrdersSection: React.FC<{ userId: string }> = ({ userId }) => {
           });
         } else {
           toast({
-          title: t("error.fetchProduct"),
-          description: t("error.tryAgain"),
-          variant: "destructive",
-        });
-        console.error("Error fetching categories:", errorResponse);
+            title: t("error.fetchProduct"),
+            description: t("error.tryAgain"),
+            variant: "destructive",
+          });
+          console.error("Error fetching categories:", errorResponse);
         }
       } finally {
         setIsLoading(false);

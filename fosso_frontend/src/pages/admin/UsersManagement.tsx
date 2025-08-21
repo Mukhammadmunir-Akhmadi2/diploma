@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -18,7 +18,7 @@ import {
 } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Search, User, Edit, ChevronDown } from "lucide-react";
+import { Search, User, Edit } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -36,12 +36,8 @@ import {
 } from "../../components/ui/carousel";
 import {
   Select,
-  SelectGroup,
   SelectItem,
   SelectValue,
-  SelectIcon,
-  SelectScrollUpButton,
-  SelectScrollDownButton,
   SelectContent,
   SelectTrigger,
 } from "../../components/ui/select";
@@ -54,7 +50,7 @@ import {
 } from "../../api/admin/AdminUser";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { Spin } from "antd";
-import { useToast } from "../../hooks/use-toast";
+import { useToast } from "../../hooks/useToast";
 import { useDebounce } from "../../hooks/useDebounce";
 
 const UsersManagement = () => {
@@ -113,13 +109,15 @@ const UsersManagement = () => {
 
   const handleRoleChange = async (
     userId: string,
-    newRole: "USER" | "MERCHANT" | "ADMIN") => {
+    newRole: "USER" | "MERCHANT" | "ADMIN"
+  ) => {
     setIsLoading(true);
     try {
       await updateUserRole(userId, newRole);
       toast({
         title: t("admin.roleUpdated"),
-        description: t("admin.roleUpdatedDescription"),})
+        description: t("admin.roleUpdatedDescription"),
+      });
       setPaginatedUsers((prev) => {
         if (!prev) return prev;
         return {
@@ -133,7 +131,7 @@ const UsersManagement = () => {
       console.error("Error updating user role:", error);
       toast({
         title: t("admin.errorUpdatingRole"),
-        description: error.message || t("admin.somethingWentWrong"),
+        description: error.message || t("admin.errorUpdatingRoleDesc"),
         variant: "destructive",
       });
     }

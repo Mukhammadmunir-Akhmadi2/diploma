@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { UserRound, Upload } from "lucide-react";
-import { useLanguage } from "../contexts/LanguageContext";
-import { useToast } from "../hooks/use-toast";
+import { useLanguage } from "../hooks/useLanguage";
+import { useToast } from "../hooks/useToast";
 import useAuthStore from "../store/useAuthStore";
 import { uploadAvatar } from "../api/User";
 import type { ImageDTO } from "../types/image";
 
-const ProfileAvatar: React.FC<{avatar: ImageDTO | null}> = ({avatar}) => {
+const ProfileAvatar: React.FC<{ avatar: ImageDTO | null }> = ({ avatar }) => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isHovering, setIsHovering] = useState(false);
-  const setAvatar = useAuthStore((state) => state.setAvatar)
+  const setAvatar = useAuthStore((state) => state.setAvatar);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
 
     if (!file) return;
@@ -36,8 +38,7 @@ const ProfileAvatar: React.FC<{avatar: ImageDTO | null}> = ({avatar}) => {
       return;
     }
 
-
-    const avatar:ImageDTO = await uploadAvatar(file);
+    const avatar: ImageDTO = await uploadAvatar(file);
 
     setAvatar(avatar);
 

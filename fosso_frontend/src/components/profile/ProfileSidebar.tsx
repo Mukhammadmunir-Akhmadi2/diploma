@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import {
   User,
@@ -23,7 +23,7 @@ const ProfileSidebar: React.FC<{ user: UserProfileDTO }> = ({ user }) => {
   const avatar: ImageDTO | null = useAuthStore((state) => state.avatar);
 
   const isMerchant = user.roles?.includes("MERCHANT");
-  const isAdmin = user.roles.includes("ADMIN")
+  const isAdmin = user.roles.includes("ADMIN");
 
   const isActiveLink = (path: string) => {
     return location.pathname === path;

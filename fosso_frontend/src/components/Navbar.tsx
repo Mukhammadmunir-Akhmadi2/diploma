@@ -11,7 +11,7 @@ import {
   Search,
 } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -104,10 +104,8 @@ const Navbar: React.FC = () => {
         ? "/men/category"
         : "/category"
     );
-    
   };
 
-  
   return (
     <header className="sticky top-0 z-50">
       {/* Main Header with Logo, Search and Icons */}

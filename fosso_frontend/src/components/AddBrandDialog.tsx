@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Upload } from "lucide-react";
@@ -15,7 +15,7 @@ import { uploadImage } from "../api/Image";
 import { createBrand } from "../api/merchant/MerchantBrand";
 import type { BrandDTO } from "../types/brand";
 import type { ImageDTO } from "../types/image";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 
 interface AddBrandDialogProps {
   isOpen: boolean;

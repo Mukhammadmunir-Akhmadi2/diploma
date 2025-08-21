@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Card,
   CardContent,
@@ -28,9 +28,12 @@ import {
 } from "../../components/ui/pagination";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import EditCategoryModal from "../../components/admin/EditCategoryModal";
-import { listCategoriesByPage, updateCategoryEnabledStatus } from "../../api/admin/AdminCategory";
+import {
+  listCategoriesByPage,
+  updateCategoryEnabledStatus,
+} from "../../api/admin/AdminCategory";
 import type { Category } from "../../types/category";
-import { useToast } from "../../hooks/use-toast";
+import { useToast } from "../../hooks/useToast";
 import { Spin } from "antd";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import AddCategoryDialog from "../../components/AddCategoryDialog";
@@ -50,7 +53,7 @@ const CategoriesManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
   const itemsPerPage = 10;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useToast } from "../../hooks/use-toast";
+import { useLanguage } from "../../hooks/useLanguage";
+import { useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";

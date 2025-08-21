@@ -2,11 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, type ErrorResponse } from "react-router-dom";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { useLanguage } from "../contexts/LanguageContext";
-import { useToast } from "../hooks/use-toast";
+import { useLanguage } from "../hooks/useLanguage";
+import { useToast } from "../hooks/useToast";
 import { type CartItemDTO, type CartResponse } from "../types/cart";
 import useAuthStore from "../store/useAuthStore";
-import { getCartItems, removeProductFromCart, updateCartItemQuantity, clearCart } from "../api/Cart";
+import {
+  getCartItems,
+  removeProductFromCart,
+  updateCartItemQuantity,
+  clearCart,
+} from "../api/Cart";
 import { Spin } from "antd";
 
 const CartPage = () => {
@@ -17,7 +22,6 @@ const CartPage = () => {
   const [cartItems, setCartItems] = useState<CartResponse>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-
   useEffect(() => {
     setIsLoading(true);
     const fetchCardtItems = async () => {
@@ -25,7 +29,7 @@ const CartPage = () => {
         const items = await getCartItems(user?.userId);
         setCartItems(items);
       } catch (error) {
-        const response = error as ErrorResponse
+        const response = error as ErrorResponse;
         if (response?.status === 404) {
           setCartItems(undefined);
           toast({
@@ -130,7 +134,7 @@ const CartPage = () => {
 
   const clearCartHandler = async () => {
     try {
-      await clearCart(); 
+      await clearCart();
       setCartItems(undefined);
       toast({
         title: t("cart.cleared"),

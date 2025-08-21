@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useToast } from "../../hooks/use-toast";
+import { useLanguage } from "../../hooks/useLanguage";
+import { useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import {
@@ -27,8 +27,22 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../components/ui/pagination";
-import { Search, Edit, CheckCircle, Calendar, Package, Trash2, RotateCw, ShieldBan } from "lucide-react";
-import { getAllProducts, updateProductEnabledStatus, deleteProduct, restoreProduct } from "../../api/admin/AdminProduct";
+import {
+  Search,
+  Edit,
+  CheckCircle,
+  Calendar,
+  Package,
+  Trash2,
+  RotateCw,
+  ShieldBan,
+} from "lucide-react";
+import {
+  getAllProducts,
+  updateProductEnabledStatus,
+  deleteProduct,
+  restoreProduct,
+} from "../../api/admin/AdminProduct";
 import type { AdminProductBriefDTO } from "../../types/admin/adminProduct";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { getImageById } from "../../api/Image";
@@ -37,7 +51,6 @@ import { getBrandById } from "../../api/Brand";
 import { getUserById } from "../../api/User";
 import { Spin } from "antd";
 import { useDebounce } from "../../hooks/useDebounce";
-
 
 const ProductsPage = () => {
   const { t } = useLanguage();
@@ -49,7 +62,7 @@ const ProductsPage = () => {
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [page, setPage] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+
   const itemsPerPage = 10;
 
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
@@ -113,7 +126,7 @@ const ProductsPage = () => {
   const handleEnableProduct = async (productId: string, status: boolean) => {
     const newStatus = !status;
     try {
-      await updateProductEnabledStatus(productId, newStatus); 
+      await updateProductEnabledStatus(productId, newStatus);
       setPageProducts((prev) => {
         if (!prev) return prev;
         return {
@@ -196,7 +209,6 @@ const ProductsPage = () => {
   const handleEditProduct = (productId: string) => {
     navigate(`/admin/products/edit/${productId}`);
   };
-
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();

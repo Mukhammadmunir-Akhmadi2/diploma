@@ -1,12 +1,11 @@
+import React from "react";
+import { useLanguage } from "../../hooks/useLanguage";
+import { Package, PackageOpen } from "lucide-react";
 
-import React from 'react';
-import { useLanguage } from "../../contexts/LanguageContext";
-import { Package, PackageOpen } from 'lucide-react';
-
-const ProductStats: React.FC<{ activeProducts: number; inactiveProducts: number }> = ({
-  activeProducts,
-  inactiveProducts,
-}) => {
+const ProductStats: React.FC<{
+  activeProducts: number;
+  inactiveProducts: number;
+}> = ({ activeProducts, inactiveProducts }) => {
   const { t } = useLanguage();
 
   return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Select,
   SelectContent,
@@ -10,11 +10,7 @@ import {
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Plus, Search } from "lucide-react";
-import {
-  Dialog,
- 
-  DialogTrigger,
-} from "../../components/ui/dialog";
+import { Dialog, DialogTrigger } from "../../components/ui/dialog";
 import type { BrandDTO } from "../../types/brand";
 import { listAllBrands } from "../../api/Brand";
 import { useToast } from "../ui/use-toast";
@@ -78,7 +74,7 @@ const BrandSelect: React.FC<BrandSelectProps> = ({ brandId, onChange }) => {
   const handleBrandChange = (brandId: string) => {
     const selected = brands.find((brand) => brand.brandId === brandId) || null;
     setSelectBrand(selected);
-    onChange(brandId); 
+    onChange(brandId);
   };
 
   const handleCreateBrand = async (brandNew: BrandDTO) => {

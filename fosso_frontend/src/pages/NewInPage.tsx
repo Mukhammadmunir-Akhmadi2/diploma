@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import type { ProductBriefDTO, ProductFilterCriteria } from "../types/product";
 import { getAllProducts } from "../api/Product";
 import ProductCard from "../components/ProductCard";
@@ -12,7 +12,7 @@ import {
   PaginationPrevious,
 } from "../components/ui/pagination";
 import type { PaginatedResponse } from "../types/paginatedResponse";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
 
 const NewInPage: React.FC = () => {
@@ -21,17 +21,17 @@ const NewInPage: React.FC = () => {
   const [paginatedProduct, setPaginatedProduct] =
     useState<PaginatedResponse<ProductBriefDTO>>();
   const { toast } = useToast();
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     const fetchProducts = async () => {
       try {
         const data = await getAllProducts(
           { isNewIn: true } as ProductFilterCriteria,
           page,
-          8);
+          8
+        );
 
         setPaginatedProduct(data);
       } catch (error) {
@@ -64,7 +64,6 @@ const NewInPage: React.FC = () => {
     );
   }
 
-
   return (
     <>
       <main className="flex-grow">
@@ -78,7 +77,7 @@ const NewInPage: React.FC = () => {
             })}
           </p>
 
-          { paginatedProduct?.products &&
+          {paginatedProduct?.products &&
           paginatedProduct?.products?.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

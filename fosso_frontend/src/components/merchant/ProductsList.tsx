@@ -1,5 +1,5 @@
 import React from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Table,
   TableBody,
@@ -18,7 +18,10 @@ import {
 } from "../../components/ui/pagination";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import type { ProductMerchantDTO } from "../../types/product";
-import { updateProduct, updateProductEnabledStatus } from "../../api/merchant/MerchantProduct";
+import {
+  updateProduct,
+  updateProductEnabledStatus,
+} from "../../api/merchant/MerchantProduct";
 import ProductRow from "./ProductRow";
 import { useToast } from "../ui/use-toast";
 
@@ -113,7 +116,10 @@ const ProductsList: React.FC<{
         (product) => product.productId === id
       );
       if (productToUpdate) {
-        const response = await updateProductEnabledStatus(id, !productToUpdate.enabled);
+        const response = await updateProductEnabledStatus(
+          id,
+          !productToUpdate.enabled
+        );
         console.log(response);
         toast({
           title: productToUpdate.enabled
@@ -143,7 +149,6 @@ const ProductsList: React.FC<{
     }
   };
 
-
   const totalPages = paginatedProducts?.totalPages || 0;
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -164,9 +169,7 @@ const ProductsList: React.FC<{
               <TableHead>{t("merchant.price")}</TableHead>
               <TableHead>{t("merchant.stock")}</TableHead>
               <TableHead>{t("merchant.status")}</TableHead>
-              <TableHead>
-                {t("merchant.actions")}
-              </TableHead>
+              <TableHead>{t("merchant.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

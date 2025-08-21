@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useToast } from "../../hooks/use-toast";
+import { useLanguage } from "../../hooks/useLanguage";
+import { useToast } from "../../hooks/useToast";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import {
   Tabs,
@@ -277,7 +277,7 @@ const UserDetailsPage = () => {
     }
   };
 
-  const handleDeleteAvatar = async (userId: string ,image: ImageDTO) => {
+  const handleDeleteAvatar = async (userId: string, image: ImageDTO) => {
     try {
       if (!userId) return;
 
@@ -518,7 +518,10 @@ const UserDetailsPage = () => {
                           <Button
                             variant="outline"
                             onClick={() =>
-                              handleDeleteAvatar(userData.user?.userId ,userData.user?.image)
+                              handleDeleteAvatar(
+                                userData.user?.userId,
+                                userData.user?.image
+                              )
                             }
                             className="text-red-500 px-4 py-2"
                           >

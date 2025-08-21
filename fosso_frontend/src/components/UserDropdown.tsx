@@ -10,7 +10,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
 import { UserRound, LogOut, User, Settings } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { type UserDTO } from "../types/user";
 import useAuthStore from "../store/useAuthStore";
 import type { ImageDTO } from "../types/image";

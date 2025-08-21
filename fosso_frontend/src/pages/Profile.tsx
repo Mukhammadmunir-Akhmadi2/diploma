@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useLocation, Navigate } from "react-router-dom";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import ProfileSidebar from "../components/profile/ProfileSidebar";
 import PersonalInfoForm from "../components/profile/PersonalInfoForm";
 import SettingsSection from "../components/profile/SettingsSection";
 import { getCurrentUserProfile } from "../api/User";
 import { type UserProfileDTO } from "../types/user";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
 import AddressesSection from "../components/profile/AddressesSection";
 import PaymentSection from "../components/profile/PaymentSection";
@@ -52,7 +52,7 @@ const Profile = () => {
     if (path.includes("/profile/addresses")) {
       return <AddressesSection />;
     } else if (path.includes("/profile/payment")) {
-      return <PaymentSection/>;
+      return <PaymentSection />;
     } else if (path.includes("/profile/orders")) {
       return <OrdersSection userId={user?.userId} />;
     } else if (path.includes("/profile/wishlist")) {

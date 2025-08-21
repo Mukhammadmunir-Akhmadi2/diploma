@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useToast } from "../hooks/use-toast";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useToast } from "../hooks/useToast";
+import { useLanguage } from "../hooks/useLanguage";
 import OrderedProductsList from "../components/merchant/OrderedProductsList";
 import useAuthStore from "../store/useAuthStore";
 import type { UserDTO } from "../types/user";

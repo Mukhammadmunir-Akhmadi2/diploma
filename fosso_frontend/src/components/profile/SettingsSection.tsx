@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { Button } from "../../components/ui/button";
 import { Switch } from "../../components/ui/switch";
 import { Label } from "../../components/ui/label";
@@ -57,7 +57,7 @@ const SettingsSection: React.FC = () => {
       const passwordChanged: PasswordChangeRequest = {
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
-      }
+      };
       await changePassword(passwordChanged);
       toast({
         title: t("profile.passwordChanged"),
@@ -65,7 +65,7 @@ const SettingsSection: React.FC = () => {
       });
       setChangePasswordModalVisible(false);
     } catch (error: any) {
-      const response = error as ErrorResponse
+      const response = error as ErrorResponse;
       if (response?.status === 401) {
         toast({
           title: t("profile.incorrectPassword"),

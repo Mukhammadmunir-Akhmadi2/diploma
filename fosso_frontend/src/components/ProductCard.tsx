@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Star, StarHalf } from "lucide-react";
-import { useToast } from "../hooks/use-toast";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useToast } from "../hooks/useToast";
+import { useLanguage } from "../hooks/useLanguage";
 import type { ProductBriefDTO } from "../types/product";
 import placeholder from "../assets/placeholder.svg";
 import { getAllImagesForOwner } from "../api/Image";
@@ -58,42 +58,42 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )
       : 0;
 
-      const handleWishlistToggle = (e: React.MouseEvent) => {
-        e.preventDefault();
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
 
-        let wishlist: ProductBriefDTO[] = [];
-        if (localStorage.getItem("wishlist")) {
-          wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-        }
+    let wishlist: ProductBriefDTO[] = [];
+    if (localStorage.getItem("wishlist")) {
+      wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    }
 
-        const isAlreadyWishlisted = wishlist.some(
-          (item) => item.productId === product.productId
-        );
+    const isAlreadyWishlisted = wishlist.some(
+      (item) => item.productId === product.productId
+    );
 
-        let updatedWishlist: ProductBriefDTO[];
-        if (isAlreadyWishlisted) {
-          updatedWishlist = wishlist.filter(
-            (item) => item.productId !== product.productId
-          );
-          setIsWishlisted(false);
-        } else {
-          updatedWishlist = [...wishlist, product];
-          setIsWishlisted(true);
-        }
+    let updatedWishlist: ProductBriefDTO[];
+    if (isAlreadyWishlisted) {
+      updatedWishlist = wishlist.filter(
+        (item) => item.productId !== product.productId
+      );
+      setIsWishlisted(false);
+    } else {
+      updatedWishlist = [...wishlist, product];
+      setIsWishlisted(true);
+    }
 
-        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
 
-        toast({
-          title: isAlreadyWishlisted
-            ? t("product.removedFromWishlist")
-            : t("product.addedToWishlist"),
-          description: `${product.productName} ${
-            isAlreadyWishlisted
-              ? t("product.removedFromWishlistDesc")
-              : t("product.addedToWishlistDesc")
-          }`,
-        });
-      };
+    toast({
+      title: isAlreadyWishlisted
+        ? t("product.removedFromWishlist")
+        : t("product.addedToWishlist"),
+      description: `${product.productName} ${
+        isAlreadyWishlisted
+          ? t("product.removedFromWishlistDesc")
+          : t("product.addedToWishlistDesc")
+      }`,
+    });
+  };
 
   const renderRatingStars = (rating: number) => {
     const stars = [];

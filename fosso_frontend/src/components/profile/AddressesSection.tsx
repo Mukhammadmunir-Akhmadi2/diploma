@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { Button } from "../../components/ui/button";
 import { PlusCircle, Home, Building, Mail, Edit, Trash } from "lucide-react";
 import {
@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../components/ui/dialog";
-import { useToast } from "../../hooks/use-toast";
+import { useToast } from "../../hooks/useToast";
 import type { Address } from "../../types/user";
 import {
   getCurrentUserAddresses,

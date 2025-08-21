@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Dialog,
   DialogContent,
@@ -52,7 +52,6 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
-
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditedCategory((prev) => ({ ...prev, name: e.target.value }));
   };
@@ -67,8 +66,8 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
-      const updatedCategory = await updateCategory(editedCategory); 
-      onSave(updatedCategory); 
+      const updatedCategory = await updateCategory(editedCategory);
+      onSave(updatedCategory);
       toast({
         title: t("admin.categoryUpdated"),
         description: t("admin.categoryUpdatedDesc"),
@@ -86,13 +85,12 @@ const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
     }
   };
 
-  
   const handleMergeCategory = async () => {
     if (!mergeTargetId) return;
 
     setIsSaving(true);
     try {
-      const result = await mergeCategories(category.categoryId, mergeTargetId); 
+      const result = await mergeCategories(category.categoryId, mergeTargetId);
       toast({
         title: t("admin.categoriesMerged"),
         description: result,

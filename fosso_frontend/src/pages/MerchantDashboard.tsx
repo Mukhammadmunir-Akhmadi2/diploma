@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useToast } from "../hooks/use-toast";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useToast } from "../hooks/useToast";
+import { useLanguage } from "../hooks/useLanguage";
 import ProductStats from "../components/merchant/ProductStats";
 import ProductsList from "../components/merchant/ProductsList";
 import { Button } from "../components/ui/button";
@@ -30,13 +30,10 @@ const MerchantDashboard: React.FC = () => {
 
       setIsLoading(true);
       try {
-        const response = await getMerchantProducts(
-          page,
-          8
-        );
+        const response = await getMerchantProducts(page, 8);
         setPaginatedProducts(response);
       } catch (err) {
-        const errorResponse: ErrorResponse = err as ErrorResponse
+        const errorResponse: ErrorResponse = err as ErrorResponse;
         console.error("Error fetching products:", errorResponse);
         if (errorResponse.status === 404) {
           toast({
@@ -46,15 +43,15 @@ const MerchantDashboard: React.FC = () => {
             }),
           });
         } else {
-           toast({
-          title: t("error.fetchProduct", {
-            defaultValue: "Error Fetching Products",
-          }),
-          description: t("error.tryAgain", {
-            defaultValue: "Please try again later.",
-          }),
-          variant: "destructive",
-        });
+          toast({
+            title: t("error.fetchProduct", {
+              defaultValue: "Error Fetching Products",
+            }),
+            description: t("error.tryAgain", {
+              defaultValue: "Please try again later.",
+            }),
+            variant: "destructive",
+          });
         }
       } finally {
         setIsLoading(false);

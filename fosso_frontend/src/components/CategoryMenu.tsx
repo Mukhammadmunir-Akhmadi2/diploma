@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { ChevronRight, Search } from "lucide-react";
 import { Input } from "../components/ui/input";
 import { type Category } from "../types/category";
 import { listHierarchicalCategories } from "../api/Category";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 
 // Example hierarchical category data
 interface CategoryMenuProps {
@@ -172,7 +172,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({
         className="flex items-center space-x-1 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
         onClick={() => {
           setIsOpen(!isOpen);
-          onClick()
+          onClick();
         }}
         onMouseEnter={() => setIsOpen(true)}
       >

@@ -1,53 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { Trash, Heart } from "lucide-react";
 import type { ProductBriefDTO } from "../types/product";
-import { useToast } from "../hooks/use-toast";
-
+import { useToast } from "../hooks/useToast";
 
 const Wishlist = () => {
   const { t } = useLanguage();
-  const [wishlist, setWishlist] = useState<ProductBriefDTO[]>([])
+  const [wishlist, setWishlist] = useState<ProductBriefDTO[]>([]);
   const { toast } = useToast();
 
-
-    useEffect(() => {
-      try {
-        const storedWishlist = localStorage.getItem("wishlist");
-        if (storedWishlist) {
-          const parsedWishlist: ProductBriefDTO[] = JSON.parse(storedWishlist);
-          setWishlist(parsedWishlist);
-        } else {
-          setWishlist([]);
-        }
-      } catch (error) {
-        console.error("Error fetching wishlist:", error);
-        toast({
-          title: t("error.fetchProduct", {
-            defaultValue: "Error Fetching Wishlist",
-          }),
-          description: t("error.tryAgain", {
-            defaultValue: "Please try again later.",
-          }),
-          variant: "destructive",
-        });
+  useEffect(() => {
+    try {
+      const storedWishlist = localStorage.getItem("wishlist");
+      if (storedWishlist) {
+        const parsedWishlist: ProductBriefDTO[] = JSON.parse(storedWishlist);
+        setWishlist(parsedWishlist);
+      } else {
+        setWishlist([]);
       }
-    }, []);
-
-    const removeFromWishlist = (productId: string) => {
-      const updatedWishlist = wishlist.filter(
-        (item) => item.productId !== productId
-      );
-      setWishlist(updatedWishlist);
-      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    } catch (error) {
+      console.error("Error fetching wishlist:", error);
       toast({
-        title: t("wishlist.removed"),
-        description: t("wishlist.removedDesc"),
+        title: t("error.fetchProduct", {
+          defaultValue: "Error Fetching Wishlist",
+        }),
+        description: t("error.tryAgain", {
+          defaultValue: "Please try again later.",
+        }),
+        variant: "destructive",
       });
-    };
+    }
+  }, []);
+
+  const removeFromWishlist = (productId: string) => {
+    const updatedWishlist = wishlist.filter(
+      (item) => item.productId !== productId
+    );
+    setWishlist(updatedWishlist);
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    toast({
+      title: t("wishlist.removed"),
+      description: t("wishlist.removedDesc"),
+    });
+  };
 
   return (
     <>

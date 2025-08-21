@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { Users, ShoppingBag, Package, ShoppingBasket } from "lucide-react";
 
 const AdminSidebar = () => {

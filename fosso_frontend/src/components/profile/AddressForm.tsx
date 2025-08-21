@@ -1,11 +1,10 @@
-
-import React from 'react';
-import { useLanguage } from "../../contexts/LanguageContext";
+import React from "react";
+import { useLanguage } from "../../hooks/useLanguage";
 import * as Yup from "yup";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import type { Address } from '../../types/user';
+import type { Address } from "../../types/user";
 
 interface AddressFormProps {
   onSubmit: (data: Address) => void;
@@ -44,9 +43,14 @@ const AddressValidationSchema = Yup.object().shape({
     .max(50, "Country must be less than 50 characters"),
   isDefault: Yup.boolean(),
 });
-const AddressForm: React.FC<AddressFormProps> = ({ onSubmit, onCancel, defaultValues, onClose }) => {
+const AddressForm: React.FC<AddressFormProps> = ({
+  onSubmit,
+  onCancel,
+  defaultValues,
+  onClose,
+}) => {
   const { t } = useLanguage();
-  
+
   const initialValues: Partial<Address> = defaultValues || {
     addressType: "home",
     phoneNumber: "",
@@ -58,7 +62,7 @@ const AddressForm: React.FC<AddressFormProps> = ({ onSubmit, onCancel, defaultVa
     country: "United States",
     isDefault: false,
   };
-  
+
   return (
     <Formik
       initialValues={initialValues}

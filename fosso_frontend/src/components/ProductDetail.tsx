@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useLanguage } from "../contexts/LanguageContext";
-import { useToast } from "../hooks/use-toast";
+import { useLanguage } from "../hooks/useLanguage";
+import { useToast } from "../hooks/useToast";
 import {
   ChevronLeft,
   ChevronRight,

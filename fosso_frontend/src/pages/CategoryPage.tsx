@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { Button } from "../components/ui/button";
 import { Slider } from "../components/ui/slider";
 import { Separator } from "../components/ui/separator";
@@ -9,7 +9,7 @@ import { listSubcategories, getCategoryById } from "../api/Category";
 import { getAllProducts } from "../api/Product";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { Gender } from "../types/enums";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 import type { Category } from "../types/category";
 import {
   Pagination,
@@ -66,12 +66,15 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const { t } = useLanguage();
   const { categoryId, brandId, keyword } = useParams();
 
-  const [priceRange, setPriceRange] = useState<[number | null, number | null]>([null, null]);
+  const [priceRange, setPriceRange] = useState<[number | null, number | null]>([
+    null,
+    null,
+  ]);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(
     brandId || null
   );
-  
+
   const [selectedGender, setSelectedGender] = useState<Gender | null>(
     preSelectedGender || null
   );
@@ -85,7 +88,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [applyFilters, setApplyFilters] = useState<boolean>(false); 
+  const [applyFilters, setApplyFilters] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);

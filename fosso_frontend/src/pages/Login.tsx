@@ -4,8 +4,8 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Checkbox } from "../components/ui/checkbox";
 import { ArrowLeft } from "lucide-react";
-import { useLanguage } from "../contexts/LanguageContext";
-import { useToast } from "../hooks/use-toast";
+import { useLanguage } from "../hooks/useLanguage";
+import { useToast } from "../hooks/useToast";
 import { login } from "../api/Auth";
 import { useMutation } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -14,9 +14,8 @@ import { type AuthResponse } from "../types/auth";
 import * as Yup from "yup";
 import { useLoginHandler } from "../hooks/useLoginHandler";
 import { Spin } from "antd";
-import { Eye, EyeOff } from "lucide-react"; 
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-
 
 const Login = () => {
   const { t } = useLanguage();

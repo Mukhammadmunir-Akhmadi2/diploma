@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { useToast } from "../hooks/use-toast";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useToast } from "../hooks/useToast";
+import { useLanguage } from "../hooks/useLanguage";
 import ProductForm from "../components/merchant/ProductForm";
 import useAuthStore from "../store/useAuthStore";
 import { getMerchantProductById } from "../api/merchant/MerchantProduct";
@@ -16,12 +16,14 @@ const CreateProduct: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [product, setProduct] = useState<ProductMerchantDTO | AdminProductDetailedDTO>();
+  const [product, setProduct] = useState<
+    ProductMerchantDTO | AdminProductDetailedDTO
+  >();
 
   useEffect(() => {
     const fetchProduct = async () => {
       if (!id) {
-        setIsLoading(false); 
+        setIsLoading(false);
         return;
       }
 

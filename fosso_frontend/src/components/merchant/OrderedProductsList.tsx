@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useToast } from "../../hooks/use-toast";
+import { useLanguage } from "../../hooks/useLanguage";
+import { useToast } from "../../hooks/useToast";
 import {
   Table,
   TableBody,
@@ -41,12 +41,15 @@ import {
   XCircle,
   BadgeDollarSign,
 } from "lucide-react";
-import { useIsMobile } from "../../hooks/use-mobile";
+import { useIsMobile } from "../../hooks/useMobile";
 import type { OrderStatus } from "../../types/enums";
 import type { OrderMerchantDTO } from "../../types/order";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { Spin } from "antd";
-import { getOrdersByMerchant, updateProductStatus } from "../../api/merchant/MerchantOrder";
+import {
+  getOrdersByMerchant,
+  updateProductStatus,
+} from "../../api/merchant/MerchantOrder";
 import { getUserProfileById } from "../../api/User";
 import { Modal, Input } from "antd";
 import type { ErrorResponse } from "../../types/error";
@@ -94,7 +97,7 @@ const OrderedProductsList: React.FC = () => {
           products: productsWithCustomer,
         });
       } catch (error) {
-        const errorResponse = error as ErrorResponse
+        const errorResponse = error as ErrorResponse;
         console.error("Error fetching merchant orders:", errorResponse);
         if (errorResponse.status === 404) {
           toast({
@@ -103,12 +106,11 @@ const OrderedProductsList: React.FC = () => {
           });
         } else {
           toast({
-          title: t("merchant.errorFetchingOrders"),
-          description: t("merchant.errorFetchingOrdersDesc"),
-          variant: "destructive",
-        });
+            title: t("merchant.errorFetchingOrders"),
+            description: t("merchant.errorFetchingOrdersDesc"),
+            variant: "destructive",
+          });
         }
-      
       } finally {
         setIsLoading(false);
       }
@@ -249,19 +251,33 @@ const OrderedProductsList: React.FC = () => {
   const getDefaultNote = (status: OrderStatus) => {
     switch (status) {
       case "SHIPPED":
-        return t("merchant.defaultNote.shipped", { defaultValue: "Product is on the way." });
+        return t("merchant.defaultNote.shipped", {
+          defaultValue: "Product is on the way.",
+        });
       case "DELIVERED":
-        return t("merchant.defaultNote.delivered", { defaultValue: "Product delivered to customer." });
+        return t("merchant.defaultNote.delivered", {
+          defaultValue: "Product delivered to customer.",
+        });
       case "RETURNED":
-        return t("merchant.defaultNote.returned", { defaultValue: "Product returned by customer." });
+        return t("merchant.defaultNote.returned", {
+          defaultValue: "Product returned by customer.",
+        });
       case "CANCELLED":
-        return t("merchant.defaultNote.cancelled", { defaultValue: "Order cancelled." });
+        return t("merchant.defaultNote.cancelled", {
+          defaultValue: "Order cancelled.",
+        });
       case "PAID":
-        return t("merchant.defaultNote.paid", { defaultValue: "Payment received." });
+        return t("merchant.defaultNote.paid", {
+          defaultValue: "Payment received.",
+        });
       case "COMPLETED":
-        return t("merchant.defaultNote.completed", { defaultValue: "Order completed." });
+        return t("merchant.defaultNote.completed", {
+          defaultValue: "Order completed.",
+        });
       case "PROCESSING":
-        return t("merchant.defaultNote.processing", { defaultValue: "Order is being processed." });
+        return t("merchant.defaultNote.processing", {
+          defaultValue: "Order is being processed.",
+        });
       default:
         return "";
     }
@@ -303,10 +319,9 @@ const OrderedProductsList: React.FC = () => {
     setPendingStatus(null);
     setStatusNote("");
   };
-  
+
   const totalPages = pageOrders?.totalPages || 0;
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
 
   if (isLoading) {
     return (

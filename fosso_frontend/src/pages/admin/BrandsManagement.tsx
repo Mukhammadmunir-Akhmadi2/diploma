@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Card,
   CardContent,
@@ -17,7 +17,14 @@ import {
 } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { Search, Edit, Plus, Image, CheckCircle, ShieldBan } from "lucide-react";
+import {
+  Search,
+  Edit,
+  Plus,
+  Image,
+  CheckCircle,
+  ShieldBan,
+} from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -33,7 +40,7 @@ import {
   listBrandsByPage,
 } from "../../api/admin/AdminBrand";
 import type { BrandDTO } from "../../types/brand";
-import { useToast } from "../../hooks/use-toast";
+import { useToast } from "../../hooks/useToast";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { getImageById } from "../../api/Image";
 import type { ImageDTO } from "../../types/image";

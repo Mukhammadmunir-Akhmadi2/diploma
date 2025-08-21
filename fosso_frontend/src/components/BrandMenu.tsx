@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { ChevronRight, Search } from "lucide-react";
 import { Input } from "../components/ui/input";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 import type { BrandDTO } from "../types/brand";
 import { listAllBrands } from "../api/Brand";
 interface BrandMenuProps {
@@ -121,8 +121,10 @@ const BrandMenu: React.FC<BrandMenuProps> = ({
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-1 bg-white dark:bg-gray-900 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 w-[500px] overflow-hidden max-h-[70vh]"
-             onMouseLeave={() => setIsOpen(false)}>
+        <div
+          className="absolute top-full left-0 z-50 mt-1 bg-white dark:bg-gray-900 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 w-[500px] overflow-hidden max-h-[70vh]"
+          onMouseLeave={() => setIsOpen(false)}
+        >
           {/* Search box */}
           <div className="p-3 border-b border-gray-200 dark:border-gray-700">
             <div className="relative">

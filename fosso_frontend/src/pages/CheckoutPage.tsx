@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useLanguage } from "../contexts/LanguageContext";
-import { useToast } from "../hooks/use-toast";
+import { useLanguage } from "../hooks/useLanguage";
+import { useToast } from "../hooks/useToast";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -66,7 +66,6 @@ const CheckoutPage: React.FC = () => {
   const [isProcessingOrder, setIsProcessingOrder] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-
   useEffect(() => {
     setIsLoading(true);
     if (user) {
@@ -96,7 +95,7 @@ const CheckoutPage: React.FC = () => {
     (sum, item) => sum + item.unitPrice * item.quantity,
     0
   );
-  const shippingCost = subtotal > 100 ? 0 : 5.99; 
+  const shippingCost = subtotal > 100 ? 0 : 5.99;
   const taxRate = 0.08; // 8% tax
   const estimatedTax = subtotal * taxRate;
   const total = subtotal + shippingCost + estimatedTax;
@@ -115,7 +114,7 @@ const CheckoutPage: React.FC = () => {
       });
       return;
     }
-  
+
     setIsProcessingOrder(true);
 
     try {
@@ -125,7 +124,6 @@ const CheckoutPage: React.FC = () => {
       };
 
       const trackingNumber = await placeOrder(orderRequest);
-
 
       toast({
         title: t("checkout.orderPlaced"),
@@ -212,7 +210,6 @@ const CheckoutPage: React.FC = () => {
       });
     }
   };
-
 
   if (isLoading) {
     // Show Ant Design's Spin component while loading

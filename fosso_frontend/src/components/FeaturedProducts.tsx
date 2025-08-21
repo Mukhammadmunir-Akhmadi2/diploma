@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import ProductCard from "./ProductCard";
 import { getAllProducts } from "../api/Product";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { ProductBriefDTO } from "../types/product";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 import type { ErrorResponse } from "../types/error";
 import type { Gender } from "../types/enums";
 export interface FeaturedProductsProps {
@@ -45,16 +45,16 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
         if (isNewIn) {
           response = await getAllProducts({ isNewIn: true, gender }, 1, 4);
         } else if (isPopular) {
-          response = await getAllProducts({gender}, 1, 4, "rating,desc");
+          response = await getAllProducts({ gender }, 1, 4, "rating,desc");
         }
 
         setProducts(response);
       } catch (error) {
         const errorResponse = error as ErrorResponse;
-        if(errorResponse.status === 404) {
+        if (errorResponse.status === 404) {
           console.error("Error fetching products:", errorResponse);
           toast({
-            title: t("products.noProductsTitle"), 
+            title: t("products.noProductsTitle"),
             description: t("products.noProductsMessage"),
           });
         } else {

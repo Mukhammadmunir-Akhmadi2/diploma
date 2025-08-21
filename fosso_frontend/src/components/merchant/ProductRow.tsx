@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import type { ProductMerchantDTO } from "../../types/product";
 import { Link } from "react-router-dom";
-import {
-  TableCell,
-  TableRow,
-} from "../../components/ui/table";
+import { TableCell, TableRow } from "../../components/ui/table";
 import { Button } from "../../components/ui/button";
 import { Switch } from "../../components/ui/switch";
 import { Eye, PenLine, Plus, Minus } from "lucide-react";
@@ -12,9 +9,8 @@ import { getCategoryById } from "../../api/Category";
 import type { Category } from "../../types/category";
 import { useToast } from "../ui/use-toast";
 import { getImageById } from "../../api/Image";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import type { ImageDTO } from "../../types/image";
-
 
 const ProductRow: React.FC<{
   product: ProductMerchantDTO;
@@ -33,7 +29,7 @@ const ProductRow: React.FC<{
         setCategory(fetchedCategory);
 
         if (product.mainImagesId && product.mainImagesId.length > 0) {
-          const image: ImageDTO= await getImageById(
+          const image: ImageDTO = await getImageById(
             product.mainImagesId[0],
             "PRODUCT_IMAGE_MAIN"
           );

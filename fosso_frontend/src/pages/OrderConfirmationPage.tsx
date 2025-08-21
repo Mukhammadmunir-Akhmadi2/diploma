@@ -1,4 +1,4 @@
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { useNavigate, useParams } from "react-router-dom";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
 import { Button } from "../components/ui/button";
@@ -7,7 +7,7 @@ import { Card, CardContent } from "../components/ui/card";
 const OrderConfirmationPage = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const {slug} = useParams();
+  const { slug } = useParams();
 
   // In a real app, this would come from the order API/context
   const orderNumber = slug;

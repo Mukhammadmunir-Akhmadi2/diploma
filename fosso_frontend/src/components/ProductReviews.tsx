@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import { Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import type { ReviewDTO } from "../types/review";
@@ -18,7 +18,7 @@ import type { PaginatedResponse } from "../types/paginatedResponse";
 import { getImageById } from "../api/Image";
 import type { ImageDTO } from "../types/image";
 import type { ErrorResponse } from "../types/error";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 interface ProductReviewsProps {
   productId: string;
   averageRating?: number;
@@ -34,7 +34,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
   const [page, setPage] = useState<number>(1);
   const { toast } = useToast();
 
-
   const itemsPerPage = 5;
   useEffect(() => {
     const fetchReviews = async () => {
@@ -42,37 +41,36 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
         const pageReviews: PaginatedResponse<ReviewDTO> =
           await getReviewsByProductId(productId, page, itemsPerPage);
 
-          pageReviews.products = await Promise.all(
-            pageReviews.products.map(async (review) => {
-              const user: UserBriefDTO = await getUserById(review.customerId);
-              let userAvatar: ImageDTO | null = null;
-              if ( user.imageId) {
-                userAvatar = await getImageById(user.imageId, "USER_AVATAR");
-              }
-              return {
-                ...review,
-                user: user,
-                userAvatar: userAvatar,
-              };
+        pageReviews.products = await Promise.all(
+          pageReviews.products.map(async (review) => {
+            const user: UserBriefDTO = await getUserById(review.customerId);
+            let userAvatar: ImageDTO | null = null;
+            if (user.imageId) {
+              userAvatar = await getImageById(user.imageId, "USER_AVATAR");
             }
-          ));
+            return {
+              ...review,
+              user: user,
+              userAvatar: userAvatar,
+            };
+          })
+        );
         setPageReviews(pageReviews);
       } catch (error) {
         const errorResponse = error as ErrorResponse;
         if (errorResponse.status === 404) {
           toast({
-            title: t("review.noReviewTitle"), 
-            description: t("review.noReviewMessage"), 
+            title: t("review.noReviewTitle"),
+            description: t("review.noReviewMessage"),
           });
         } else {
           console.error("Error fetching reviews:", errorResponse);
-        toast({
-          title: t("error.fetchReviews"),
-          description: errorResponse.message,
-          variant: "destructive",
-        });
+          toast({
+            title: t("error.fetchReviews"),
+            description: errorResponse.message,
+            variant: "destructive",
+          });
         }
-        
       }
     };
 

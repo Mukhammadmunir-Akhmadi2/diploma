@@ -1,6 +1,5 @@
-
-import React, { useState } from 'react';
-import { useLanguage } from "../../contexts/LanguageContext";
+import React, { useState } from "react";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Dialog,
   DialogContent,
@@ -14,11 +13,11 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { Image, Upload, Trash } from "lucide-react";
-import type { BrandDTO } from '../../types/brand';
-import type { ImageDTO } from '../../types/image';
-import { deleteImageByOwnerId, uploadImage } from '../../api/Image';
-import { updateBrand } from '../../api/admin/AdminBrand';
-import { useToast } from '../ui/use-toast';
+import type { BrandDTO } from "../../types/brand";
+import type { ImageDTO } from "../../types/image";
+import { deleteImageByOwnerId, uploadImage } from "../../api/Image";
+import { updateBrand } from "../../api/admin/AdminBrand";
+import { useToast } from "../ui/use-toast";
 
 interface EditBrandModalProps {
   brand: BrandDTO;
@@ -27,24 +26,26 @@ interface EditBrandModalProps {
   onSave: (brand: BrandDTO) => void;
 }
 
-const EditBrandModal: React.FC<EditBrandModalProps> = ({ 
-  brand, 
-  isOpen, 
-  onClose, 
-  onSave 
+const EditBrandModal: React.FC<EditBrandModalProps> = ({
+  brand,
+  isOpen,
+  onClose,
+  onSave,
 }) => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [editedBrand, setEditedBrand] = useState<BrandDTO>({ ...brand });
-  const [tempLogo, setTempLogo] = useState<ImageDTO | File | null>(brand.logo || null);
-  
+  const [tempLogo, setTempLogo] = useState<ImageDTO | File | null>(
+    brand.logo || null
+  );
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setEditedBrand(prev => ({ ...prev, [name]: value }));
+    setEditedBrand((prev) => ({ ...prev, [name]: value }));
   };
-  
+
   const handleSaveChanges = async () => {
     try {
       let updatedLogo = tempLogo;
@@ -78,7 +79,8 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
       };
 
       const result = await updateBrand(brand.brandId, updatedBrand);
-      onSave({ ...result, logo: updatedLogo });      toast({
+      onSave({ ...result, logo: updatedLogo });
+      toast({
         title: t("admin.brandUpdated"),
         description: t("admin.brandUpdatedDesc"),
       });
@@ -92,12 +94,12 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
       });
     }
   };
-  
-    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
-  
+
     const file = e.target.files[0];
-  
+
     // Validate file size (limit: 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
@@ -107,7 +109,7 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
       });
       return;
     }
-  
+
     // Validate file type (must be an image)
     if (!file.type.startsWith("image/")) {
       toast({
@@ -119,11 +121,11 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
     }
     setTempLogo(file);
   };
-  
+
   const handleLogoDelete = async () => {
     setTempLogo(null);
   };
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>

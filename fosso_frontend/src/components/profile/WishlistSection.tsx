@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useLanguage } from "../../contexts/LanguageContext";
-import { Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useLanguage } from "../../hooks/useLanguage";
+import { Heart } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import ProductCard from "../../components/ProductCard";
-import type { ProductBriefDTO } from '../../types/product';
-import { useToast } from '../ui/use-toast';
+import type { ProductBriefDTO } from "../../types/product";
+import { useToast } from "../ui/use-toast";
 
-
-
-const WishlistSection: React.FC= () => {
+const WishlistSection: React.FC = () => {
   const { t } = useLanguage();
-  const [wishlist, setWishlist] = useState<ProductBriefDTO[]>([])
+  const [wishlist, setWishlist] = useState<ProductBriefDTO[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {

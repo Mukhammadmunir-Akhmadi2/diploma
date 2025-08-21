@@ -1,5 +1,5 @@
 import React from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { Button } from "../../components/ui/button";
 import type { UserProfileDTO, UserUpdateDTO } from "../../types/user";
 import type { Gender } from "../../types/enums";
@@ -39,7 +39,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
     defaultValues: {
       ...user,
     },
-  resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
   const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +109,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
               {...register("firstName")}
               className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            {errors.firstName && (<p>{errors.firstName.message}</p>)}
+            {errors.firstName && <p>{errors.firstName.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

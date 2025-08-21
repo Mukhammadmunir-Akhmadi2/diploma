@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../contexts/LanguageContext";
+import { useLanguage } from "../../hooks/useLanguage";
 import { Truck, ArrowLeft, CheckCircle } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
@@ -7,7 +7,7 @@ import { Separator } from "../../components/ui/separator";
 import { useNavigate, useParams } from "react-router-dom";
 import { getOrderById } from "../../api/Order";
 import { type OrderDetail, type OrderDetailedDTO } from "../../types/order";
-import { useToast } from "../../hooks/use-toast";
+import { useToast } from "../../hooks/useToast";
 import { Spin } from "antd";
 import { getImageByOwnerId } from "../../api/Image";
 import { getUserById } from "../../api/User";

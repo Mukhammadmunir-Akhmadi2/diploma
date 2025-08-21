@@ -1,11 +1,11 @@
 import { Link, useParams } from "react-router-dom";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from "../hooks/useLanguage";
 import type { BrandDTO } from "../types/brand";
 import type { ImageDTO } from "../types/image";
 import { listAllBrands } from "../api/Brand";
 import { getImageById } from "../api/Image";
 import { useEffect, useState } from "react";
-import { useToast } from "../hooks/use-toast";
+import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
 
 const BrandListingPage = () => {
@@ -25,7 +25,10 @@ const BrandListingPage = () => {
           allBrands.map(async (brand) => {
             if (brand.logoImageId) {
               try {
-                const image: ImageDTO = await getImageById(brand.logoImageId, "BRAND_IMAGE");
+                const image: ImageDTO = await getImageById(
+                  brand.logoImageId,
+                  "BRAND_IMAGE"
+                );
                 return {
                   ...brand,
                   logo: `data:${image.contentType};base64,${image.base64Data}`,
