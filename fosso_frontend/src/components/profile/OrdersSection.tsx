@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "../../hooks/useLanguage";
 import { Button } from "../../components/ui/button";
 import { ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { type OrderBriefDTO } from "../../types/order";
 import { getOrdersByCustomer } from "../../api/Order";
 import { type PaginatedResponse } from "../../types/paginatedResponse";
@@ -20,17 +20,18 @@ import {
 import { Card, CardContent } from "../../components/ui/card";
 import type { OrderStatus } from "../../types/enums";
 import { useIsMobile } from "../../hooks/useMobile";
-import type { UserBriefDTO } from "../../types/user";
-import { getUserById } from "../../api/User";
+import type {UserProfileDTO } from "../../types/user";
 
-const OrdersSection: React.FC<{ userId: string }> = ({ userId }) => {
+const OrdersSection: React.FC = () => {
+
+  const { user } = useOutletContext<{user: UserProfileDTO}>();
+
   const { t } = useLanguage();
   const [paginatedOrder, setPaginatedOrder] =
     useState<PaginatedResponse<OrderBriefDTO>>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const isMobile = useIsMobile();
   const { toast } = useToast();
-  const [user, setUser] = useState<UserBriefDTO | null>(null);
   const [page, setPage] = useState(1);
   const ordersPerPage = 4;
 
@@ -39,10 +40,7 @@ const OrdersSection: React.FC<{ userId: string }> = ({ userId }) => {
       setIsLoading(true);
       try {
         const data: PaginatedResponse<OrderBriefDTO> =
-          await getOrdersByCustomer(userId, page, ordersPerPage);
-
-        const userData: UserBriefDTO = await getUserById(userId);
-        setUser(userData);
+          await getOrdersByCustomer(user.userId, page, ordersPerPage);
         setPaginatedOrder(data);
       } catch (error: any) {
         const errorResponse = error as ErrorResponse;

@@ -35,9 +35,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const user = useAuthStore((state) => state.user);
-  const avatar = useAuthStore((state) => state.avatar);
-  const logout = useAuthStore((state) => state.logout);
+  const {user, avatar, logout} = useAuthStore((state) => state);
 
   const isLoggedIn = !!user;
 

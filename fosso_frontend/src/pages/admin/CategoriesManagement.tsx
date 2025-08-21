@@ -26,7 +26,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../components/ui/pagination";
-import AdminSidebar from "../../components/admin/AdminSidebar";
 import EditCategoryModal from "../../components/admin/EditCategoryModal";
 import {
   listCategoriesByPage,
@@ -188,200 +187,185 @@ const CategoriesManagement = () => {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-8 flex-grow">
-        <div className="flex flex-col md:flex-row gap-8 w-full">
-          {/* Admin Sidebar */}
-          <AdminSidebar />
+      <div className="w-full md:w-3/4 space-y-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl font-bold">
+                {t("admin.categories")}
+              </CardTitle>
+              <CardDescription>
+                {t("admin.manageCategoriesDetails")}
+              </CardDescription>
+            </div>
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Plus size={18} className="mr-1" />
+              {t("admin.addCategory")}
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center mb-6">
+              <div className="relative w-full max-w-sm">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t("admin.searchCategories")}
+                  className="pl-8"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
 
-          {/* Main Content */}
-          <div className="w-full md:w-3/4 space-y-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-2xl font-bold">
-                    {t("admin.categories")}
-                  </CardTitle>
-                  <CardDescription>
-                    {t("admin.manageCategoriesDetails")}
-                  </CardDescription>
+            {pageCategories?.products && pageCategories?.products.length > 0 ? (
+              <>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t("product.category")}</TableHead>
+                        <TableHead>{t("admin.parentCategory")}</TableHead>
+                        <TableHead>{t("admin.subCategories")}</TableHead>
+                        <TableHead>{t("admin.categoryStatus")}</TableHead>
+                        <TableHead className="w-[100px]">
+                          {t("common.actions")}
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pageCategories.products.map((category) => (
+                        <TableRow key={category.categoryId}>
+                          <TableCell className="font-medium">
+                            {category.name}
+                          </TableCell>
+                          <TableCell>
+                            {getParentCategoryName(category.parentId || "-")}
+                          </TableCell>
+                          <TableCell>
+                            {getSubCategoriesText(
+                              category.subCategoriesId || []
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className={
+                                category.enabled
+                                  ? "ml-2 text-green-500"
+                                  : "ml-2 text-red-500"
+                              }
+                              onClick={() =>
+                                toggleCategoryStatus(
+                                  category.categoryId,
+                                  category.enabled
+                                )
+                              }
+                            >
+                              {category.enabled ? (
+                                <CheckCircle size={16} className="mr-1" />
+                              ) : (
+                                <ShieldBan size={16} className="mr-1" />
+                              )}
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs ${
+                                  category.enabled
+                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                                }`}
+                              >
+                                {category.enabled
+                                  ? t("common.enabled")
+                                  : t("common.disabled")}
+                              </span>
+                            </Button>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditCategory(category)}
+                            >
+                              <Edit size={16} className="mr-1" />
+                              {t("common.edit")}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  {totalPages > 1 && (
+                    <Pagination className="mt-8">
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            onClick={() =>
+                              setPage((prev) => Math.max(prev - 1, 1))
+                            }
+                            className={
+                              page === 1 ? "pointer-events-none opacity-50" : ""
+                            }
+                          />
+                        </PaginationItem>
+
+                        {pageNumbers.map((number) => (
+                          <PaginationItem key={number}>
+                            <PaginationLink
+                              onClick={() => setPage(number)}
+                              isActive={page === number}
+                            >
+                              {number}
+                            </PaginationLink>
+                          </PaginationItem>
+                        ))}
+
+                        <PaginationItem>
+                          <PaginationNext
+                            onClick={() =>
+                              setPage((prev) => Math.min(prev + 1, totalPages))
+                            }
+                            className={
+                              page === totalPages
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  )}
                 </div>
-                <Button onClick={() => setIsDialogOpen(true)}>
-                  <Plus size={18} className="mr-1" />
-                  {t("admin.addCategory")}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center mb-6">
-                  <div className="relative w-full max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder={t("admin.searchCategories")}
-                      className="pl-8"
-                      value={searchQuery}
-                      onChange={handleSearch}
-                      disabled={isLoading}
-                    />
-                  </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <div className="mx-auto h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-muted-foreground"
+                  >
+                    <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18" />
+                  </svg>
                 </div>
-
-                {pageCategories?.products &&
-                pageCategories?.products.length > 0 ? (
-                  <>
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>{t("product.category")}</TableHead>
-                            <TableHead>{t("admin.parentCategory")}</TableHead>
-                            <TableHead>{t("admin.subCategories")}</TableHead>
-                            <TableHead>{t("admin.categoryStatus")}</TableHead>
-                            <TableHead className="w-[100px]">
-                              {t("common.actions")}
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {pageCategories.products.map((category) => (
-                            <TableRow key={category.categoryId}>
-                              <TableCell className="font-medium">
-                                {category.name}
-                              </TableCell>
-                              <TableCell>
-                                {getParentCategoryName(
-                                  category.parentId || "-"
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                {getSubCategoriesText(
-                                  category.subCategoriesId || []
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className={
-                                    category.enabled
-                                      ? "ml-2 text-green-500"
-                                      : "ml-2 text-red-500"
-                                  }
-                                  onClick={() =>
-                                    toggleCategoryStatus(
-                                      category.categoryId,
-                                      category.enabled
-                                    )
-                                  }
-                                >
-                                  {category.enabled ? (
-                                    <CheckCircle size={16} className="mr-1" />
-                                  ) : (
-                                    <ShieldBan size={16} className="mr-1" />
-                                  )}
-                                  <span
-                                    className={`px-2 py-1 rounded-full text-xs ${
-                                      category.enabled
-                                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                                        : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                                    }`}
-                                  >
-                                    {category.enabled
-                                      ? t("common.enabled")
-                                      : t("common.disabled")}
-                                  </span>
-                                </Button>
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleEditCategory(category)}
-                                >
-                                  <Edit size={16} className="mr-1" />
-                                  {t("common.edit")}
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                      {totalPages > 1 && (
-                        <Pagination className="mt-8">
-                          <PaginationContent>
-                            <PaginationItem>
-                              <PaginationPrevious
-                                onClick={() =>
-                                  setPage((prev) => Math.max(prev - 1, 1))
-                                }
-                                className={
-                                  page === 1
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
-                              />
-                            </PaginationItem>
-
-                            {pageNumbers.map((number) => (
-                              <PaginationItem key={number}>
-                                <PaginationLink
-                                  onClick={() => setPage(number)}
-                                  isActive={page === number}
-                                >
-                                  {number}
-                                </PaginationLink>
-                              </PaginationItem>
-                            ))}
-
-                            <PaginationItem>
-                              <PaginationNext
-                                onClick={() =>
-                                  setPage((prev) =>
-                                    Math.min(prev + 1, totalPages)
-                                  )
-                                }
-                                className={
-                                  page === totalPages
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
-                              />
-                            </PaginationItem>
-                          </PaginationContent>
-                        </Pagination>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center py-12">
-                    <div className="mx-auto h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-muted-foreground"
-                      >
-                        <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18" />
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-medium mb-2">
-                      {t("admin.noCategories")}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {searchQuery
-                        ? "No categories match your search criteria."
-                        : "No categories found in the system."}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+                <h3 className="text-lg font-medium mb-2">
+                  {t("admin.noCategories")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {searchQuery
+                    ? "No categories match your search criteria."
+                    : "No categories found in the system."}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* Add Category Dialog */}

@@ -57,11 +57,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(401).body(new ErrorResponse(401, "Unauthorized", e.getMessage()));
     }
 
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         logger.warn("Illegal argument: {}", e.getMessage());
         return ResponseEntity.badRequest().body(new ErrorResponse(400, "Bad Request", e.getMessage()));
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalState(IllegalStateException e) {
+        logger.warn("Illegal state: {}", e.getMessage());
+        return ResponseEntity.badRequest().body(new ErrorResponse(400, "Bad Request", e.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception e) {
         logger.error("Unexpected error occurred: ", e);

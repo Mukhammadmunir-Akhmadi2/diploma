@@ -1,5 +1,6 @@
 import React from "react";
 import { useLanguage } from "../../hooks/useLanguage";
+import { useOutletContext } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import type { UserProfileDTO, UserUpdateDTO } from "../../types/user";
 import type { Gender } from "../../types/enums";
@@ -16,10 +17,9 @@ interface PersonalInfoFormProps {
   setUser: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({
-  user,
-  setUser,
-}) => {
+const PersonalInfoForm: React.FC = () => {
+  const { user, setUser } = useOutletContext<PersonalInfoFormProps>();
+  
   const schema = Yup.object({
     firstName: Yup.string().required(),
     lastName: Yup.string(),

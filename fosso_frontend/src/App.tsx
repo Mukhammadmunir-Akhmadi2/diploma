@@ -7,6 +7,14 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./providers/LanguageProvider";
 import { lazy, Suspense } from "react";
 import { Spin } from "antd";
+import PersonalInfoForm from "./components/profile/PersonalInfoForm";
+import AddressesSection from "./components/profile/AddressesSection";
+import PaymentSection from "./components/profile/PaymentSection";
+import OrdersSection from "./components/profile/OrdersSection";
+import WishlistSection from "./components/profile/WishlistSection";
+import SettingsSection from "./components/profile/SettingsSection";
+import ProtectedLayout from "./layout/ProtectedLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 // Lazy imports
 const Index = lazy(() => import("./pages/Index"));
@@ -23,14 +31,22 @@ const MerchantDashboard = lazy(() => import("./pages/MerchantDashboard"));
 const CreateProduct = lazy(() => import("./pages/CreateProduct"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
 const BrandListingPage = lazy(() => import("./pages/BrandListingPage"));
-const OrderDetailPage = lazy(() => import("./components/profile/OrderDetailPage"));
-const MerchantOrderedProducts = lazy(() => import("./pages/MerchantOrderedProducts"));
-const OrderConfirmationPage = lazy(() => import("./pages/OrderConfirmationPage"));
+const OrderDetailPage = lazy(
+  () => import("./components/profile/OrderDetailPage")
+);
+const MerchantOrderedProducts = lazy(
+  () => import("./pages/MerchantOrderedProducts")
+);
+const OrderConfirmationPage = lazy(
+  () => import("./pages/OrderConfirmationPage")
+);
 
 // Admin Pages
 const UsersManagement = lazy(() => import("./pages/admin/UsersManagement"));
 const UserDetailsPage = lazy(() => import("./pages/admin/UserDetailsPage"));
-const CategoriesManagement = lazy(() => import("./pages/admin/CategoriesManagement"));
+const CategoriesManagement = lazy(
+  () => import("./pages/admin/CategoriesManagement")
+);
 const BrandsManagement = lazy(() => import("./pages/admin/BrandsManagement"));
 const ProductsPage = lazy(() => import("./pages/admin/ProductsPage"));
 
@@ -52,76 +68,62 @@ const App = () => (
                 <Route element={<Layout />}>
                   <Route path="/" element={<Index />} />
                   <Route
-                    path="/womenswear"
+                    path="womenswear"
                     element={<Index gender="FEMALE" />}
                   />
                   <Route path="/menswear" element={<Index gender="MALE" />} />
-                  {/* Profile Routes */}
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/profile/addresses" element={<Profile />} />
-                  <Route path="/profile/payment" element={<Profile />} />
-                  <Route path="/profile/orders" element={<Profile />} />
-                  <Route path="/profile/wishlist" element={<Profile />} />
-                  <Route path="/profile/settings" element={<Profile />} />
-                  <Route path="/order/:id" element={<OrderDetailPage />} />
-                  <Route path="/logout" element={<Login />} />
 
-                  <Route path="/wishlist" element={<Wishlist />} />
-                  <Route path="/cart" element={<CartPage />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
-                  <Route
-                    path="/order-confirmation/:slug"
-                    element={<OrderConfirmationPage />}
-                  />
+                  <Route path="wishlist" element={<Wishlist />} />
+                  <Route path="cart" element={<CartPage />} />
 
-                  <Route path="/category" element={<CategoryPage />} />
+                  <Route path="category" element={<CategoryPage />} />
                   <Route
-                    path="/women/category"
+                    path="women/category"
                     element={<CategoryPage gender="FEMALE" />}
                   />
                   <Route
-                    path="/men/category"
+                    path="men/category"
                     element={<CategoryPage gender="MALE" />}
                   />
                   <Route
-                    path="/category/:categoryId"
+                    path="category/:categoryId"
                     element={<CategoryPage />}
                   />
-                  <Route path="/brand/:brandId" element={<CategoryPage />} />
+                  <Route path="brand/:brandId" element={<CategoryPage />} />
 
                   <Route
-                    path="/women/brand/:brandId"
+                    path="women/brand/:brandId"
                     element={<CategoryPage gender="FEMALE" />}
                   />
 
                   <Route
-                    path="/men/brand/:brandId"
+                    path="men/brand/:brandId"
                     element={<CategoryPage gender="MALE" />}
                   />
 
                   <Route
-                    path="/women/category/:categoryId"
+                    path="women/category/:categoryId"
                     element={<CategoryPage gender="FEMALE" />}
                   />
                   <Route
-                    path="/men/category/:categoryId"
+                    path="men/category/:categoryId"
                     element={<CategoryPage gender="MALE" />}
                   />
 
                   <Route
-                    path="/women/trending"
+                    path="women/trending"
                     element={<CategoryPage isPopular={true} gender="FEMALE" />}
                   />
                   <Route
-                    path="/men/trending"
+                    path="men/trending"
                     element={<CategoryPage isPopular={true} gender="MALE" />}
                   />
                   <Route
-                    path="/trending"
+                    path="trending"
                     element={<CategoryPage isPopular={true} />}
                   />
 
-                  <Route path="/new-in" element={<NewInPage />} />
+                  <Route path="new-in" element={<NewInPage />} />
 
                   <Route
                     path="men/search/:keyword"
@@ -133,56 +135,76 @@ const App = () => (
                     element={<CategoryPage gender="FEMALE" />}
                   />
 
-                  <Route path="/search/:keyword" element={<CategoryPage />} />
+                  <Route path="search/:keyword" element={<CategoryPage />} />
 
-                  <Route path="/product/:id" element={<ProductDetail />} />
-                  <Route path="/brands" element={<BrandListingPage />} />
+                  <Route path="product/:id" element={<ProductDetail />} />
+                  <Route path="brands" element={<BrandListingPage />} />
 
-                  {/* Merchant Routes */}
-                  <Route
-                    path="/merchant/dashboard"
-                    element={<MerchantDashboard />}
-                  />
-                  <Route
-                    path="/merchant/create-product"
-                    element={<CreateProduct />}
-                  />
-                  <Route
-                    path="/merchant/edit-product/:id"
-                    element={<CreateProduct />}
-                  />
-                  <Route
-                    path="/merchant/ordered-products"
-                    element={<MerchantOrderedProducts />}
-                  />
+                  {/* Profile Routes */}
+                  <Route element={<ProtectedLayout />}>
+                    <Route path="profile" element={<Profile />}>
+                      <Route index element={<PersonalInfoForm />} />
+                      <Route path="addresses" element={<AddressesSection />} />
+                      <Route path="payment" element={<PaymentSection />} />
+                      <Route path="orders" element={<OrdersSection />} />
+                      <Route path="wishlist" element={<WishlistSection />} />
+                      <Route path="settings" element={<SettingsSection />} />
+                    </Route>
+                    <Route path="order/:id" element={<OrderDetailPage />} />
+                    <Route path="logout" element={<Login />} />
+                    <Route path="checkout" element={<CheckoutPage />} />
+                    <Route
+                      path="order-confirmation/:slug"
+                      element={<OrderConfirmationPage />}
+                    />
 
-                  {/* Admin Routes */}
-                  <Route path="/admin/users" element={<UsersManagement />} />
-                  <Route
-                    path="/admin/users/:userId"
-                    element={<UserDetailsPage />}
-                  />
-                  <Route
-                    path="/admin/categories"
-                    element={<CategoriesManagement />}
-                  />
-                  <Route path="/admin/brands" element={<BrandsManagement />} />
-                  <Route
-                    path="/admin/products"
-                    element={<ProductsPage />}
-                  />
-                  <Route
-                    path="/admin/products/edit/:id"
-                    element={<CreateProduct />}
-                  />
+                    {/* Merchant Routes */}
+                    <Route
+                      path="merchant/dashboard"
+                      element={<MerchantDashboard />}
+                    />
+                    <Route
+                      path="merchant/create-product"
+                      element={<CreateProduct />}
+                    />
+                    <Route
+                      path="merchant/edit-product/:id"
+                      element={<CreateProduct />}
+                    />
+                    <Route
+                      path="merchant/ordered-products"
+                      element={<MerchantOrderedProducts />}
+                    />
 
-                  {/* These routes would be implemented in future iterations */}
+                    {/* Admin Routes */}
+                    <Route path="admin" element={<AdminDashboard />}>
+                      <Route index path="users" element={<UsersManagement />} />
+                      <Route
+                        path="users/:userId"
+                        element={<UserDetailsPage />}
+                      />
+                      <Route
+                        path="categories"
+                        element={<CategoriesManagement />}
+                      />
+                      <Route
+                        path="brands"
+                        element={<BrandsManagement />}
+                      />
+                      <Route path="products" element={<ProductsPage />} />
+                      <Route
+                        path="products/edit/:id"
+                        element={<CreateProduct />}
+                      />
+                    </Route>
+                  </Route>
+                  
                   <Route path="*" element={<NotFound />} />
                 </Route>
 
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/terms" element={<Terms />} />
+                <Route path="login" element={<Login />} />
+                <Route path="signup" element={<Signup />} />
+                <Route path="terms" element={<Terms />} />
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
