@@ -12,7 +12,6 @@ import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundExceptio
 import com.fosso.backend.fosso_backend.common.exception.UnauthorizedException;
 import com.fosso.backend.fosso_backend.product.mapper.ProductMapper;
 import com.fosso.backend.fosso_backend.product.model.Product;
-import com.fosso.backend.fosso_backend.product.strategy.ProductFilterStrategy;
 import com.fosso.backend.fosso_backend.user.model.User;
 import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
 import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
@@ -33,7 +32,6 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final AuthenticatedUserProvider userProvider;
-    private final List<ProductFilterStrategy> strategies;
     private final ActionLogService actionLogService;
     private final CategoryRepository categoryRepository;
 
@@ -163,7 +161,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> getFilteredProducts(ProductFilterCriteria criteria, Pageable pageable) {
-        if (criteria.getCategoryId() != null) {
+        if (criteria != null && criteria.getCategoryId() != null) {
             List<String> categoryIds = getAllCategoryIds(criteria.getCategoryId());
             categoryIds.add(criteria.getCategoryId());
             criteria.setCategoryIds(categoryIds);
@@ -171,11 +169,7 @@ public class ProductServiceImpl implements ProductService {
             criteria.setCategoryIds(null);
         }
 
-        Page<Product> products = strategies.stream()
-                .filter(strategy -> strategy.isApplicable(criteria))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No matching filter strategy found"))
-                .filter(criteria, pageable);
+        Page<Product> products = productRepository.findByDynamicCriteria(criteria, pageable);
         if (products == null || products.isEmpty()) {
             throw new ResourceNotFoundException("No products found matching the criteria");
         }

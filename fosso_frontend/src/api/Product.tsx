@@ -11,16 +11,16 @@ const baseUrl = "products";
 
 // Get all products with filters and pagination
 export async function getAllProducts(
-  criteria: ProductFilterCriteria,
+  filterCriteria?: ProductFilterCriteria,
   page?: number,
   size?: number,
-  sort?: string,
+  sort?: string
 ): Promise<PaginatedResponse<ProductBriefDTO>> {
   try {
     const response = await apiClient.get<PaginatedResponse<ProductBriefDTO>>(
       `${baseUrl}`,
       {
-        params: { ...criteria, page, size, sort },
+        params: { ...filterCriteria, page, size, sort },
       }
     );
     return response.data;

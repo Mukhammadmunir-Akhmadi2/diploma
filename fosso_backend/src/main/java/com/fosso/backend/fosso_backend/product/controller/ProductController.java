@@ -25,31 +25,12 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllProducts(
-            @RequestParam(required = false) String merchantId,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String categoryId,
-            @RequestParam(required = false) String brandId,
-            @RequestParam(required = false) Gender gender,
-            @RequestParam(required = false) boolean isNewIn,
-            @RequestParam(required = false) String color,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
+            @ModelAttribute ProductFilterCriteria filterCriteria,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdDateTime,desc") String[] sort) {
 
         Pageable pageable = PaginationUtil.createPageable(page, size, sort);
-
-        ProductFilterCriteria filterCriteria = new ProductFilterCriteria();
-        filterCriteria.setMerchantId(merchantId);
-        filterCriteria.setKeyword(keyword);
-        filterCriteria.setCategoryId(categoryId);
-        filterCriteria.setBrandId(brandId);
-        filterCriteria.setGender(gender);
-        filterCriteria.setNewIn(isNewIn);
-        filterCriteria.setColor(color);
-        filterCriteria.setMinPrice(minPrice);
-        filterCriteria.setMaxPrice(maxPrice);
 
         Page<Product> pageProducts = productService.getFilteredProducts(filterCriteria, pageable);
 

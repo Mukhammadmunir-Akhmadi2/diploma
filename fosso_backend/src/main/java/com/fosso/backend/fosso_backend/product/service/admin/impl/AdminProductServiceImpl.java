@@ -1,9 +1,7 @@
 package com.fosso.backend.fosso_backend.product.service.admin.impl;
 
 import com.fosso.backend.fosso_backend.action.service.ActionLogService;
-import com.fosso.backend.fosso_backend.product.dto.ProductUpdateDTO;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
-import com.fosso.backend.fosso_backend.product.mapper.ProductMapper;
 import com.fosso.backend.fosso_backend.product.model.Product;
 import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
 import com.fosso.backend.fosso_backend.product.service.admin.AdminProductService;

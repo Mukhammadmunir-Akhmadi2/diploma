@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends MongoRepository<Product, String> {
+public interface ProductRepository extends MongoRepository<Product, String>, ProductRepositoryCustom {
     //user
     @Query("{'$and': [{'enabled': true}, {'isDeleted': false}]}")
     Page<Product> findAllForUser(Pageable pageable);
