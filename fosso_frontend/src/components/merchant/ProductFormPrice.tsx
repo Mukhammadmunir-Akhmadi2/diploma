@@ -9,7 +9,7 @@ interface ProductPriceProps {
     formData: ProductCreateDTO
     setFormData: React.Dispatch<React.SetStateAction<ProductCreateDTO>>;
 }
-const ProductPrice: React.FC<ProductPriceProps> = ({
+const ProductFormPrice: React.FC<ProductPriceProps> = ({
   formData,
   setFormData,
 }) => {
@@ -98,4 +98,4 @@ const ProductPrice: React.FC<ProductPriceProps> = ({
   );
 };
 
-export default ProductPrice;
+export default ProductFormPrice;

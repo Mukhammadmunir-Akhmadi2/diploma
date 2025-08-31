@@ -19,7 +19,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-import { Plus, Trash, Upload, X } from "lucide-react";
 import CategorySelect from "./CategorySelect";
 import BrandSelect from "./BrandSelect";
 import type {
@@ -29,11 +28,7 @@ import type {
   ProductCreateDTO,
 } from "../../types/product";
 import type { ImageDTO } from "../../types/image";
-import {
-  getImageById,
-  uploadImage,
-  deleteImageByOwnerId,
-} from "../../api/Image";
+import { getImageById, uploadImage } from "../../api/Image";
 import type { UserDTO } from "../../types/user";
 import type { ImageType } from "../../types/enums";
 import {
@@ -41,8 +36,10 @@ import {
   updateProduct,
 } from "../../api/merchant/MerchantProduct";
 import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
-import ProductPrice from "./ProductPrice";
-import ProductVariants from "./ProductVariants";
+import ProductFormPrice from "./ProductFormPrice";
+import ProductFormVariants from "./ProductFormVariants";
+import ProductFormDetails from "./ProductFormDetails";
+import ProductFormImages from "./ProductFormImages";
 
 interface ProductFormProps {
   onSuccess: (data: ProductMerchantDTO) => void;
@@ -139,87 +136,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAddDetail = () => {
-    setDetails([...details, { key: "", value: "" }]);
-  };
-
-  const handleRemoveDetail = (index: number) => {
-    setDetails(details.filter((_, i) => i !== index));
-  };
-
-  const handleDetailChange = (
-    index: number,
-    field: "key" | "value",
-    value: string
-  ) => {
-    const updatedDetails = [...details];
-    updatedDetails[index][field] = value;
-    setDetails(updatedDetails);
-  };
-
-  const handleImageUpload = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    type: "PRODUCT_IMAGE_MAIN" | "PRODUCT_IMAGE"
-  ) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-
-      if (file.size > 5 * 1024 * 1024) {
-        // 5MB
-        toast({
-          title: t("merchant.imageTooLarge"),
-          description: t("merchant.imageSizeLimit"),
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!file.type.startsWith("image/")) {
-        toast({
-          title: t("merchant.invalidFileType"),
-          description: t("merchant.acceptedImageTypes"),
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (
-        type === "PRODUCT_IMAGE_MAIN" &&
-        imageFiles.filter((img) => img.type === "PRODUCT_IMAGE_MAIN").length >=
-          2
-      ) {
-        toast({
-          title: t("merchant.tooManyMainImages"),
-          description: t("merchant.mainImagesLimit"),
-          variant: "destructive",
-        });
-        return;
-      }
-      const id = Date.now().toString();
-      setImageFiles((prev) => [...prev, { id, file, type }]);
-    }
-  };
-
-  const handleRemoveImageFile = async (id: string) => {
-    setImageFiles((prev) => prev.filter((img) => img.id !== id));
-  };
-  const handleRemoveImage = async (id: string) => {
-    if (initialData && images) {
-      await deleteImageByOwnerId(initialData?.productId, id, "PRODUCT_IMAGE");
-      setImages((prev) => prev.filter((imag) => imag.imageId !== id));
-    }
-  };
-  const handleRemoveMainImage = async (id: string) => {
-    if (initialData && mainImage) {
-      await deleteImageByOwnerId(
-        initialData?.productId,
-        id,
-        "PRODUCT_IMAGE_MAIN"
-      );
-      setMainImage((prev) => prev.filter((imag) => imag.imageId !== id));
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -374,264 +290,30 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
         {/* Pricing */}
         <TabsContent value="pricing" className="space-y-6">
-          <ProductPrice formData={formData} setFormData={setFormData} />
+          <ProductFormPrice formData={formData} setFormData={setFormData} />
         </TabsContent>
 
         {/* Variants */}
         <TabsContent value="variants" className="space-y-6">
-          <ProductVariants variants={variants} setVariants={setVariants} />
+          <ProductFormVariants variants={variants} setVariants={setVariants} />
         </TabsContent>
 
         {/* Details */}
         <TabsContent value="details" className="space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">
-                {t("merchant.productDetails")}
-              </h3>
-              <Button
-                type="button"
-                onClick={handleAddDetail}
-                variant="outline"
-                size="sm"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                {t("merchant.addDetail")}
-              </Button>
-            </div>
-
-            {details.length === 0 ? (
-              <div className="text-center p-6 border border-dashed rounded-md">
-                <p className="text-gray-500 dark:text-gray-400">
-                  {t("merchant.noDetailsYet")}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {details.map((detail, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border rounded-md relative"
-                  >
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-2 right-2"
-                      onClick={() => handleRemoveDetail(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-
-                    <div>
-                      <Label htmlFor={`detail-${index}-key`}>
-                        {t("merchant.detailName")} *
-                      </Label>
-                      <Input
-                        id={`detail-${index}-key`}
-                        placeholder={t("merchant.detailNameExample")}
-                        value={detail.key}
-                        onChange={(e) =>
-                          handleDetailChange(index, "key", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor={`detail-${index}-value`}>
-                        {t("merchant.detailValue")} *
-                      </Label>
-                      <Input
-                        id={`detail-${index}-value`}
-                        placeholder={t("merchant.detailValueExample")}
-                        value={detail.value}
-                        onChange={(e) =>
-                          handleDetailChange(index, "value", e.target.value)
-                        }
-                        required
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <ProductFormDetails details={details} setDetails={setDetails} />
         </TabsContent>
 
         {/* Images */}
         <TabsContent value="images" className="space-y-6">
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-medium mb-2">
-                {t("merchant.mainImages")}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                {t("merchant.mainImagesDesc")}
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Main images */}
-                {(mainImage.length > 0 || imageFiles) && (
-                  <>
-                    {mainImage.map((image) => (
-                      <div
-                        key={image.imageId}
-                        className="border rounded-md p-3 relative"
-                      >
-                        <img
-                          src={`data:${image.contentType};base64,${image.base64Data}`}
-                          alt="Product"
-                          className="w-full h-48 object-contain"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2"
-                          onClick={() => handleRemoveMainImage(image.imageId)}
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                    {imageFiles
-                      .filter(
-                        (imageFile) => imageFile.type === "PRODUCT_IMAGE_MAIN"
-                      )
-                      .map((imageFile) => (
-                        <div
-                          key={imageFile.id}
-                          className="border rounded-md p-3 relative"
-                        >
-                          <img
-                            src={URL.createObjectURL(imageFile.file)}
-                            alt="Uploaded"
-                            className="w-full h-48 object-contain"
-                          />
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-2 right-2"
-                            onClick={() => handleRemoveImageFile(imageFile.id)}
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                  </>
-                )}
-                {/* Upload slots for main images */}
-                {mainImage.length < 2 && imageFiles.length < 2 && (
-                  <div className="border border-dashed rounded-md p-6 flex flex-col items-center justify-center">
-                    <Label
-                      htmlFor="main-image-upload"
-                      className="cursor-pointer text-center"
-                    >
-                      <Upload className="h-12 w-12 mb-2 text-gray-400 mx-auto" />
-                      <span className="block font-medium text-sm mb-1">
-                        {t("merchant.uploadImage")}
-                      </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {t("merchant.dragOrClick")}
-                      </span>
-                      <Input
-                        id="main-image-upload"
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) =>
-                          handleImageUpload(e, "PRODUCT_IMAGE_MAIN")
-                        }
-                      />
-                    </Label>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-medium mb-2">
-                {t("merchant.galleryImages")}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                {t("merchant.galleryImagesDesc")}
-              </p>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {/* Gallery images */}
-                {(images.length > 0 || imageFiles) && (
-                  <>
-                    {images.map((image) => (
-                      <div
-                        key={image.imageId}
-                        className="border rounded-md p-2 relative"
-                      >
-                        <img
-                          src={`data:${image.contentType};base64,${image.base64Data}`}
-                          alt="Product"
-                          className="w-full h-32 object-contain"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 h-6 w-6"
-                          onClick={() => handleRemoveImage(image.imageId)}
-                        >
-                          <Trash className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                    {imageFiles
-                      .filter((imageFile) => imageFile.type === "PRODUCT_IMAGE")
-                      .map((imageFile) => (
-                        <div
-                          key={imageFile.id}
-                          className="border rounded-md p-2 relative"
-                        >
-                          <img
-                            src={URL.createObjectURL(imageFile.file)}
-                            alt="Uploaded"
-                            className="w-full h-32 object-contain"
-                          />
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-1 right-1 h-6 w-6"
-                            onClick={() => handleRemoveImageFile(imageFile.id)}
-                          >
-                            <Trash className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))}
-                  </>
-                )}
-
-                {/* Upload slot for gallery images */}
-                <div className="border border-dashed rounded-md p-4 flex flex-col items-center justify-center">
-                  <Label
-                    htmlFor="gallery-image-upload"
-                    className="cursor-pointer text-center"
-                  >
-                    <Upload className="h-8 w-8 mb-1 text-gray-400 mx-auto" />
-                    <span className="block text-xs text-gray-500 dark:text-gray-400">
-                      {t("merchant.addToGallery")}
-                    </span>
-                    <Input
-                      id="gallery-image-upload"
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) => handleImageUpload(e, "PRODUCT_IMAGE")}
-                    />
-                  </Label>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProductFormImages
+            initialData={initialData}
+            images={images}
+            setImages={setImages}
+            mainImage={mainImage}
+            setMainImage={setMainImage}
+            imageFiles={imageFiles}
+            setImageFiles={setImageFiles}
+          />
         </TabsContent>
       </Tabs>
 

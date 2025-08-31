@@ -10,7 +10,7 @@ interface ProductVariantsProps {
     variants: ProductVariantDTO[];
     setVariants: React.Dispatch<React.SetStateAction<ProductVariantDTO[]>>;
 }
-const ProductVariants: React.FC<ProductVariantsProps> = ({
+const ProductFormVariants: React.FC<ProductVariantsProps> = ({
   variants,
   setVariants,
 }) => {
@@ -126,4 +126,4 @@ const ProductVariants: React.FC<ProductVariantsProps> = ({
   );
 };
 
-export default ProductVariants;
+export default ProductFormVariants;
