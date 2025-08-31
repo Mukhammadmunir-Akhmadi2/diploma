@@ -71,7 +71,7 @@ const App = () => (
                     path="womenswear"
                     element={<Index gender="FEMALE" />}
                   />
-                  <Route path="/menswear" element={<Index gender="MALE" />} />
+                  <Route path="menswear" element={<Index gender="MALE" />} />
 
                   <Route path="wishlist" element={<Wishlist />} />
                   <Route path="cart" element={<CartPage />} />

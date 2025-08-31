@@ -6,7 +6,6 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
-import { Switch } from "../../components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -42,6 +41,7 @@ import {
   updateProduct,
 } from "../../api/merchant/MerchantProduct";
 import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
+import ProductPrice from "./ProductPrice";
 
 interface ProductFormProps {
   onSuccess: (data: ProductMerchantDTO) => void;
@@ -140,9 +140,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSwitchChange = (name: string, checked: boolean) => {
-    setFormData((prev) => ({ ...prev, [name]: checked }));
-  };
 
   const handleAddVariant = () => {
     setVariants([...variants, { color: "", size: "", stockQuantity: 0 }]);
@@ -395,82 +392,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
         {/* Pricing */}
         <TabsContent value="pricing" className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <Label htmlFor="price">{t("merchant.price")} *</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                  $
-                </span>
-                <Input
-                  id="price"
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  className="pl-8"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  required
-                  min="0"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="discountPrice">
-                {t("merchant.discountPrice")}
-              </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                  $
-                </span>
-                <Input
-                  id="discountPrice"
-                  name="discountPrice"
-                  type="number"
-                  step="0.01"
-                  className="pl-8"
-                  value={formData.discountPrice}
-                  onChange={handleInputChange}
-                  min="0"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="shippingCost">{t("merchant.shippingCost")}</Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                  $
-                </span>
-                <Input
-                  id="shippingCost"
-                  name="shippingCost"
-                  type="number"
-                  step="0.01"
-                  className="pl-8"
-                  value={formData.shippingCost}
-                  onChange={handleInputChange}
-                  min="0"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="enabled"
-                checked={formData.enabled}
-                onCheckedChange={(checked) =>
-                  handleSwitchChange("enabled", checked)
-                }
-              />
-              <Label htmlFor="enabled" className="cursor-pointer">
-                {formData.enabled
-                  ? t("merchant.enabled")
-                  : t("merchant.disabled")}
-              </Label>
-            </div>
-          </div>
+          <ProductPrice formData={formData} setFormData={setFormData} />
         </TabsContent>
 
         {/* Variants */}
