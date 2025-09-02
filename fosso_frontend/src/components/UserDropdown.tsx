@@ -12,7 +12,8 @@ import { UserRound, LogOut, User, Settings } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useLanguage } from "../hooks/useLanguage";
 import { type UserDTO } from "../types/user";
-import useAuthStore from "../store/useAuthStore";
+import { useAppDispatch } from "../hooks/hooks";
+import { logout } from "../slices/authSlice";
 import type { ImageDTO } from "../types/image";
 
 interface UserDropdownProps {
@@ -27,8 +28,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   avatar,
 }) => {
   const { t } = useLanguage();
-  const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const getInitials = () => {
     if (!user) return "";
@@ -131,7 +132,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
               <button
                 onClick={(e) => {
                   e.preventDefault();
-                  logout();
+                  dispatch(logout());
                   navigate("/");
                 }}
                 className="cursor-pointer flex w-full items-center text-destructive"
