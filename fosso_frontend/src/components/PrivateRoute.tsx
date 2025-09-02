@@ -1,10 +1,10 @@
 // components/PrivateRoute.tsx
 import { Navigate } from "react-router-dom";
-import useAuthStore from "../store/useAuthStore"; 
+import { useAppSelector } from "../hooks/hooks";
 import type { JSX } from "react";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-  const token = useAuthStore((state) => state.token);
+  const token = useAppSelector((state) => state.auth.token);
 
   return token ? children : <Navigate to="/login" replace />;
 };

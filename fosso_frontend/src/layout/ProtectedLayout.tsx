@@ -1,8 +1,8 @@
 import { Outlet, Navigate } from "react-router-dom";
-import useAuthStore from "../store/useAuthStore"
+import { useAppSelector } from "../hooks/hooks";
 
 function ProtectedLayout() {
-  const user = useAuthStore((state) => state.user);
+  const user = useAppSelector((state) => state.auth.user);
     if (!user) {
         return <Navigate to="/login" replace />;
     }

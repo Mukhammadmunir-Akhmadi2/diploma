@@ -3,7 +3,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { useToast } from "../hooks/useToast";
 import { useLanguage } from "../hooks/useLanguage";
 import ProductForm from "../components/merchant/ProductForm";
-import useAuthStore from "../store/useAuthStore";
+import { useAppSelector } from "../hooks/hooks";
 import { getMerchantProductById } from "../api/merchant/MerchantProduct";
 import type { ProductMerchantDTO } from "../types/product";
 import { getProductById } from "../api/admin/AdminProduct";
@@ -13,7 +13,7 @@ import { Spin } from "antd";
 const CreateProduct: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const user = useAuthStore((state) => state.user);
+  const user = useAppSelector((state) => state.auth.user);
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [product, setProduct] = useState<

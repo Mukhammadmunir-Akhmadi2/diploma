@@ -6,7 +6,7 @@ import ProductStats from "../components/merchant/ProductStats";
 import ProductsList from "../components/merchant/ProductsList";
 import { Button } from "../components/ui/button";
 import { Plus, ShoppingCart } from "lucide-react";
-import useAuthStore from "../store/useAuthStore";
+import { useAppSelector } from "../hooks/hooks";
 import { getMerchantProducts } from "../api/merchant/MerchantProduct";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { ProductMerchantDTO } from "../types/product";
@@ -18,7 +18,7 @@ import type { ErrorResponse } from "../types/error";
 const MerchantDashboard: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const user = useAuthStore((state) => state.user);
+  const user = useAppSelector((state) => state.auth.user);
   const [paginatedProducts, setPaginatedProducts] =
     useState<PaginatedResponse<ProductMerchantDTO>>();
   const [isLoading, setIsLoading] = useState<boolean>(true);

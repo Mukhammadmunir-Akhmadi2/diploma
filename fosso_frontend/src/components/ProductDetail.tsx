@@ -29,14 +29,14 @@ import { type BrandDTO } from "../types/brand";
 import { getBrandById } from "../api/Brand";
 import { type ReviewDTO } from "../types/review";
 import { createReview, getReviewByProductIdAndCustomerId } from "../api/Review";
-import useAuthStore from "../store/useAuthStore";
+import { useAppSelector } from "../hooks/hooks";
 import { Modal } from "antd";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 
 const ProductDetail = () => {
   const { t } = useLanguage();
-  const user = useAuthStore((state) => state.user);
-  const avatar = useAuthStore((state) => state.avatar);
+  const user = useAppSelector((state) => state.auth.user);
+  const avatar = useAppSelector((state) => state.auth.avatar);
 
   const navigate = useNavigate();
 

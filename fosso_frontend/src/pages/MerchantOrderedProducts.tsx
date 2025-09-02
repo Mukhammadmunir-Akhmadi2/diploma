@@ -3,15 +3,13 @@ import { Navigate } from "react-router-dom";
 import { useToast } from "../hooks/useToast";
 import { useLanguage } from "../hooks/useLanguage";
 import OrderedProductsList from "../components/merchant/OrderedProductsList";
-import useAuthStore from "../store/useAuthStore";
-import type { UserDTO } from "../types/user";
-
+import { useAppSelector } from "../hooks/hooks";
 // This is a mock function that would be replaced by real auth
 
 const MerchantOrderedProducts: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const user: UserDTO = useAuthStore((state) => state.user);
+  const user = useAppSelector((state) => state.auth.user);
   // Check if user is authenticated and has merchant role
   if (!user) {
     return <Navigate to="/login" />;
