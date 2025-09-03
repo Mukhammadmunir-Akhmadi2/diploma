@@ -36,7 +36,7 @@ import {
 } from "../api/User";
 import { getCartItems } from "../api/Cart";
 import type { CartItemDTO } from "../types/cart";
-import useAuthStore from "../store/useAuthStore";
+import { useAppSelector } from "../store/hooks";
 import { placeOrder } from "../api/Order";
 import type { CheckoutRequest } from "../types/order";
 import type { PaymentMethod } from "../types/enums";
@@ -56,7 +56,7 @@ const CheckoutPage: React.FC = () => {
       ""
   );
 
-  const user = useAuthStore((state) => state.user);
+  const user = useAppSelector((state) => state.auth.user);
 
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 

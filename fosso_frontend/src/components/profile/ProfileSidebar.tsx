@@ -14,13 +14,13 @@ import {
   Plus,
 } from "lucide-react";
 import type { UserProfileDTO } from "../../types/user";
-import useAuthStore from "../../store/useAuthStore";
+import { useAppSelector } from "../../store/hooks";
 import type { ImageDTO } from "../../types/image";
 
 const ProfileSidebar: React.FC<{ user: UserProfileDTO }> = ({ user }) => {
   const { t } = useLanguage();
   const location = useLocation();
-  const avatar: ImageDTO | null = useAuthStore((state) => state.avatar);
+  const avatar: ImageDTO | null = useAppSelector((state) => state.auth.avatar);
 
   const isMerchant = user.roles?.includes("MERCHANT");
   const isAdmin = user.roles.includes("ADMIN");

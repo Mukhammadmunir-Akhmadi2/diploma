@@ -1,8 +1,6 @@
 import React from "react";
 import { useLanguage } from "../../hooks/useLanguage";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import {
@@ -28,13 +26,7 @@ export interface PaymentFormValues {
   cvv: string;
 }
 
-const paymentFormSchema = z.object({
-  cardType: z.string().min(1, "Card type is required"),
-  cardNumber: z.string().min(1, "Card number is required"),
-  cardHolder: z.string().min(1, "Card holder name is required"),
-  expiryDate: z.string().min(1, "Expiry date is required"),
-  cvv: z.string().min(3, "CVV is required").max(4),
-});
+
 
 const PaymentForm: React.FC<PaymentFormProps> = ({
   onSubmit,
@@ -44,7 +36,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   const { t } = useLanguage();
 
   const form = useForm<PaymentFormValues>({
-    resolver: zodResolver(paymentFormSchema),
     defaultValues: defaultValues || {
       cardType: "",
       cardNumber: "",

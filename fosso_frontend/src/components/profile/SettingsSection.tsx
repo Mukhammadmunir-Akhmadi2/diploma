@@ -7,13 +7,15 @@ import { Bell, Shield } from "lucide-react";
 import { changePassword, deleteUser } from "../../api/User";
 import { useToast } from "../ui/use-toast";
 import { Modal } from "antd";
-import useAuthStore from "../../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useForm } from "react-hook-form";
+import { logout } from "../../slices/authSlice";
 import * as Yup from "yup";
 import { Eye, EyeOff } from "lucide-react";
 import type { PasswordChangeRequest } from "../../types/user";
 import type { ErrorResponse } from "../../types/error";
+import { Input } from "../ui/input";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const SettingsSection: React.FC = () => {
   const { t } = useLanguage();
@@ -30,7 +32,6 @@ const SettingsSection: React.FC = () => {
     useState(false);
   const [isDeactivateAccountModalVisible, setDeactivateAccountModalVisible] =
     useState(false);
-  const logout = useAuthStore((state) => state.logout);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -43,6 +44,26 @@ const SettingsSection: React.FC = () => {
       [setting]: checked,
     }));
   };
+  const validationSchema = Yup.object().shape({
+    currentPassword: Yup.string().required(t("profile.requiredField")),
+    newPassword: Yup.string()
+      .required(t("profile.requiredField"))
+      .matches(
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,15}$/,
+        t("signup.passwordComplexity")
+      ),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword"), null], t("profile.passwordsDoNotMatch"))
+      .required(t("profile.requiredField")),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
 
   const handleSaveSettings = () => {
     console.log("Saving settings:", settings);
@@ -81,19 +102,6 @@ const SettingsSection: React.FC = () => {
       }
     }
   };
-
-  const validationSchema = Yup.object().shape({
-    currentPassword: Yup.string().required(t("profile.requiredField")),
-    newPassword: Yup.string()
-      .required(t("profile.requiredField"))
-      .matches(
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,15}$/,
-        t("signup.passwordComplexity")
-      ),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("newPassword"), null], t("profile.passwordsDoNotMatch"))
-      .required(t("profile.requiredField")),
-  });
 
   const handleDeactivateAccount = async () => {
     try {
@@ -260,100 +268,88 @@ const SettingsSection: React.FC = () => {
         onCancel={() => setChangePasswordModalVisible(false)}
         footer={null}
       >
-        <Formik
-          initialValues={{
-            currentPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleChangePassword}
+        <form
+          className="space-y-4"
+          onSubmit={handleSubmit(handleChangePassword)}
         >
-          {({ isSubmitting }) => (
-            <Form className="space-y-4">
-              {/* Current Password Field */}
-              <div className="relative">
-                <label htmlFor="currentPassword" className="block font-medium">
-                  {t("profile.currentPassword")}
-                </label>
-                <Field
-                  type={isPasswordVisible ? "text" : "password"} // Toggle between text and password
-                  name="currentPassword"
-                  id="currentPassword"
-                  className="w-full border rounded px-3 py-2"
-                />
-                <ErrorMessage
-                  name="currentPassword"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-9 text-gray-500"
-                >
-                  {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+          {/* Current Password Field */}
+          <div className="relative">
+            <label htmlFor="currentPassword" className="block font-medium">
+              {t("profile.currentPassword")}
+            </label>
+            <Input
+              type={isPasswordVisible ? "text" : "password"} // Toggle between text and password
+              className="w-full border rounded px-3 py-2"
+              {...register("currentPassword")}
+            />
+            {errors.currentPassword && (
+              <p className="text-red-500 text-sm">
+                {errors.currentPassword.message}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-9 text-gray-500"
+            >
+              {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
 
-              {/* New Password Field */}
-              <div className="relative">
-                <label htmlFor="newPassword" className="block font-medium">
-                  {t("profile.newPassword")}
-                </label>
-                <Field
-                  type={isPasswordVisible ? "text" : "password"} // Toggle between text and password
-                  name="newPassword"
-                  id="newPassword"
-                  className="w-full border rounded px-3 py-2"
-                />
-                <ErrorMessage
-                  name="newPassword"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-9 text-gray-500"
-                >
-                  {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+          {/* New Password Field */}
+          <div className="relative">
+            <label htmlFor="newPassword" className="block font-medium">
+              {t("profile.newPassword")}
+            </label>
+            <Input
+              type={isPasswordVisible ? "text" : "password"} // Toggle between text and password
+              className="w-full border rounded px-3 py-2"
+              {...register("newPassword")}
+            />
+            {errors.newPassword && (
+              <p className="text-red-500 text-sm">
+                {errors.newPassword.message}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-9 text-gray-500"
+            >
+              {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
 
-              {/* Confirm Password Field */}
-              <div>
-                <label htmlFor="confirmPassword" className="block font-medium">
-                  {t("profile.confirmPassword")}
-                </label>
-                <Field
-                  type="password"
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  className="w-full border rounded px-3 py-2"
-                />
-                <ErrorMessage
-                  name="confirmPassword"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+          {/* Confirm Password Field */}
+          <div>
+            <label htmlFor="confirmPassword" className="block font-medium">
+              {t("profile.confirmPassword")}
+            </label>
+            <Input
+              type="password"
+              className="w-full border rounded px-3 py-2"
+              {...register("confirmPassword")}
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm">
+                {errors.confirmPassword.message}
+              </p>
+            )}{" "}
+          </div>
 
-              <div className="flex justify-end">
-                <Button
-                  variant="outline"
-                  onClick={() => setChangePasswordModalVisible(false)}
-                  className="mr-2"
-                >
-                  {t("common.cancel")}
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {t("common.save")}
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setChangePasswordModalVisible(false)}
+              className="mr-2"
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {t("common.save")}
+            </Button>
+          </div>
+        </form>
       </Modal>
 
       {/* Deactivate Account Modal */}

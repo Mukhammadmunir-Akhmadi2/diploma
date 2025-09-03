@@ -14,7 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 interface PersonalInfoFormProps {
   user: UserProfileDTO;
-  setUser: React.Dispatch<React.SetStateAction<any>>;
+  setUser: React.Dispatch<React.SetStateAction<UserProfileDTO>>;
 }
 
 const PersonalInfoForm: React.FC = () => {
