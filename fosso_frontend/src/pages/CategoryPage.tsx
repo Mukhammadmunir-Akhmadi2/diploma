@@ -15,7 +15,7 @@ import type { BrandDTO } from "../types/brand";
 import { listAllBrands } from "../api/Brand";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../types/error";
-import ProductPagination from "../components/ProductsPagination";
+import ProductPagination from "../components/product/ProductsPagination";
 
 const colors = [
   { id: "1", name: "Black", hex: "#000000" },
@@ -362,7 +362,11 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
               </div>
 
               {pageProducts?.products && pageProducts?.products.length > 0 ? (
-                <ProductPagination paginatedProduct={pageProducts} page={page} setPage={setPage}/>
+                <ProductPagination
+                  paginatedProduct={pageProducts}
+                  page={page}
+                  setPage={setPage}
+                />
               ) : (
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center">
                   <p className="text-gray-700 dark:text-gray-300">

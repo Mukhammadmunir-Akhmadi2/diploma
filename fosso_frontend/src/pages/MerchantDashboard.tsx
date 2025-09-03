@@ -6,7 +6,7 @@ import ProductStats from "../components/merchant/ProductStats";
 import ProductsList from "../components/merchant/ProductsList";
 import { Button } from "../components/ui/button";
 import { Plus, ShoppingCart } from "lucide-react";
-import { useAppSelector } from "../hooks/hooks";
+import { useAppSelector } from "../store/hooks";
 import { getMerchantProducts } from "../api/merchant/MerchantProduct";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { ProductMerchantDTO } from "../types/product";

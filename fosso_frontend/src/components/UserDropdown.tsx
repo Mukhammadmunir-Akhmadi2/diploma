@@ -12,7 +12,7 @@ import { UserRound, LogOut, User, Settings } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useLanguage } from "../hooks/useLanguage";
 import { type UserDTO } from "../types/user";
-import { useAppDispatch } from "../hooks/hooks";
+import { useAppDispatch } from "../store/hooks";
 import { logout } from "../slices/authSlice";
 import type { ImageDTO } from "../types/image";
 
@@ -33,9 +33,9 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
 
   const getInitials = () => {
     if (!user) return "";
-    return `${user.firstName.charAt(0)}${user.lastName ?user.lastName.charAt(
-      0
-    ) : ""}`.toUpperCase();
+    return `${user.firstName.charAt(0)}${
+      user.lastName ? user.lastName.charAt(0) : ""
+    }`.toUpperCase();
   };
 
   const getPrimaryRole = () => {

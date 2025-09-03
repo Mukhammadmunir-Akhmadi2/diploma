@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useLanguage } from "../hooks/useLanguage";
-import { useToast } from "../hooks/useToast";
+import { useLanguage } from "../../hooks/useLanguage";
+import { useToast } from "../../hooks/useToast";
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,29 +9,30 @@ import {
   Star,
   ShoppingBag,
 } from "lucide-react";
-import { Button } from "../components/ui/button";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../components/ui/tabs";
+import { Button } from "../ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import ProductReviews from "../components/ProductReviews";
-import type { ProductDetailedDTO, ProductVariantDTO } from "../types/product";
-import { getProductById, incrementReviewCount } from "../api/Product";
-import type { ErrorResponse } from "../types/error";
+import type {
+  ProductDetailedDTO,
+  ProductVariantDTO,
+} from "../../types/product";
+import { getProductById, incrementReviewCount } from "../../api/Product";
+import type { ErrorResponse } from "../../types/error";
 import { Spin } from "antd";
-import type { ImageDTO } from "../types/image";
-import { getAllImagesForOwner } from "../api/Image";
-import type { CartItemCreateDTO } from "../types/cart";
-import { addProductToCart } from "../api/Cart";
-import { type BrandDTO } from "../types/brand";
-import { getBrandById } from "../api/Brand";
-import { type ReviewDTO } from "../types/review";
-import { createReview, getReviewByProductIdAndCustomerId } from "../api/Review";
-import { useAppSelector } from "../hooks/hooks";
+import type { ImageDTO } from "../../types/image";
+import { getAllImagesForOwner } from "../../api/Image";
+import type { CartItemCreateDTO } from "../../types/cart";
+import { addProductToCart } from "../../api/Cart";
+import { type BrandDTO } from "../../types/brand";
+import { getBrandById } from "../../api/Brand";
+import { type ReviewDTO } from "../../types/review";
+import {
+  createReview,
+  getReviewByProductIdAndCustomerId,
+} from "../../api/Review";
+import { useAppSelector } from "../../store/hooks";
 import { Modal } from "antd";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const ProductDetail = () => {
   const { t } = useLanguage();

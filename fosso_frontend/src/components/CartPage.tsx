@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, type ErrorResponse } from "react-router-dom";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useLanguage } from "../hooks/useLanguage";
 import { useToast } from "../hooks/useToast";
 import { type CartItemDTO, type CartResponse } from "../types/cart";
-import useAuthStore from "../store/useAuthStore";
+import { useAppSelector } from "../store/hooks";
 import {
   getCartItems,
   removeProductFromCart,
@@ -18,7 +18,7 @@ const CartPage = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
+  const user = useAppSelector((state) => state.auth.user);
   const [cartItems, setCartItems] = useState<CartResponse>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -26,7 +26,7 @@ const CartPage = () => {
     setIsLoading(true);
     const fetchCardtItems = async () => {
       try {
-        const items = await getCartItems(user?.userId);
+        const items = await getCartItems(user.userId);
         setCartItems(items);
       } catch (error) {
         const response = error as ErrorResponse;
@@ -48,7 +48,7 @@ const CartPage = () => {
         setIsLoading(false);
       }
     };
-    if (user?.userId) {
+    if (user) {
       fetchCardtItems();
     }
   }, []);

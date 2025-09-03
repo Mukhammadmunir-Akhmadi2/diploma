@@ -8,20 +8,44 @@ import { useLanguage } from "../hooks/useLanguage";
 import { useToast } from "../hooks/useToast";
 import { login } from "../api/Auth";
 import { useMutation } from "@tanstack/react-query";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import { type ErrorResponse } from "../types/error";
-import { type AuthResponse } from "../types/auth";
+import { type AuthRequest, type AuthResponse } from "../types/auth";
 import * as Yup from "yup";
 import { useLoginHandler } from "../hooks/useLoginHandler";
 import { Spin } from "antd";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const Login = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { handleLoginSuccess } = useLoginHandler();
+
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email(t("login.invalidEmail"))
+      .required(t("login.required")),
+    password: Yup.string()
+      .min(6, t("login.passwordTooShort"))
+      .required(t("login.required")),
+    rememberMe: Yup.boolean(),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<AuthRequest & { rememberMe: boolean }>({
+    defaultValues: {
+      email: localStorage.getItem("email") || "",
+      password: "",
+      rememberMe: localStorage.getItem("rememberMe") === "true",
+    }
+    resolver: yupResolver(validationSchema),
+  });
 
   const [isPasswordVisible, setPasswordVisible] = useState(false); // State for toggling password visibility
 
@@ -60,16 +84,6 @@ const Login = () => {
       }
       loginMutation.reset();
     },
-  });
-
-  const validationSchema = Yup.object({
-    email: Yup.string()
-      .email(t("login.invalidEmail"))
-      .required(t("login.required")),
-    password: Yup.string()
-      .min(6, t("login.passwordTooShort"))
-      .required(t("login.required")),
-    rememberMe: Yup.boolean(),
   });
 
   const goBack = () => navigate(-1);
@@ -131,100 +145,99 @@ const Login = () => {
                 {t("login.title")}
               </h2>
 
-              <Formik
-                initialValues={{ email: "", password: "", rememberMe: false }}
-                validationSchema={validationSchema}
-                onSubmit={(values) => loginMutation.mutate(values)}
+              <form
+                className="space-y-6"
+                onSubmit={handleSubmit((data) => {
+                  if (data.rememberMe) {
+                    localStorage.setItem("rememberMe", "true");
+                    localStorage.setItem("email", data.email); // optional
+                  } else {
+                    localStorage.removeItem("rememberMe");
+                    localStorage.removeItem("email");
+                  }
+
+                  loginMutation.mutate({
+                    email: data.email,
+                    password: data.password,
+                  });
+                })}
               >
-                {({ isSubmitting, values, setFieldValue }) => (
-                  <Form className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">{t("login.email")}</Label>
-                      <Field
-                        as={Input}
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder={t("login.emailPlaceholder")}
-                      />
-                      <ErrorMessage
-                        name="email"
-                        component="div"
-                        className="text-red-500 text-sm"
-                      />
-                    </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">{t("login.email")}</Label>
+                  <Input
+                    type="email"
+                    placeholder={t("login.emailPlaceholder")}
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">
+                      {errors.email.message}{" "}
+                    </p>
+                  )}
+                </div>
 
-                    <div className="space-y-2 relative">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="password">{t("login.password")}</Label>
-                        <Link
-                          to="/forgot-password"
-                          className="text-sm text-blue-600 hover:underline"
-                        >
-                          {t("login.forgotPassword")}
-                        </Link>
-                      </div>
-                      <Field
-                        as={Input}
-                        id="password"
-                        name="password"
-                        type={isPasswordVisible ? "text" : "password"} // Toggle between text and password
-                        placeholder={t("login.passwordPlaceholder")}
-                      />
-                      <ErrorMessage
-                        name="password"
-                        component="div"
-                        className="text-red-500 text-sm"
-                      />
-                      <button
-                        type="button"
-                        onClick={togglePasswordVisibility}
-                        className="absolute right-3 top-9 text-gray-500"
-                      >
-                        {isPasswordVisible ? (
-                          <EyeOff size={18} />
-                        ) : (
-                          <Eye size={18} />
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="rememberMe"
-                        checked={values.rememberMe}
-                        onCheckedChange={(val) =>
-                          setFieldValue("rememberMe", val)
-                        }
-                      />
-                      <label
-                        htmlFor="rememberMe"
-                        className="text-sm font-medium leading-none"
-                      >
-                        {t("login.rememberMe")}
-                      </label>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700"
-                      disabled={isSubmitting || loginMutation.isPending}
+                <div className="space-y-2 relative">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">{t("login.password")}</Label>
+                    <Link
+                      to="/forgot-password"
+                      className="text-sm text-blue-600 hover:underline"
                     >
-                      {t("login.submit")}
-                    </Button>
+                      {t("login.forgotPassword")}
+                    </Link>
+                  </div>
+                  <Input
+                    type={isPasswordVisible ? "text" : "password"} // Toggle between text and password
+                    placeholder={t("login.passwordPlaceholder")}
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">
+                      {errors.password.message}
+                    </p>
+                  )}
 
-                    <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-                      {t("login.noAccount")}{" "}
-                      <Link
-                        to="/signup"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {t("login.signup")}
-                      </Link>
-                    </div>
-                  </Form>
-                )}
-              </Formik>
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-9 text-gray-500"
+                  >
+                    {isPasswordVisible ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    {...register("rememberMe")}
+                  />
+                  <label
+                    htmlFor="rememberMe"
+                    className="text-sm font-medium leading-none"
+                  >
+                    {t("login.rememberMe")}
+                  </label>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  disabled={isSubmitting || loginMutation.isPending}
+                >
+                  {t("login.submit")}
+                </Button>
+
+                <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+                  {t("login.noAccount")}{" "}
+                  <Link to="/signup" className="text-blue-600 hover:underline">
+                    {t("login.signup")}
+                  </Link>
+                </div>
+              </form>
             </div>
           </div>
         </div>

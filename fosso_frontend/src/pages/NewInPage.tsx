@@ -6,7 +6,7 @@ import type { PaginatedResponse } from "../types/paginatedResponse";
 import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../types/error";
-import ProductPagination from "../components/ProductsPagination";
+import ProductPagination from "../components/product/ProductsPagination";
 
 const NewInPage: React.FC = () => {
   const { t } = useLanguage();
@@ -36,12 +36,12 @@ const NewInPage: React.FC = () => {
             description: t("products.noProductsMessage"),
           });
         } else {
-           toast({
-             title: t("error.fetchProduct"),
-             description: t("error.tryAgain"),
-             variant: "destructive",
-           });
-           console.error("Error fetching categories:", error);
+          toast({
+            title: t("error.fetchProduct"),
+            description: t("error.tryAgain"),
+            variant: "destructive",
+          });
+          console.error("Error fetching categories:", error);
         }
       } finally {
         setIsLoading(false);
@@ -50,7 +50,6 @@ const NewInPage: React.FC = () => {
 
     fetchProducts();
   }, [page]);
-
 
   if (isLoading) {
     // Show Ant Design's Spin component while loading

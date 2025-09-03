@@ -1,4 +1,4 @@
-import { useAppDispatch } from "./hooks";
+import { useAppDispatch } from "../store/hooks";
 import { setUser, setToken, setAvatar } from "../slices/authSlice";
 import { getCurrentUser, getAvatar } from "../api/User";
 import type { AuthResponse } from "../types/auth";

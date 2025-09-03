@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../hooks/useLanguage";
+import { useLanguage } from "../../hooks/useLanguage";
 import { Star } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import type { ReviewDTO } from "../types/review";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import type { ReviewDTO } from "../../types/review";
 import {
   Pagination,
   PaginationContent,
@@ -10,15 +10,15 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "../components/ui/pagination";
-import type { UserBriefDTO } from "../types/user";
-import { getReviewsByProductId } from "../api/Review";
-import { getUserById } from "../api/User";
-import type { PaginatedResponse } from "../types/paginatedResponse";
-import { getImageById } from "../api/Image";
-import type { ImageDTO } from "../types/image";
-import type { ErrorResponse } from "../types/error";
-import { useToast } from "../hooks/useToast";
+} from "../ui/pagination";
+import type { UserBriefDTO } from "../../types/user";
+import { getReviewsByProductId } from "../../api/Review";
+import { getUserById } from "../../api/User";
+import type { PaginatedResponse } from "../../types/paginatedResponse";
+import { getImageById } from "../../api/Image";
+import type { ImageDTO } from "../../types/image";
+import type { ErrorResponse } from "../../types/error";
+import { useToast } from "../../hooks/useToast";
 interface ProductReviewsProps {
   productId: string;
   averageRating?: number;

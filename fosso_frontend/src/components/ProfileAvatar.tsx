@@ -3,7 +3,7 @@ import { UserRound, Upload } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
 import { useToast } from "../hooks/useToast";
 import { setAvatar } from "../slices/authSlice";
-import { useAppDispatch } from "../hooks/hooks";
+import { useAppDispatch } from "../store/hooks";
 import { uploadAvatar } from "../api/User";
 import type { ImageDTO } from "../types/image";
 

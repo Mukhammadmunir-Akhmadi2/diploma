@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLanguage } from "../hooks/useLanguage";
-import ProductCard from "./ProductCard";
+import ProductCard from "./product/ProductCard";
 import { getAllProducts } from "../api/Product";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { ProductBriefDTO } from "../types/product";

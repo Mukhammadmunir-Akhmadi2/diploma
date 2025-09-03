@@ -3,7 +3,7 @@ import { Navigate, useParams } from "react-router-dom";
 import { useToast } from "../hooks/useToast";
 import { useLanguage } from "../hooks/useLanguage";
 import ProductForm from "../components/merchant/ProductForm";
-import { useAppSelector } from "../hooks/hooks";
+import { useAppSelector } from "../store/hooks";
 import { getMerchantProductById } from "../api/merchant/MerchantProduct";
 import type { ProductMerchantDTO } from "../types/product";
 import { getProductById } from "../api/admin/AdminProduct";

@@ -25,7 +25,8 @@ import { Button } from "./ui/button";
 import CategoryMenu from "./CategoryMenu";
 import BrandMenu from "./BrandMenu";
 import UserDropdown from "./UserDropdown";
-import useAuthStore from "../store/useAuthStore";
+import { useAppSelector } from "../store/hooks";
+import { logout } from "../slices/authSlice";
 
 const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,7 +36,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const {user, avatar, logout} = useAuthStore((state) => state);
+  const { user, avatar } = useAppSelector((state) => state.auth);
 
   const isLoggedIn = !!user;
 

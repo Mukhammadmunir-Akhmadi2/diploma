@@ -3,7 +3,7 @@ import { useLanguage } from "../../hooks/useLanguage";
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
-import ProductCard from "../../components/ProductCard";
+import ProductCard from "../product/ProductCard";
 import type { ProductBriefDTO } from "../../types/product";
 import { useToast } from "../ui/use-toast";
 
