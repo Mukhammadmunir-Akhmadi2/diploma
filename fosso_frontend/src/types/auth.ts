@@ -15,3 +15,12 @@ export interface RegisterRequest {
   password: string; 
   phoneNumber?: string;
 }
+
+export interface RegisterForm {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreeTerms: boolean;
+  phoneNumber?: string;
+}

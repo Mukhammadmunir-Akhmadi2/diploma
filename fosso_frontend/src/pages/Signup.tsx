@@ -7,36 +7,19 @@ import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
 import { useToast } from "../hooks/useToast";
 import { useMutation } from "@tanstack/react-query";
-import { register, checkEmailUnique } from "../api/Auth";
+import { register as registerApi, checkEmailUnique } from "../api/Auth";
 import { type ErrorResponse } from "../types/error";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Spin } from "antd";
 import * as Yup from "yup";
+import { useForm } from "react-hook-form";
+import type { RegisterForm, RegisterRequest } from "../types/auth";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const Signup = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [emailError, setEmailError] = useState<string | null>(null);
-  const signupMutation = useMutation({
-    mutationFn: register,
-    onSuccess: () => {
-      toast({
-        title: t("signup.success"),
-        description: t("signup.redirecting"),
-      });
-      navigate("/login");
-    },
-    onError: (error: any) => {
-      const errorResponse = error as ErrorResponse;
-      console.error("Signup error:", errorResponse);
-      toast({
-        title: t("signup.failed"),
-        description: error.message || t("signup.error"),
-        variant: "destructive",
-      });
-    },
-  });
   const validationSchema = Yup.object({
     name: Yup.string().required(t("signup.nameRequired")),
     email: Yup.string()
@@ -56,6 +39,41 @@ const Signup = () => {
     agreeTerms: Yup.boolean()
       .oneOf([true], t("signup.mustAgreeTerms"))
       .required(t("signup.mustAgreeTerms")),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterForm>({
+    defaultValues: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      confirmPassword: "",
+      agreeTerms: false,
+    },
+    resolver: yupResolver(validationSchema),
+  });
+  const signupMutation = useMutation({
+    mutationFn: registerApi,
+    onSuccess: () => {
+      toast({
+        title: t("signup.success"),
+        description: t("signup.redirecting"),
+      });
+      navigate("/login");
+    },
+    onError: (error: any) => {
+      const errorResponse = error as ErrorResponse;
+      console.error("Signup error:", errorResponse);
+      toast({
+        title: t("signup.failed"),
+        description: error.message || t("signup.error"),
+        variant: "destructive",
+      });
+    },
   });
 
   const goBack = () => {
@@ -117,20 +135,13 @@ const Signup = () => {
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
                 {t("signup.title")}
               </h2>
-              <Formik
-                initialValues={{
-                  name: "",
-                  email: "",
-                  phoneNumber: "",
-                  password: "",
-                  confirmPassword: "",
-                  agreeTerms: false,
-                }}
-                validationSchema={validationSchema}
-                onSubmit={(values) => {
+
+              <form
+                className="space-y-5"
+                onSubmit={handleSubmit((values) => {
                   const [firstName, ...rest] = values.name.trim().split(" ");
                   const lastName = rest.join(" ").trim();
-                  const payload = {
+                  const payload: RegisterRequest = {
                     firstName,
                     lastName: lastName.length === 0 ? null : lastName,
                     email: values.email,
@@ -138,158 +149,130 @@ const Signup = () => {
                     password: values.password,
                   };
                   signupMutation.mutate(payload);
-                }}
+                })}
               >
-                {({ values, handleChange }) => (
-                  <Form className="space-y-5">
-                    <div className="space-y-2 relative">
-                      <Label htmlFor="name">{t("signup.name")}</Label>
-                      <Field
-                        as={Input}
-                        id="name"
-                        name="name"
-                        placeholder={t("signup.namePlaceholder")}
-                      />
-                      <ErrorMessage
-                        name="name"
-                        component="div"
-                        className="text-red-500 text-sm absolute top-full"
-                      />
-                    </div>
+                <div className="space-y-2 relative">
+                  <Label htmlFor="name">{t("signup.name")}</Label>
+                  <Input
+                    placeholder={t("signup.namePlaceholder")}
+                    {...register("name")}
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm absolute top-full">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
 
-                    <Field name="email">
-                      {({ field, form }: any) => (
-                        <div className="space-y-2 relative">
-                          <Label htmlFor="email">{t("signup.email")}</Label>
-                          <Input
-                            {...field}
-                            id="email"
-                            type="email"
-                            placeholder={t("signup.emailPlaceholder")}
-                            onBlur={async (e) => {
-                              form.setFieldTouched("email", true); // Let Formik know it's been touched
-                              field.onBlur(e); // Maintain Formik internal blur
-                              try {
-                                await checkEmailUnique(e.target.value);
-                                setEmailError(null);
-                              } catch (error: any) {
-                                const errMsg =
-                                  error?.message ||
-                                  t("error.emailValidationFailed");
-                                setEmailError(errMsg);
-                              }
-                            }}
-                          />
-                          <ErrorMessage
-                            name="email"
-                            component="div"
-                            className="text-red-500 text-sm absolute top-full"
-                          />
-                          {emailError && (
-                            <div className="text-red-500 text-sm absolute top-full">
-                              {emailError}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </Field>
-
-                    <div className="space-y-2 relative">
-                      <Label htmlFor="phoneNumber">{t("signup.phone")}</Label>
-                      <Field
-                        as={Input}
-                        id="phoneNumber"
-                        name="phoneNumber"
-                        type="tel"
-                        placeholder={t("signup.phonePlaceholder")}
-                      />
-                      <ErrorMessage
-                        name="phoneNumber"
-                        component="div"
-                        className="text-red-500 text-sm absolute top-full"
-                      />
+                <div className="space-y-2 relative">
+                  <Label htmlFor="email">{t("signup.email")}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder={t("signup.emailPlaceholder")}
+                    {...register("email")}
+                    onBlur={async (e) => {
+                      try {
+                        await checkEmailUnique(e.target.value);
+                        setEmailError(null);
+                      } catch (error: any) {
+                        const errMsg =
+                          error?.message || t("error.emailValidationFailed");
+                        setEmailError(errMsg);
+                      }
+                    }}
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm absolute top-full">
+                      {errors.email?.message}
+                    </p>
+                  )}
+                  {emailError && (
+                    <div className="text-red-500 text-sm absolute top-full">
+                      {emailError}
                     </div>
+                  )}
+                </div>
 
-                    <div className="space-y-2 relative">
-                      <Label htmlFor="password">{t("signup.password")}</Label>
-                      <Field
-                        as={Input}
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder={t("signup.passwordPlaceholder")}
-                      />
-                      <ErrorMessage
-                        name="password"
-                        component="div"
-                        className="text-red-500 text-sm top-full"
-                      />
-                    </div>
+                <div className="space-y-2 relative">
+                  <Label htmlFor="phoneNumber">{t("signup.phone")}</Label>
+                  <Input
+                    type="tel"
+                    placeholder={t("signup.phonePlaceholder")}
+                    {...register("phoneNumber")}
+                  />
+                  {errors.phoneNumber && (
+                    <p className="text-red-500 text-sm absolute top-full">
+                      {errors.phoneNumber?.message}
+                    </p>
+                  )}
+                </div>
 
-                    <div className="space-y-2 relative">
-                      <Label htmlFor="confirmPassword">
-                        {t("signup.confirmPassword")}
-                      </Label>
-                      <Field
-                        as={Input}
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type="password"
-                        placeholder={t("signup.confirmPasswordPlaceholder")}
-                      />
-                      <ErrorMessage
-                        name="confirmPassword"
-                        component="div"
-                        className="text-red-500 text-sm absolute top-full"
-                      />
-                    </div>
+                <div className="space-y-2 relative">
+                  <Label htmlFor="password">{t("signup.password")}</Label>
+                  <Input
+                    type="password"
+                    placeholder={t("signup.passwordPlaceholder")}
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-sm top-full">
+                      {errors.password?.message}
+                    </p>
+                  )}
+                </div>
 
-                    <div className="flex items-center space-x-2 relative py-2">
-                      <Field
-                        name="agreeTerms"
-                        type="checkbox"
-                        id="terms"
-                        checked={values.agreeTerms}
-                        onChange={handleChange}
-                        className="h-4 w-4"
-                      />
-                      <label
-                        htmlFor="terms"
-                        className="text-sm font-medium leading-none cursor-pointer"
-                      >
-                        {t("signup.termsAgreement")}{" "}
-                        <Link
-                          to="/terms"
-                          className="text-blue-600 hover:underline"
-                        >
-                          {t("signup.termsLink")}
-                        </Link>
-                      </label>
-                      <ErrorMessage
-                        name="agreeTerms"
-                        component="div"
-                        className="text-red-500 text-sm absolute top-full"
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700"
-                    >
-                      {t("signup.submit")}
-                    </Button>
+                <div className="space-y-2 relative">
+                  <Label htmlFor="confirmPassword">
+                    {t("signup.confirmPassword")}
+                  </Label>
+                  <Input
+                    type="password"
+                    placeholder={t("signup.confirmPasswordPlaceholder")}
+                    {...register("confirmPassword")}
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm absolute top-full">
+                      {errors.confirmPassword?.message}
+                    </p>
+                  )}
+                </div>
 
-                    <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-                      {t("signup.haveAccount")}{" "}
-                      <Link
-                        to="/login"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {t("signup.login")}
-                      </Link>
-                    </div>
-                  </Form>
-                )}
-              </Formik>
+                <div className="flex items-center space-x-2 relative py-2">
+                  <Input
+                    type="checkbox"
+                    className="h-4 w-4"
+                    {...register("agreeTerms")}
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="text-sm font-medium leading-none cursor-pointer"
+                  >
+                    {t("signup.termsAgreement")}{" "}
+                    <Link to="/terms" className="text-blue-600 hover:underline">
+                      {t("signup.termsLink")}
+                    </Link>
+                  </label>
+                  {errors.agreeTerms && (
+                    <p className="text-red-500 text-sm absolute top-full">
+                      {errors.agreeTerms?.message}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                >
+                  {t("signup.submit")}
+                </Button>
+
+                <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+                  {t("signup.haveAccount")}{" "}
+                  <Link to="/login" className="text-blue-600 hover:underline">
+                    {t("signup.login")}
+                  </Link>
+                </div>
+              </form>
             </div>
           </div>
         </div>
