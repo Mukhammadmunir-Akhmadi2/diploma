@@ -4,7 +4,7 @@ import { Heart, Star, StarHalf } from "lucide-react";
 import { useToast } from "../../hooks/useToast";
 import { useLanguage } from "../../hooks/useLanguage";
 import type { ProductBriefDTO } from "../../types/product";
-import placeholder from "../assets/placeholder.svg";
+import placeholder from "../../assets/placeholder.svg";
 import { getAllImagesForOwner } from "../../api/Image";
 import { AspectRatio } from "../ui/aspect-ratio";
 import type { ImageDTO } from "../../types/image";

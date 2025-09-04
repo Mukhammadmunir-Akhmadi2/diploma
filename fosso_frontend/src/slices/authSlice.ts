@@ -18,13 +18,13 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<UserDTO>) {
+    setUser(state, action: PayloadAction<UserDTO>) {
       state.user = action.payload;
     },
-    setToken: (state, action: PayloadAction<string>) {
+    setToken(state, action: PayloadAction<string>) {
       state.token = action.payload;
     },
-    setAvatar: (state, action: PayloadAction<ImageDTO | null>) {
+    setAvatar(state, action: PayloadAction<ImageDTO | null>) {
         state.avatar = action.payload;
     },
     logout: (state) => {

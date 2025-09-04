@@ -43,7 +43,7 @@ const Login = () => {
       email: localStorage.getItem("email") || "",
       password: "",
       rememberMe: localStorage.getItem("rememberMe") === "true",
-    }
+    },
     resolver: yupResolver(validationSchema),
   });
 
