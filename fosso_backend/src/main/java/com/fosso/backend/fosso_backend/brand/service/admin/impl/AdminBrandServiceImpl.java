@@ -1,6 +1,5 @@
 package com.fosso.backend.fosso_backend.brand.service.admin.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
 import com.fosso.backend.fosso_backend.brand.model.Brand;
 import com.fosso.backend.fosso_backend.brand.repository.BrandRepository;
 import com.fosso.backend.fosso_backend.brand.service.admin.AdminBrandService;
