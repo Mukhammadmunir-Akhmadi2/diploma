@@ -1,20 +1,21 @@
 package com.fosso.backend.fosso_backend.cart.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
 import com.fosso.backend.fosso_backend.brand.model.Brand;
-import com.fosso.backend.fosso_backend.brand.repository.BrandRepository;
+import com.fosso.backend.fosso_backend.brand.service.BrandService;
 import com.fosso.backend.fosso_backend.cart.dto.CartItemCreateDTO;
 import com.fosso.backend.fosso_backend.cart.dto.CartItemDTO;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import com.fosso.backend.fosso_backend.cart.mapper.CartItemMapper;
 import com.fosso.backend.fosso_backend.cart.model.CartItem;
+import com.fosso.backend.fosso_backend.common.exception.UnauthorizedException;
 import com.fosso.backend.fosso_backend.image.model.Image;
-import com.fosso.backend.fosso_backend.image.repository.ImageRepository;
+import com.fosso.backend.fosso_backend.image.service.ImageService;
 import com.fosso.backend.fosso_backend.product.model.Product;
 import com.fosso.backend.fosso_backend.product.model.ProductVariant;
+import com.fosso.backend.fosso_backend.product.service.ProductService;
 import com.fosso.backend.fosso_backend.user.model.User;
 import com.fosso.backend.fosso_backend.cart.repository.CartItemRepository;
-import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
 import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
 import com.fosso.backend.fosso_backend.cart.service.CartItemService;
 import lombok.RequiredArgsConstructor;
@@ -31,41 +32,38 @@ import java.util.UUID;
 public class CartItemServiceImpl implements CartItemService {
 
     private final CartItemRepository cartItemRepository;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
     private final AuthenticatedUserProvider userProvider;
-    private final ActionLogService actionLogService;
-    private final BrandRepository brandRepository;
-    private final ImageRepository imageRepository;
+    private final BrandService brandService;
+    private final ImageService imageService;
 
     @Override
     public List<CartItemDTO> listCartItems(String customerId) {
         User currentUser = userProvider.getAuthenticatedUser();
         if (!currentUser.getUserId().equals(customerId)) {
-            throw new ResourceNotFoundException("You are not authorized to view this cart");
+            throw new UnauthorizedException("You are not authorized to view this cart");
         }
         List<CartItem> cartItems = cartItemRepository.findByCustomerId(customerId);
         if (cartItems == null || cartItems.isEmpty()) {
             throw new ResourceNotFoundException("No cart item found with id " + customerId);
         }
         return cartItems.stream().map(cartItem -> {
-            Product product = productRepository.findById(cartItem.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + cartItem.getProductId()));
+            Product product = productService.getProductById(cartItem.getProductId());
 
-            Brand brand = brandRepository.findById(product.getBrandId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Brand not found with ID: " + product.getBrandId()));
-            Image image = imageRepository.findById(product.getMainImagesId().getFirst())
-                    .orElseThrow(() -> new ResourceNotFoundException("Image not found with ID: " + product.getMainImagesId().getFirst()));
+            Brand brand = brandService.getByBrandId(product.getBrandId());
+
+            Image image = imageService.getImageById(product.getMainImagesId().getFirst());
 
             return CartItemMapper.convertToDTO(cartItem, product, brand, image);
         }).toList();
     }
 
     @Override
-    public String addProduct(CartItemCreateDTO cartItemCreate) {
+    @Loggable(action = "CREATE", entity = "CartItem", message = "Added product to cart")
+    public CartItem addProduct(CartItemCreateDTO cartItemCreate) {
         User customer = userProvider.getAuthenticatedUser();
 
-        Product product = productRepository.findById(cartItemCreate.getProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + cartItemCreate.getProductId()));
+        Product product = productService.getProductById(cartItemCreate.getProductId());
 
         Optional<ProductVariant> matchingVariant = product.getProductVariants()
                 .stream()
@@ -107,72 +105,50 @@ public class CartItemServiceImpl implements CartItemService {
             newItem.setAddedDateTime(LocalDateTime.now());
             savedItem = cartItemRepository.save(newItem);
         }
-
-        actionLogService.logAction(
-                customer.getUserId(),
-                "CREATE",
-                "CartItem",
-                savedItem.getCartId(),
-                "Added product to cart"
-        );
-
-        return "Product added to cart successfully";
+        return savedItem;
 
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "CartItem", message = "Updated quantity of product in cart")
     public CartItemDTO updateQuantity(String cartId, int quantity) {
         CartItem item = cartItemRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found in cart"));
-        Product product = productRepository.findById(item.getProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + item.getProductId()));
+        Product product = productService.getProductById(item.getProductId());
+
         item.setQuantity(quantity);
 
-        Brand brand = brandRepository.findById(product.getBrandId())
-                .orElseThrow(() -> new ResourceNotFoundException("Brand not found with ID: " + product.getBrandId()));
-        Image image = imageRepository.findById(product.getMainImagesId().getFirst())
-                .orElseThrow(() -> new ResourceNotFoundException("Image not found with ID: " + product.getMainImagesId().getFirst()));
+        Brand brand = brandService.getByBrandId(product.getBrandId());
+
+        Image image = imageService.getImageById(product.getMainImagesId().getFirst());
 
         CartItem updatedItem = cartItemRepository.save(item);
-
-        // Log the action
-        actionLogService.logAction(
-                item.getCustomerId(),
-                "UPDATE",
-                "CartItem",
-                cartId,
-                "Updated quantity of product in cart"
-        );
 
         return CartItemMapper.convertToDTO(updatedItem, product, brand, image);    }
 
     @Override
+    @Loggable(action = "DELETE", entity = "CartItem", message = "Removed product from cart")
     public void removeProduct(String cartId) {
         CartItem item = cartItemRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found in cart"));
 
         cartItemRepository.delete(item);
-
-        actionLogService.logAction(
-                item.getCustomerId(),
-                "DELETE",
-                "CartItem",
-                cartId,
-                "Removed product from cart"
-        );
     }
 
     @Override
+    @Loggable(action = "DELETE", entity = "CartItem", message = "Cleared all items from cart")
     public void clearCart() {
         User customer = userProvider.getAuthenticatedUser();
         cartItemRepository.deleteByCustomerId(customer.getUserId());
+    }
 
-        actionLogService.logAction(
-                customer.getUserId(),
-                "DELETE",
-                "CartItem",
-                null,
-                "Cleared all items from cart"
-        );
+    @Override
+    public List<CartItem> getByCustomerId(String userId) {
+        return cartItemRepository.findByCustomerId(userId);
+    }
+
+    @Override
+    public void deleteByCustomerId(String userId) {
+        cartItemRepository.deleteByCustomerId(userId);
     }
 }

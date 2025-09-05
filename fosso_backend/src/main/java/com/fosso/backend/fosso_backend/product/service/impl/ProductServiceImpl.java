@@ -1,9 +1,8 @@
 package com.fosso.backend.fosso_backend.product.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
 import com.fosso.backend.fosso_backend.category.model.Category;
-import com.fosso.backend.fosso_backend.category.repository.CategoryRepository;
-import com.fosso.backend.fosso_backend.common.aop.LogAction;
+import com.fosso.backend.fosso_backend.category.service.CategoryService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.enums.Role;
 import com.fosso.backend.fosso_backend.product.dto.ProductCreateDTO;
 import com.fosso.backend.fosso_backend.product.dto.ProductFilterCriteria;
@@ -31,10 +30,10 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final AuthenticatedUserProvider userProvider;
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @Override
-    @LogAction(action = "CREATE", entity = "Product", message = "Created a new product")
+    @Loggable(action = "CREATE", entity = "Product", message = "Created a new product")
     public Product saveProduct(ProductCreateDTO product) {
         User currentUser = userProvider.getAuthenticatedUser();
         if (!currentUser.getUserId().equals(product.getMerchantId())) {
@@ -43,9 +42,8 @@ public class ProductServiceImpl implements ProductService {
         Product newProduct = ProductMapper.createProductFromDTO(product);
         newProduct.setCreatedDateTime(LocalDateTime.now());
         newProduct.setUpdatedDateTime(LocalDateTime.now());
-        Product savedProduct = productRepository.save(newProduct);
 
-        return savedProduct;
+        return productRepository.save(newProduct);
     }
 
     @Override
@@ -55,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @LogAction(action = "UPDATE", entity = "Product", message = "Updated Product Details")
+    @Loggable(action = "UPDATE", entity = "Product", message = "Updated Product Details")
     public Product updateProduct(String productId, ProductUpdateDTO product) {
         User currentUser = userProvider.getAuthenticatedUser();
 
@@ -68,13 +66,17 @@ public class ProductServiceImpl implements ProductService {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         ProductMapper.updateProductFromDTO(existingProduct, product);
-        Product saveProduct = productRepository.save(existingProduct);
 
-        return saveProduct;
+        return productRepository.save(existingProduct);
     }
 
     @Override
-    @LogAction(action = "UPDATE", entity = "Product", message = "Updated product price")
+    public Product updateProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    @Override
+    @Loggable(action = "UPDATE", entity = "Product", message = "Updated product price")
     public String updateProductPrice(String productId, BigDecimal price, BigDecimal discountPrice) {
         User currentUser = userProvider.getAuthenticatedUser();
         Product existingProduct = productRepository.findById(productId)
@@ -92,7 +94,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @LogAction(action = "DELETE", entity = "Product", message = "Deleted Product")
+    @Loggable(action = "DELETE", entity = "Product", message = "Deleted Product")
     public String deleteProduct(String productId) {
         User currentUser = userProvider.getAuthenticatedUser();
         Product product = productRepository.findById(productId).orElseThrow(() ->
@@ -107,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @LogAction(action = "UPDATE", entity = "Product", message = "Updated Product enabled status")
+    @Loggable(action = "UPDATE", entity = "Product", message = "Updated Product enabled status")
     public String updateProductEnabledStatus(String productId, boolean enabled) {
         User currentUser = userProvider.getAuthenticatedUser();
         Product product = productRepository.findById(productId)
@@ -127,7 +129,7 @@ public class ProductServiceImpl implements ProductService {
             List<String> categoryIds = getAllCategoryIds(criteria.getCategoryId());
             categoryIds.add(criteria.getCategoryId());
             criteria.setCategoryIds(categoryIds);
-        } else {
+        } else if (criteria != null) {
             criteria.setCategoryIds(null);
         }
 
@@ -140,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
 
     private List<String> getAllCategoryIds(String parentId) {
         List<String> categoryIds = new ArrayList<>();
-        List<Category> subcategories = categoryRepository.findByParentIdAndEnabledTrue(parentId);
+        List<Category> subcategories = categoryService.listByParentId(parentId);
 
         for (Category subcategory : subcategories) {
             categoryIds.add(subcategory.getCategoryId());

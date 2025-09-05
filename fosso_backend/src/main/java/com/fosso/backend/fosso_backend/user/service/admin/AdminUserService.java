@@ -5,12 +5,8 @@ import com.fosso.backend.fosso_backend.user.dto.UserUpdateDTO;
 import com.fosso.backend.fosso_backend.common.enums.Role;
 import com.fosso.backend.fosso_backend.user.dto.admin.AdminUserBriefDTO;
 import com.fosso.backend.fosso_backend.user.dto.admin.AdminUserDetailDTO;
-import com.fosso.backend.fosso_backend.user.model.Address;
-import com.fosso.backend.fosso_backend.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface AdminUserService {
     String hardDeleteUser(String userId);

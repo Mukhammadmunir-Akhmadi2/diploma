@@ -4,6 +4,7 @@ import com.fosso.backend.fosso_backend.action.service.ActionLogService;
 import com.fosso.backend.fosso_backend.brand.model.Brand;
 import com.fosso.backend.fosso_backend.brand.repository.BrandRepository;
 import com.fosso.backend.fosso_backend.brand.service.admin.AdminBrandService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.exception.DuplicateResourceException;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AdminBrandServiceImpl implements AdminBrandService {
     private final BrandRepository brandRepository;
-    private final ActionLogService actionLogService;
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Brand", message = "Updated brand details")
     public Brand updateBrand(String brandId, Brand brand) {
         Brand existingBrand = brandRepository.findById(brandId)
                 .orElseThrow(() -> new ResourceNotFoundException("Brand not found with ID: " + brand.getBrandId()));
@@ -37,50 +38,26 @@ public class AdminBrandServiceImpl implements AdminBrandService {
         existingBrand.setUpdatedTime(LocalDateTime.now());
         existingBrand.setCreatedTime(LocalDateTime.now());
 
-        Brand updatedBrand = brandRepository.save(existingBrand);
-
-        actionLogService.logAction(
-                "SYSTEM",
-                "UPDATE",
-                "Brand",
-                brandId,
-                "Updated brand details"
-        );
-
-        return updatedBrand;
+        return brandRepository.save(existingBrand);
     }
 
     @Override
+    @Loggable(action = "DELETE", entity = "Brand", message = "Deleted brand")
     public void deleteBrand(String brandId) {
         if (!brandRepository.existsById(brandId)) {
             throw new ResourceNotFoundException("Brand not found with ID: " + brandId);
         }
         brandRepository.deleteById(brandId);
-
-        actionLogService.logAction(
-                "SYSTEM",
-                "DELETE",
-                "Brand",
-                brandId,
-                "Deleted brand"
-        );
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Brand",message = "Updated brand enabled status")
     public String updateBrandEnabledStatus(String brandId, boolean enabled) {
         Brand brand = brandRepository.findById(brandId)
                 .orElseThrow(() -> new ResourceNotFoundException("Brand not found with ID: " + brandId));
         brand.setEnabled(enabled);
         brand.setUpdatedTime(LocalDateTime.now());
         brandRepository.save(brand);
-
-        actionLogService.logAction(
-                "SYSTEM",
-                "UPDATE",
-                "Brand",
-                brandId,
-                "Updated brand enabled status to " + enabled
-        );
 
         return enabled ? "Brand enabled successfully" : "Brand disabled successfully";
     }

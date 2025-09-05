@@ -1,10 +1,8 @@
 package com.fosso.backend.fosso_backend.user.dto.admin;
 
-import com.fosso.backend.fosso_backend.action.model.ActionLog;
 import com.fosso.backend.fosso_backend.common.enums.Gender;
 import com.fosso.backend.fosso_backend.common.enums.Role;
 import com.fosso.backend.fosso_backend.image.dto.ImageDTO;
-import com.fosso.backend.fosso_backend.review.model.Review;
 import com.fosso.backend.fosso_backend.user.model.Address;
 import lombok.Builder;
 import lombok.Data;

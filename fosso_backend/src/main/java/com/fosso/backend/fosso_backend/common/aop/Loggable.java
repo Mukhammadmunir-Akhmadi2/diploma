@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LogAction {
+public @interface Loggable {
     String action();
     String entity();
     String message() default "";

@@ -1,14 +1,11 @@
 package com.fosso.backend.fosso_backend.user.service.admin.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.enums.ImageType;
-import com.fosso.backend.fosso_backend.image.dto.ImageDTO;
 import com.fosso.backend.fosso_backend.image.model.Image;
 import com.fosso.backend.fosso_backend.image.repository.ImageRepository;
-import com.fosso.backend.fosso_backend.image.service.ImageService;
 import com.fosso.backend.fosso_backend.order.model.Order;
 import com.fosso.backend.fosso_backend.order.repository.OrderRepository;
-import com.fosso.backend.fosso_backend.order.service.OrderService;
 import com.fosso.backend.fosso_backend.user.dto.AddressDTO;
 import com.fosso.backend.fosso_backend.user.dto.UserUpdateDTO;
 import com.fosso.backend.fosso_backend.common.enums.Role;
@@ -28,7 +25,6 @@ import com.fosso.backend.fosso_backend.user.service.admin.AdminUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -42,28 +38,21 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final AuthenticatedUserProvider userProvider;
-    private final ActionLogService actionLogService;
     private final ImageRepository imageRepository;
     private final OrderRepository orderRepository;
 
     @Override
+    @Loggable(action = "DELETE", entity = "User", message = "Hard deleted the user")
     public String hardDeleteUser(String userId) {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User not found with ID: " + userId);
         }
         userRepository.deleteById(userId);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "DELETE",
-                "User",
-                userId,
-                "Hard deleted the user"
-        );
         return "User deleted successfully";
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "User", message = "Updated user details")
     public String updateUser(String userId, UserUpdateDTO userDetails) {
         User user = userService.getUserById(userId);
 
@@ -80,19 +69,12 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         userRepository.save(user);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "User",
-                userId,
-                "Updated user details"
-        );
-
         return "User updated successfully";
     }
 
     @Override
-    public String updateUserAddress(String userId, AddressDTO addressDTO) {
+    @Loggable(action = "UPDATE", entity = "Address", message = "Updated user address")
+    public String updateUserAddress(String userId, AddressDTO addressDTO) { // needs change
         User user = userService.getUserById(userId);
 
         for (Address existingAddress : user.getAddresses()) {
@@ -106,51 +88,34 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         userRepository.save(user);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "Address",
-                addressDTO.getAddressId(),
-                "Updated user address"
-        );
         return "User address updated successfully";
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "User", message = "Blocked the user")
     public String blockUser(String userId, int banDuration) {
         User user = userService.getUserById(userId);
         user.setEnabled(false);
         user.setBanExpirationTime(LocalDateTime.now().plusDays(banDuration));
         user.setUpdatedTime(LocalDateTime.now());
         user.setUpdatedBy(userProvider.getAuthenticatedUser().getEmail());
+
         userRepository.save(user);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "User",
-                userId,
-                "Blocked the user"
-        );
         return "User blocked successfully";
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "User", message = "Unblocked the user")
     public String unblockUser(String userId) {
         User user = userService.getUserById(userId);
         user.setEnabled(true);
         user.setBanExpirationTime(null);
         user.setUpdatedTime(LocalDateTime.now());
         user.setUpdatedBy(userProvider.getAuthenticatedUser().getEmail());
+
         userRepository.save(user);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "User",
-                userId,
-                "Unblocked the user"
-        );
         return "User unblocked successfully";
     }
 
@@ -184,7 +149,8 @@ public class AdminUserServiceImpl implements AdminUserService {
     }
 
     @Override
-    public String updateUserRole(String userId, Role role) {
+    @Loggable(action = "UPDATE", entity = "User", message = "Updated user role")
+    public String updateUserRole(String userId, Role role) { // needs change
         User user = userService.getUserById(userId);
 
         User currentAdmin = userProvider.getAuthenticatedUser();
@@ -214,17 +180,11 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         userRepository.save(user);
 
-        actionLogService.logAction(
-                currentAdmin.getUserId(),
-                "UPDATE",
-                "User",
-                userId,
-                "Updated user role to " + role
-        );
         return "User role updated successfully";
     }
 
    @Override
+   @Loggable(action = "RESTORE", entity = "User", message = "Restored the user")
    public String restoreUser(String userId) {
        User user = userRepository.findById(userId)
                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
@@ -239,14 +199,6 @@ public class AdminUserServiceImpl implements AdminUserService {
        user.setUpdatedBy(userProvider.getAuthenticatedUser().getEmail());
 
        userRepository.save(user);
-
-       actionLogService.logAction(
-               userProvider.getAuthenticatedUser().getUserId(),
-               "RESTORE",
-               "User",
-               userId,
-               "Restored the user"
-       );
 
        return "User restored successfully";
    }
@@ -265,7 +217,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     private BigDecimal calculateTotalSpend(List<Order> orders) {
         return orders.stream()
-                .map(Order::getTotal) // Assuming `getTotal` returns BigDecimal
+                .map(Order::getTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

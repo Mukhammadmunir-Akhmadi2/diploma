@@ -1,11 +1,10 @@
 package com.fosso.backend.fosso_backend.product.service.admin.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import com.fosso.backend.fosso_backend.product.model.Product;
 import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
 import com.fosso.backend.fosso_backend.product.service.admin.AdminProductService;
-import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,23 +15,12 @@ import org.springframework.stereotype.Service;
 public class AdminProductServiceImpl implements AdminProductService {
 
     private final ProductRepository productRepository;
-    private final ActionLogService actionLogService;
-    private final AuthenticatedUserProvider userProvider;
-
 
     @Override
+    @Loggable(action = "DELETE", entity = "Product", message = "Deleted product")
     public String deleteProduct(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         productRepository.delete(product);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "DELETE",
-                "Product",
-                productId,
-                "Deleted product"
-        );
-
         return "Product deleted successfully";
     }
 
@@ -47,7 +35,7 @@ public class AdminProductServiceImpl implements AdminProductService {
 
     @Override
     public Page<Product> listDeletedProducts(Pageable pageable) {
-        Page<Product> products = productRepository.findByIsDeletedTrue(pageable);
+        Page<Product> products = productRepository.findByDeletedTrue(pageable);
         if (products == null || products.isEmpty()) {
             throw new ResourceNotFoundException("No deleted products found");
         }
@@ -63,6 +51,7 @@ public class AdminProductServiceImpl implements AdminProductService {
     }
 
     @Override
+    @Loggable(action = "RESTORE", entity = "Product", message = "Restored product")
     public String restoreProduct(String productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
@@ -73,19 +62,11 @@ public class AdminProductServiceImpl implements AdminProductService {
         product.setDeleted(false);
         productRepository.save(product);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "RESTORE",
-                "Product",
-                productId,
-                "Restored product: " + product.getProductName()
-        );
-
         return "Product restored successfully";
     }
     @Override
     public Page<Product> listAllByMerchantId(String merchantId, Pageable pageable) {
-        Page<Product> products = productRepository.findByMerchant(merchantId, pageable);
+        Page<Product> products = productRepository.findByMerchantId(merchantId, pageable);
         if (products == null || products.isEmpty()) {
             throw new ResourceNotFoundException("No products found for merchant ID: " + merchantId);
         }
@@ -93,18 +74,11 @@ public class AdminProductServiceImpl implements AdminProductService {
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Product", message = "Updated product enabled status")
     public String updateProductEnabledStatus(String productId, boolean enabled) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         product.setEnabled(enabled);
         productRepository.save(product);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "Product",
-                productId,
-                "Updated product enabled status to " + enabled
-        );
 
         return enabled ? "Product enabled successfully" : "Product disabled successfully";
     }

@@ -1,7 +1,6 @@
 package com.fosso.backend.fosso_backend.brand.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
-import com.fosso.backend.fosso_backend.common.aop.LogAction;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.exception.DuplicateResourceException;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import com.fosso.backend.fosso_backend.brand.model.Brand;
@@ -54,7 +53,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    @LogAction(action = "CREATE", entity = "Brand", message = "Saved a new brand")
+    @Loggable(action = "CREATE", entity = "Brand", message = "Saved a new brand")
     public Brand saveBrand(Brand brand) {
         if (brandRepository.existsByName(brand.getName())) {
             throw new DuplicateResourceException("Brand name already exists: " + brand.getName());
@@ -63,12 +62,11 @@ public class BrandServiceImpl implements BrandService {
         brand.setUpdatedTime(LocalDateTime.now());
         brand.setCreatedTime(LocalDateTime.now());
 
-        Brand savedBrand = brandRepository.save(brand);
-        return savedBrand;
+        return brandRepository.save(brand);
     }
 
     @Override
-    @LogAction(action = "CREATE", entity = "Brand", message = "Added category to brand") // needed to be change in feature
+    @Loggable(action = "CREATE", entity = "Brand", message = "Added category to brand") // needs change
     public String addCategory(String brandId, String categoryId) {
         Brand brand = brandRepository.findById(brandId)
                 .orElseThrow(() -> new ResourceNotFoundException("Brand not found with ID: " + brandId));

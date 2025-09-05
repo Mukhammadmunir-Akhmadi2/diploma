@@ -1,6 +1,5 @@
 package com.fosso.backend.fosso_backend.user.mapper;
 
-import com.fosso.backend.fosso_backend.image.dto.ImageDTO;
 import com.fosso.backend.fosso_backend.image.mapper.ImageMapper;
 import com.fosso.backend.fosso_backend.image.model.Image;
 import com.fosso.backend.fosso_backend.user.dto.admin.AdminUserBriefDTO;

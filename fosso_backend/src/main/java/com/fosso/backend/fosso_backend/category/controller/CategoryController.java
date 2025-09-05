@@ -1,20 +1,16 @@
 package com.fosso.backend.fosso_backend.category.controller;
 
 import com.fosso.backend.fosso_backend.category.dto.CategoryDTO;
-import com.fosso.backend.fosso_backend.common.exception.DuplicateResourceException;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import com.fosso.backend.fosso_backend.category.mapper.CategoryMapper;
 import com.fosso.backend.fosso_backend.category.model.Category;
 import com.fosso.backend.fosso_backend.category.service.CategoryService;
 import com.fosso.backend.fosso_backend.category.service.impl.CategoryHierarchyManager;
 import com.fosso.backend.fosso_backend.common.utils.PaginationUtil;
-import com.fosso.backend.fosso_backend.common.utils.ValidationUtils;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
