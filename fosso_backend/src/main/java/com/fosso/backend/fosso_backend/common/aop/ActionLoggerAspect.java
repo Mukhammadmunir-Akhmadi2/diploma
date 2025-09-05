@@ -1,6 +1,7 @@
 package com.fosso.backend.fosso_backend.common.aop;
 
 import com.fosso.backend.fosso_backend.action.service.ActionLogService;
+import com.fosso.backend.fosso_backend.brand.model.Brand;
 import com.fosso.backend.fosso_backend.product.model.Product;
 import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
 import com.fosso.backend.fosso_backend.user.model.User;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ActionLoggerAspect {
+
     private ActionLogService logService;
     private AuthenticatedUserProvider userProvider;
 
@@ -31,6 +33,8 @@ public class ActionLoggerAspect {
                 entityId = (String) firstArg;
             } else if (result instanceof Product) {
                 entityId = ((Product) result).getProductId();
+            } else if (result instanceof Brand) {
+                entityId = ((Brand) result).getBrandId();
             }
 
             logService.logAction(
@@ -43,7 +47,6 @@ public class ActionLoggerAspect {
 
             return result;
         } catch (Throwable ex) {
-            // Optional: log failed action if you want
             logService.logAction(
                     currentUser.getUserId(),
                     "FAILED_" + logAction.action(),
