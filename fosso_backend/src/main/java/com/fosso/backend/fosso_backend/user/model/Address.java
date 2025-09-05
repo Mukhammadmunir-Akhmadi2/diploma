@@ -1,9 +1,10 @@
 package com.fosso.backend.fosso_backend.user.model;
 
+import com.fosso.backend.fosso_backend.common.interfaces.LoggableEntity;
 import lombok.Data;
 
 @Data
-public class Address {
+public class Address implements LoggableEntity {
     private String addressId;
     private String addressType;
     private String phoneNumber;
@@ -14,4 +15,9 @@ public class Address {
     private String postalCode;
     private boolean isDefault;
     private String country;
+
+    @Override
+    public String getEntityId() {
+        return addressId;
+    }
 }

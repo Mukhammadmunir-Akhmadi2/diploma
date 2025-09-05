@@ -1,7 +1,6 @@
 package com.fosso.backend.fosso_backend.order.service;
 
 import com.fosso.backend.fosso_backend.common.enums.OrderStatus;
-import com.fosso.backend.fosso_backend.common.enums.PaymentMethod;
 import com.fosso.backend.fosso_backend.order.dto.CheckoutRequest;
 import com.fosso.backend.fosso_backend.order.dto.OrderMerchantDTO;
 import com.fosso.backend.fosso_backend.order.model.Order;

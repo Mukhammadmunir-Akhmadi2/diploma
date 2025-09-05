@@ -1,13 +1,10 @@
 package com.fosso.backend.fosso_backend.category.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
-import com.fosso.backend.fosso_backend.category.dto.CategoryDTO;
 import com.fosso.backend.fosso_backend.category.model.Category;
 import com.fosso.backend.fosso_backend.category.repository.CategoryRepository;
 import com.fosso.backend.fosso_backend.category.service.CategoryService;
 import com.fosso.backend.fosso_backend.category.service.CategoryValidator;
-import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
-import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +21,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryValidator categoryValidator;
     private final CategoryHierarchyManager hierarchyManager;
-    private final ActionLogService actionLogService;
-    private final AuthenticatedUserProvider userProvider;
-
 
     @Override
     public List<Category> listAll() {
@@ -54,6 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Loggable(action = "CREATE", entity = "Category", message = "Saved a new category")
     public Category saveCategory(Category category) {
         categoryValidator.validateNewCategory(category);
 
@@ -63,17 +58,8 @@ public class CategoryServiceImpl implements CategoryService {
         category.setEnabled(true);
 
         hierarchyManager.configureHierarchy(category);
-        Category savedCategory = categoryRepository.save(category);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "CREATE",
-                "Category",
-                savedCategory.getCategoryId(),
-                "Saved a new category"
-        );
-
-        return savedCategory;
+        return categoryRepository.save(category);
     }
 
     @Override

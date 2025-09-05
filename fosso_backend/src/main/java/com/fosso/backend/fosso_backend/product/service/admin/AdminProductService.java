@@ -1,6 +1,5 @@
 package com.fosso.backend.fosso_backend.product.service.admin;
 
-import com.fosso.backend.fosso_backend.product.dto.ProductUpdateDTO;
 import com.fosso.backend.fosso_backend.product.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -4,15 +4,11 @@ import com.fosso.backend.fosso_backend.brand.dto.BrandDTO;
 import com.fosso.backend.fosso_backend.brand.mapper.BrandMapper;
 import com.fosso.backend.fosso_backend.brand.model.Brand;
 import com.fosso.backend.fosso_backend.brand.service.BrandService;
-import com.fosso.backend.fosso_backend.common.exception.DuplicateResourceException;
 import com.fosso.backend.fosso_backend.common.utils.PaginationUtil;
-import com.fosso.backend.fosso_backend.common.utils.ValidationUtils;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

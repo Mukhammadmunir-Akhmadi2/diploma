@@ -1,6 +1,6 @@
 package com.fosso.backend.fosso_backend.image.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.enums.ImageType;
 import com.fosso.backend.fosso_backend.common.exception.ImageStorageException;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
@@ -10,7 +10,6 @@ import com.fosso.backend.fosso_backend.image.service.ImageService;
 import com.fosso.backend.fosso_backend.image.strategy.ImageDeletionHandler;
 import com.fosso.backend.fosso_backend.image.strategy.ImageOwnerHandler;
 import com.fosso.backend.fosso_backend.image.strategy.ImageOwnerHandlerFactory;
-import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
 import com.mongodb.MongoException;
 import lombok.RequiredArgsConstructor;
 import org.bson.BsonBinarySubType;
@@ -28,11 +27,9 @@ public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
     private final ImageOwnerHandlerFactory handlerFactory;
-    private final ActionLogService actionLogService;
-    private final AuthenticatedUserProvider userProvider;
-
 
     @Override
+    @Loggable(action = "UPLOAD", entity = "Image", message = "Uploaded the image")
     public Image uploadImage(MultipartFile file, String ownerId, ImageType type) {
         try {
             Image image = new Image();
@@ -47,14 +44,6 @@ public class ImageServiceImpl implements ImageService {
 
             ImageOwnerHandler handler = handlerFactory.getHandler(type);
             handler.handleImageAssociation(ownerId, savedImage.getImageId());
-
-            actionLogService.logAction(
-                    userProvider.getAuthenticatedUser().getUserId(),
-                    "UPLOAD",
-                    "Image",
-                    savedImage.getImageId(),
-                    "Uploaded an image of type: " + type
-            );
 
             return savedImage;
         } catch (IOException e) {
@@ -77,6 +66,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Loggable(action = "DELETE", entity = "Image", message = "Deleted the image")
     public String deleteImage(String ownerId, String imageId, ImageType type) {
         if (!imageRepository.existsByOwnerIdAndImageIdAndType(ownerId, imageId, type)) {
             throw new ResourceNotFoundException("Image not found");
@@ -85,14 +75,6 @@ public class ImageServiceImpl implements ImageService {
 
         deletionHandler.handleImageDeletion(ownerId, imageId);
         imageRepository.deleteByOwnerIdAndImageIdAndType(ownerId, imageId, type);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "DELETE",
-                "Image",
-                imageId,
-                "Deleted an image of type: " + type
-        );
 
         return "Image deleted successfully";
     }
@@ -104,6 +86,13 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public Image getImageById(String imageId) {
+        return imageRepository.findById(imageId)
+                .orElseThrow(() -> new ResourceNotFoundException("Image not found with ID: " + imageId));
+    }
+
+    @Override
+    @Loggable(action = "UPLOAD", entity = "Image", message = "Uploaded main images for product")
     public String uploadMainImages(String productId, MultipartFile[] mainImages, ImageType type) {
         for (MultipartFile file : mainImages) {
             try {
@@ -116,15 +105,6 @@ public class ImageServiceImpl implements ImageService {
                 image.setType(type);
 
                 imageRepository.save(image);
-
-                actionLogService.logAction(
-                        userProvider.getAuthenticatedUser().getUserId(),
-                        "UPLOAD",
-                        "Image",
-                        image.getImageId(),
-                        "Uploaded main images for product"
-                );
-
             } catch (IOException | MongoException | IllegalArgumentException e) {
                 throw new ImageStorageException("Failed to store image", e);
             }

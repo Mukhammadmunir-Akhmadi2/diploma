@@ -1,6 +1,6 @@
 package com.fosso.backend.fosso_backend.user.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.exception.DuplicateResourceException;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import com.fosso.backend.fosso_backend.common.exception.UnauthorizedException;
@@ -27,11 +27,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticatedUserProvider userProvider;
-    private final ActionLogService actionLogService;
 
     @Override
     public boolean isEmailUnique(String email) {
@@ -72,6 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "User", message = "Updated user profile")
     public User updateCurrentUserProfile(UserUpdateDTO profileDTO) {
         User user = userProvider.getAuthenticatedUser();
 
@@ -88,16 +87,7 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedTime(LocalDateTime.now());
         user.setUpdatedBy(user.getEmail());
 
-        User updatedUser = userRepository.save(user);
-
-        actionLogService.logAction(
-                user.getUserId(),
-                "UPDATE",
-                "User",
-                user.getUserId(),
-                "Updated user profile"
-        );
-        return updatedUser;
+        return userRepository.save(user);
     }
 
     @Override
@@ -110,6 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Address", message = "Updated user address")
     public Address updateCurrentUserAddress(AddressDTO addressDTO) {
         User user = userProvider.getAuthenticatedUser();
         if (user.getAddresses() == null || user.getAddresses().isEmpty()) {
@@ -139,17 +130,11 @@ public class UserServiceImpl implements UserService {
 
         User updated = userRepository.save(user);
 
-        actionLogService.logAction(
-                user.getUserId(),
-                "UPDATE",
-                "Address",
-                addressDTO.getAddressId(),
-                "Updated user address"
-        );
         return updated.getAddresses().stream().filter(address -> address.getAddressId().equals(addressDTO.getAddressId())).findFirst().get();
     }
 
     @Override
+    @Loggable(action = "CREATE", entity = "Address", message = "Added a new address")
     public Address addAddress(AddressDTO addressDTO) {
         User user = userProvider.getAuthenticatedUser();
         addressDTO.setAddressId(UUID.randomUUID().toString());
@@ -166,18 +151,11 @@ public class UserServiceImpl implements UserService {
 
         User updated = userRepository.save(user);
 
-        actionLogService.logAction(
-                user.getUserId(),
-                "CREATE",
-                "Address",
-                addressDTO.getAddressId(),
-                "Added a new address"
-        );
-
         return updated.getAddresses().stream().filter(address -> address.getAddressId().equals(addressDTO.getAddressId())).findFirst().get();
     }
 
     @Override
+    @Loggable(action = "DELETE", entity = "Address", message = "Deleted user address")
     public String deleteUserAddress(String addressId) {
         User currentUser = userProvider.getAuthenticatedUser();
 
@@ -196,18 +174,11 @@ public class UserServiceImpl implements UserService {
         currentUser.setAddresses(updatedAddresses);
         userRepository.save(currentUser);
 
-        actionLogService.logAction(
-                currentUser.getUserId(),
-                "DELETE",
-                "Address",
-                addressId,
-                "Deleted user address with ID: " + addressId
-        );
-
         return "Address deleted successfully";
     }
 
     @Override
+    @Loggable(action = "DELETE", entity = "User", message = "Soft deleted the user")
     public String softDeleteUser() {
         User user = userProvider.getAuthenticatedUser();
         user.setDeleted(true);
@@ -215,17 +186,11 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedBy(user.getEmail());
         userRepository.save(user);
 
-        actionLogService.logAction(
-                user.getUserId(),
-                "DELETE",
-                "User",
-                user.getUserId(),
-                "Soft deleted the user"
-        );
         return "User deleted successfully";
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "User", message = "Changed password")
     public String changePassword(PasswordChangeRequest changeRequest) {
         User currentUser = userProvider.getAuthenticatedUser();
 
@@ -236,14 +201,6 @@ public class UserServiceImpl implements UserService {
         currentUser.setUpdatedTime(LocalDateTime.now());
         currentUser.setUpdatedBy(currentUser.getEmail());
         userRepository.save(currentUser);
-
-        actionLogService.logAction(
-                currentUser.getUserId(),
-                "UPDATE",
-                "User",
-                currentUser.getUserId(),
-                "Changed password"
-        );
 
         return "Password changed successfully";
     }

@@ -1,6 +1,5 @@
 package com.fosso.backend.fosso_backend.product.controller;
 
-import com.fosso.backend.fosso_backend.common.enums.Gender;
 import com.fosso.backend.fosso_backend.product.dto.*;
 import com.fosso.backend.fosso_backend.product.mapper.ProductMapper;
 import com.fosso.backend.fosso_backend.product.model.Product;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 

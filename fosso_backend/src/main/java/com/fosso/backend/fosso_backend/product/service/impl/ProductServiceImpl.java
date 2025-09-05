@@ -1,8 +1,8 @@
 package com.fosso.backend.fosso_backend.product.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
 import com.fosso.backend.fosso_backend.category.model.Category;
-import com.fosso.backend.fosso_backend.category.repository.CategoryRepository;
+import com.fosso.backend.fosso_backend.category.service.CategoryService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.enums.Role;
 import com.fosso.backend.fosso_backend.product.dto.ProductCreateDTO;
 import com.fosso.backend.fosso_backend.product.dto.ProductFilterCriteria;
@@ -30,10 +30,10 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final AuthenticatedUserProvider userProvider;
-    private final ActionLogService actionLogService;
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @Override
+    @Loggable(action = "CREATE", entity = "Product", message = "Created a new product")
     public Product saveProduct(ProductCreateDTO product) {
         User currentUser = userProvider.getAuthenticatedUser();
         if (!currentUser.getUserId().equals(product.getMerchantId())) {
@@ -42,18 +42,8 @@ public class ProductServiceImpl implements ProductService {
         Product newProduct = ProductMapper.createProductFromDTO(product);
         newProduct.setCreatedDateTime(LocalDateTime.now());
         newProduct.setUpdatedDateTime(LocalDateTime.now());
-        Product savedProduct = productRepository.save(newProduct);
 
-        // Log the action
-        actionLogService.logAction(
-                currentUser.getUserId(),
-                "CREATE",
-                "Product",
-                savedProduct.getProductId(),
-                "Created a new product"
-        );
-
-        return savedProduct;
+        return productRepository.save(newProduct);
     }
 
     @Override
@@ -63,33 +53,30 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Product", message = "Updated Product Details")
     public Product updateProduct(String productId, ProductUpdateDTO product) {
         User currentUser = userProvider.getAuthenticatedUser();
 
         boolean isAdmin = currentUser.getRoles().contains(Role.ADMIN);
-        boolean isMerchant = currentUser.getRoles().contains(Role.MERCHANT);
         boolean isOwner = currentUser.getUserId().equals(product.getMerchantId());
 
-        if (!(isAdmin || (isMerchant && isOwner))) {
+        if (!(isAdmin || (isOwner))) {
             throw new UnauthorizedException("You do not have permission to update this product");
         }
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
         ProductMapper.updateProductFromDTO(existingProduct, product);
-        Product saveProduct = productRepository.save(existingProduct);
 
-        actionLogService.logAction(
-                currentUser.getUserId(),
-                "UPDATE",
-                "Product",
-                productId,
-                "Updated product details"
-        );
-
-        return saveProduct;
+        return productRepository.save(existingProduct);
     }
 
     @Override
+    public Product updateProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    @Override
+    @Loggable(action = "UPDATE", entity = "Product", message = "Updated product price")
     public String updateProductPrice(String productId, BigDecimal price, BigDecimal discountPrice) {
         User currentUser = userProvider.getAuthenticatedUser();
         Product existingProduct = productRepository.findById(productId)
@@ -103,18 +90,11 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setDiscountPrice(discountPrice);
         productRepository.save(existingProduct);
 
-        actionLogService.logAction(
-                currentUser.getUserId(),
-                "UPDATE",
-                "Product",
-                productId,
-                "Updated product price"
-        );
-
         return "Product price updated successfully";
     }
 
     @Override
+    @Loggable(action = "DELETE", entity = "Product", message = "Deleted Product")
     public String deleteProduct(String productId) {
         User currentUser = userProvider.getAuthenticatedUser();
         Product product = productRepository.findById(productId).orElseThrow(() ->
@@ -125,17 +105,11 @@ public class ProductServiceImpl implements ProductService {
         product.setDeleted(true);
         productRepository.save(product);
 
-        actionLogService.logAction(
-                currentUser.getUserId(),
-                "DELETE",
-                "Product",
-                productId,
-                "Deleted product"
-        );
         return "Product deleted successfully";
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Product", message = "Updated Product enabled status")
     public String updateProductEnabledStatus(String productId, boolean enabled) {
         User currentUser = userProvider.getAuthenticatedUser();
         Product product = productRepository.findById(productId)
@@ -146,14 +120,6 @@ public class ProductServiceImpl implements ProductService {
         product.setEnabled(enabled);
         productRepository.save(product);
 
-        actionLogService.logAction(
-                currentUser.getUserId(),
-                "UPDATE",
-                "Product",
-                productId,
-                "Updated product enabled status to " + enabled
-        );
-
         return enabled ? "Product enabled successfully" : "Product disabled successfully";
     }
 
@@ -163,7 +129,7 @@ public class ProductServiceImpl implements ProductService {
             List<String> categoryIds = getAllCategoryIds(criteria.getCategoryId());
             categoryIds.add(criteria.getCategoryId());
             criteria.setCategoryIds(categoryIds);
-        } else {
+        } else if (criteria != null) {
             criteria.setCategoryIds(null);
         }
 
@@ -176,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
 
     private List<String> getAllCategoryIds(String parentId) {
         List<String> categoryIds = new ArrayList<>();
-        List<Category> subcategories = categoryRepository.findByParentIdAndEnabledTrue(parentId);
+        List<Category> subcategories = categoryService.listByParentId(parentId);
 
         for (Category subcategory : subcategories) {
             categoryIds.add(subcategory.getCategoryId());

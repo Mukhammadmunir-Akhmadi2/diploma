@@ -1,5 +1,6 @@
 package com.fosso.backend.fosso_backend.cart.model;
 
+import com.fosso.backend.fosso_backend.common.interfaces.LoggableEntity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @CompoundIndex(name = "customer_product_variant_idx",
         def = "{'customerId': 1, 'productId': 1, 'color': 1, 'size': 1}",
         unique = true)
-public class CartItem {
+public class CartItem implements LoggableEntity {
     @Id
     private String cartId;
     private String customerId;
@@ -21,4 +22,9 @@ public class CartItem {
     private String size;
     private int quantity;
     private LocalDateTime addedDateTime;
+
+    @Override
+    public String getEntityId() {
+        return cartId;
+    }
 }

@@ -2,7 +2,6 @@ package com.fosso.backend.fosso_backend.product.service;
 
 import com.fosso.backend.fosso_backend.product.dto.ProductCreateDTO;
 import com.fosso.backend.fosso_backend.product.dto.ProductFilterCriteria;
-import com.fosso.backend.fosso_backend.product.dto.ProductMerchantDTO;
 import com.fosso.backend.fosso_backend.product.dto.ProductUpdateDTO;
 import com.fosso.backend.fosso_backend.product.model.Product;
 import org.springframework.data.domain.Page;
@@ -15,6 +14,7 @@ public interface ProductService {
     Product saveProduct(ProductCreateDTO product);
     Product getProductById(String productId);
     Product updateProduct(String productId, ProductUpdateDTO product);
+    Product updateProduct(Product product);
     String updateProductPrice(String productId, BigDecimal price, BigDecimal discountPrice);
     String deleteProduct(String productId);
     String updateProductEnabledStatus(String productId, boolean enabled);

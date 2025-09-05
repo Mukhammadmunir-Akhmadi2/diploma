@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ReviewService {
-    String saveReview(Review review);
+    Review saveReview(Review review);
     String updateReview(String reviewId, Review review);
     List<Review> getReviewsByCustomerId(String customerId);
     Page<Review> getReviewsByProductId(String productId, Pageable pageable);

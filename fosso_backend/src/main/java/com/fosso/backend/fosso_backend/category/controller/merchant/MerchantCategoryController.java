@@ -30,7 +30,6 @@ public class MerchantCategoryController {
             @RequestParam(required = false) String id,
             @RequestParam String name) {
 
-        boolean isUnique = categoryService.isNameUnique(name, id);
         if(categoryService.isNameUnique(name, id)) {
             throw new DuplicateResourceException("Category already exists: " + name);
         }
