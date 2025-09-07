@@ -32,8 +32,6 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
     @Query("{'categoryId': ?0, 'enabled': true}")
     Optional<Category> findByCategoryIdAndEnabledTrue(String categoryId);
 
-    List<Category> findByLevel(int level);
-
     boolean existsByName(String name);
 
     List<Category> findByEnabledTrue(Sort sort);

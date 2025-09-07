@@ -85,7 +85,7 @@ public class AdminProductServiceImpl implements AdminProductService {
     }
     @Override
     public Page<Product> listAllByMerchantId(String merchantId, Pageable pageable) {
-        Page<Product> products = productRepository.findByMerchant(merchantId, pageable);
+        Page<Product> products = productRepository.findByMerchantId(merchantId, pageable);
         if (products == null || products.isEmpty()) {
             throw new ResourceNotFoundException("No products found for merchant ID: " + merchantId);
         }

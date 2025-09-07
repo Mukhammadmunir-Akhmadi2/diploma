@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface CartItemRepository extends MongoRepository<CartItem, String> {
 
-    @Query("{'customerId': ?0}")
     List<CartItem> findByCustomerId(String customerId);
 
     @Query(value = "{'customerId': ?0}", delete = true)
