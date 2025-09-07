@@ -14,10 +14,8 @@ import java.util.Optional;
 @Repository
 public interface BrandRepository extends MongoRepository<Brand, String> {
 
-    @Query("{'enabled': true}")
     Page<Brand> findAllAndEnabledTrue(Pageable pageable);
 
-    @Query("{'enabled': true}")
     List<Brand> findAllAndEnabledTrue(Sort sort);
 
     Optional<Brand> findByName(String name);
@@ -35,7 +33,4 @@ public interface BrandRepository extends MongoRepository<Brand, String> {
     List<Brand> findByCategoryIdAndEnabledTrue(String categoryId);
 
     boolean existsByName(String name);
-
-    @Query("{'enabled': false}")
-    List<Brand> findAllEnabledFalse();
 }
