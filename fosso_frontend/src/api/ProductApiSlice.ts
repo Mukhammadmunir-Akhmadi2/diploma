@@ -36,3 +36,5 @@ export const productApiSlice = apiClientSlice.injectEndpoints({
     }),
   }),
 });
+
+export const { useGetAllProductsQuery, useGetProductByIdQuery, useIncrementReviewCountMutation} = productApiSlice;
