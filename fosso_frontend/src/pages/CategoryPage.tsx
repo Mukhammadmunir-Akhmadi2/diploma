@@ -6,7 +6,7 @@ import { Slider } from "../components/ui/slider";
 import { Separator } from "../components/ui/separator";
 import type { ProductBriefDTO } from "../types/product";
 import { listSubcategories, getCategoryById } from "../api/Category";
-import { getAllProducts } from "../api/Product";
+import { useGetAllProductsQuery } from "../api/ProductApiSlice";
 import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { Gender } from "../types/enums";
 import { useToast } from "../hooks/useToast";
@@ -78,12 +78,26 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const { toast } = useToast();
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const [applyFilters, setApplyFilters] = useState<boolean>(false);
 
+  const { data, isLoading, isError, error } = useGetAllProductsQuery({
+    filterCriteria: {
+      categoryId: categoryId || undefined,
+      brandId: selectedBrand || undefined,
+      gender: selectedGender || undefined,
+      keyword: keyword || undefined,
+      color: selectedColor || undefined,
+      minPrice: priceRange[0],
+      maxPrice: priceRange[1],
+    },
+    page,
+    size: 4,
+    sort: isPopular ? "rating,desc" : undefined,
+  });
+
+  
+
   useEffect(() => {
-    setIsLoading(true);
     const fetchProducts = async () => {
       try {
         const response = await getAllProducts(

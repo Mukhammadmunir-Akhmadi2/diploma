@@ -36,3 +36,5 @@ export const authApiSlice = apiClientSlice.injectEndpoints({
     }),
   }),
 });
+
+export const { useLoginMutation, useRegisterMutation, useLazyCheckEmailUniqueQuery } = authApiSlice;

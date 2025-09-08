@@ -6,12 +6,14 @@ import { Label } from "../components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
 import { useToast } from "../hooks/useToast";
-import { useMutation } from "@tanstack/react-query";
-import { register as registerApi, checkEmailUnique } from "../api/Auth";
+import {
+  useRegisterMutation,
+  useLazyCheckEmailUniqueQuery,
+} from "../api/AuthApiSlice";
 import { type ErrorResponse } from "../types/error";
 import { Spin } from "antd";
 import * as Yup from "yup";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import type { RegisterForm, RegisterRequest } from "../types/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -56,31 +58,46 @@ const Signup = () => {
     },
     resolver: yupResolver(validationSchema),
   });
-  const signupMutation = useMutation({
-    mutationFn: registerApi,
-    onSuccess: () => {
+
+  const [registerUser, { isLoading }] = useRegisterMutation();
+  const [triggerCheckEmailUnique] = useLazyCheckEmailUniqueQuery();
+
+  const onSubmit: SubmitHandler<RegisterForm> = async (values: RegisterForm) => {
+    const [firstName, ...rest] = values.name.trim().split(" ");
+    const lastName = rest.join(" ").trim();
+    const payload: RegisterRequest = {
+      firstName,
+      lastName: lastName.length === 0 ? null : lastName,
+      email: values.email,
+      phoneNumber: values.phoneNumber,
+      password: values.password,
+    };
+
+    try {
+      await registerUser(payload).unwrap();
+
       toast({
         title: t("signup.success"),
         description: t("signup.redirecting"),
       });
+
       navigate("/login");
-    },
-    onError: (error: any) => {
-      const errorResponse = error as ErrorResponse;
+    } catch (error: any) {
+      const errorResponse = error.data as ErrorResponse;
       console.error("Signup error:", errorResponse);
       toast({
         title: t("signup.failed"),
-        description: error.message || t("signup.error"),
+        description: errorResponse.message || t("signup.error"),
         variant: "destructive",
       });
-    },
-  });
+    }
+  };
 
   const goBack = () => {
     navigate(-1);
   };
 
-  if (signupMutation.isPending) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-white dark:bg-gray-900">
         <Spin
@@ -136,21 +153,7 @@ const Signup = () => {
                 {t("signup.title")}
               </h2>
 
-              <form
-                className="space-y-5"
-                onSubmit={handleSubmit((values) => {
-                  const [firstName, ...rest] = values.name.trim().split(" ");
-                  const lastName = rest.join(" ").trim();
-                  const payload: RegisterRequest = {
-                    firstName,
-                    lastName: lastName.length === 0 ? null : lastName,
-                    email: values.email,
-                    phoneNumber: values.phoneNumber,
-                    password: values.password,
-                  };
-                  signupMutation.mutate(payload);
-                })}
-              >
+              <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-2 relative">
                   <Label htmlFor="name">{t("signup.name")}</Label>
                   <Input
@@ -173,11 +176,13 @@ const Signup = () => {
                     {...register("email")}
                     onBlur={async (e) => {
                       try {
-                        await checkEmailUnique(e.target.value);
+                        await triggerCheckEmailUnique({
+                          email: e.target.value,
+                        }).unwrap();
                         setEmailError(null);
                       } catch (error: any) {
                         const errMsg =
-                          error?.message || t("error.emailValidationFailed");
+                          error?.data.message || t("error.emailValidationFailed");
                         setEmailError(errMsg);
                       }
                     }}

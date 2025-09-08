@@ -9,6 +9,10 @@ import type {
   FetchBaseQueryMeta,
 } from "@reduxjs/toolkit/query";
 
+export type ApiError = FetchBaseQueryError & {
+  data?: ErrorResponse;
+};
+
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:8080",
   prepareHeaders: (headers, { getState }) => {
@@ -23,16 +27,14 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithAuth: BaseQueryFn<
   string | FetchArgs,
   unknown,
-  FetchBaseQueryError,
+  ApiError,
   {},
   FetchBaseQueryMeta
 > = async (args, api, extraOptions) => {
   const result = await baseQuery(args, api, extraOptions);
 
   if (result.error) {
-    const typedError = result.error as FetchBaseQueryError & {
-      data?: ErrorResponse;
-    };
+    const typedError = result.error as ApiError;
 
     if (typedError.status === 401 || typedError.status === 403) {
       api.dispatch(logout());
