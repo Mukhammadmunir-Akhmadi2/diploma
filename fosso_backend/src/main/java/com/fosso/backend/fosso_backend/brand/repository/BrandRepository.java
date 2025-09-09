@@ -29,8 +29,5 @@ public interface BrandRepository extends MongoRepository<Brand, String> {
     @Query("{'name': {$regex: ?0, $options: 'i'}, 'enabled': true}")
     Page<Brand> findByKeywordAndEnabledTrue(String keyword, Pageable pageable);
 
-    @Query("{'categoryIds': ?0, 'enabled': true}")
-    List<Brand> findByCategoryIdAndEnabledTrue(String categoryId);
-
     boolean existsByName(String name);
 }

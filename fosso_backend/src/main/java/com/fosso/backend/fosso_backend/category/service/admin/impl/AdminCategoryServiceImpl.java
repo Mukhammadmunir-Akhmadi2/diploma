@@ -1,12 +1,11 @@
 package com.fosso.backend.fosso_backend.category.service.admin.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
 import com.fosso.backend.fosso_backend.category.model.Category;
 import com.fosso.backend.fosso_backend.category.repository.CategoryRepository;
 import com.fosso.backend.fosso_backend.category.service.CategoryValidator;
 import com.fosso.backend.fosso_backend.category.service.admin.AdminCategoryService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
-import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +22,9 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryValidator categoryValidator;
     private final CategoryParentManager categoryParentManager;
-    private final ActionLogService actionLogService;
-    private final AuthenticatedUserProvider userProvider;
 
     @Override
+    @Loggable(action = "DELETE", entity = "Category", message = "Deleted category")
     public String deleteCategory(String categoryId) {
         Category category = categoryValidator.getExistingCategory(categoryId);
         List<Category> children = categoryRepository.findByParentId(categoryId);
@@ -41,30 +39,15 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         }
         categoryRepository.delete(category);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "DELETE",
-                "Category",
-                categoryId,
-                "Deleted category"
-        );
-
         return "Category deleted successfully";
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Category", message =  "Updated category enabled status")
     public String updateCategoryEnabledStatus(String categoryId, boolean enabled) {
         Category category = categoryValidator.getExistingCategory(categoryId);
         category.setEnabled(enabled);
         categoryRepository.save(category);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "Category",
-                categoryId,
-                "Updated category enabled status to " + enabled
-        );
 
         return "Category status updated successfully";
     }
@@ -78,6 +61,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         return disabledCategories;
     }
     @Override
+    @Loggable(action = "UPDATE", entity = "Category", message = "Updated category details")
     public Category updateCategory(Category updatedTargetCategory) {
         Category existingCategory = categoryRepository.findByCategoryIdAndEnabledTrue(updatedTargetCategory.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + updatedTargetCategory.getCategoryId()));
@@ -93,18 +77,11 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         if (!oldParentId.equals(newParentId)) {
             categoryParentManager.reassignParent(existingCategory, newParentId);
         }
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "Category",
-                updatedTargetCategory.getCategoryId(),
-                "Updated category details"
-        );
-
         return categoryRepository.save(existingCategory);
     }
 
     @Override
+    @Loggable(action = "MERGED", entity = "Category", message = "Merged the categories") // needs change
     public String mergeCategories(String sourceCategoryId, String targetCategoryId) {
         if (sourceCategoryId.equals(targetCategoryId)) {
             throw new IllegalArgumentException("Source and target categories must be different");
@@ -132,14 +109,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         }
 
         categoryRepository.delete(sourceCategory);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "MERGED",
-                "Category",
-                sourceCategoryId + " " + targetCategoryId,
-                "Merged the category " + sourceCategory.getName() + " to " + targetCategory.getName() + " category."
-        );
 
         return "Categories merged successfully";
     }

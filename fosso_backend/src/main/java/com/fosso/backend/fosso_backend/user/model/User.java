@@ -2,6 +2,7 @@ package com.fosso.backend.fosso_backend.user.model;
 
 import com.fosso.backend.fosso_backend.common.enums.Gender;
 import com.fosso.backend.fosso_backend.common.enums.Role;
+import com.fosso.backend.fosso_backend.common.interfaces.LoggableEntity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Document(collection = "users")
-public class User implements UserDetails {
+public class User implements UserDetails, LoggableEntity {
     @Id
     private String userId;
     @Indexed(unique = true)
@@ -95,5 +96,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    @Override
+    public String getEntityId() {
+        return userId;
     }
 }

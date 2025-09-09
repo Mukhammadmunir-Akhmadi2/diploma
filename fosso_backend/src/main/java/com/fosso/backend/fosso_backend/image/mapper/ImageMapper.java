@@ -16,10 +16,4 @@ public class ImageMapper {
                 .base64Data(Base64.getEncoder().encodeToString(image.getData().getData()))
                 .build();
     }
-    public static byte[] getImageData(ImageDTO imageDTO) {
-        if (imageDTO.getBase64Data() != null) {
-            return Base64.getDecoder().decode(imageDTO.getBase64Data());
-        }
-        return new byte[0];
-    }
 }

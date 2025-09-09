@@ -1,11 +1,8 @@
 package com.fosso.backend.fosso_backend.user.dto;
 
 import com.fosso.backend.fosso_backend.common.enums.Gender;
-import com.fosso.backend.fosso_backend.common.enums.Role;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-
-import java.util.Set;
 
 @Data
 public class UserUpdateDTO {

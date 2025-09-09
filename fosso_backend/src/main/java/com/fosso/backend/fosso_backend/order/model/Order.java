@@ -2,6 +2,7 @@ package com.fosso.backend.fosso_backend.order.model;
 
 import com.fosso.backend.fosso_backend.common.enums.OrderStatus;
 import com.fosso.backend.fosso_backend.common.enums.PaymentMethod;
+import com.fosso.backend.fosso_backend.common.interfaces.LoggableEntity;
 import com.fosso.backend.fosso_backend.user.model.Address;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Data
 @Document(collection = "orders")
-public class Order {
+public class Order implements LoggableEntity {
     @Id
     private String orderId;
     @Indexed
@@ -36,4 +37,9 @@ public class Order {
     private List<OrderDetail> orderDetails = new ArrayList<>();
     private LocalDateTime createdDateTime;
     private LocalDateTime updatedDateTime;
+
+    @Override
+    public String getEntityId() {
+        return orderId;
+    }
 }

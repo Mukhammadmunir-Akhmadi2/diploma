@@ -12,7 +12,6 @@ public interface ProductRepository extends MongoRepository<Product, String>, Pro
     //user
 
     //merchant
-    @Query("{'merchantId': ?0, 'isDeleted': false}")
     Page<Product> findByMerchantIdAndDeletedNot(String merchantId, Pageable pageable);
 
     //admin

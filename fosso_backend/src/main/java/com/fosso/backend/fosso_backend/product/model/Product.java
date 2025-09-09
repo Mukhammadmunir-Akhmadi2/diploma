@@ -2,6 +2,7 @@ package com.fosso.backend.fosso_backend.product.model;
 
 import com.fosso.backend.fosso_backend.common.enums.Gender;
 import com.fosso.backend.fosso_backend.common.enums.Season;
+import com.fosso.backend.fosso_backend.common.interfaces.LoggableEntity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,7 +15,7 @@ import java.util.*;
 
 @Data
 @Document(collection = "products")
-public class Product {
+public class Product implements LoggableEntity {
     @Id
     private String productId;
     @Indexed
@@ -51,5 +52,10 @@ public class Product {
     }
     public void setProductVariant(ProductVariant productVariant) {
         this.productVariants.add(productVariant);
+    }
+
+    @Override
+    public String getEntityId() {
+        return productId;
     }
 }

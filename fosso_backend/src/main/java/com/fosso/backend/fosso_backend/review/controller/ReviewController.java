@@ -1,6 +1,5 @@
 package com.fosso.backend.fosso_backend.review.controller;
 
-
 import com.fosso.backend.fosso_backend.common.utils.PaginationUtil;
 import com.fosso.backend.fosso_backend.common.utils.ValidationUtils;
 import com.fosso.backend.fosso_backend.review.dto.ReviewDTO;
@@ -28,8 +27,8 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<String> createReview(@Valid @RequestBody ReviewDTO reviewDTO) {
-        String response = reviewService.saveReview(ReviewMapper.toEntity(reviewDTO));
-        return ResponseEntity.ok(response);
+        reviewService.saveReview(ReviewMapper.toEntity(reviewDTO));
+        return ResponseEntity.ok("Review created successfully");
     }
 
     @PutMapping("/{reviewId}")

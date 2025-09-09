@@ -1,14 +1,14 @@
 package com.fosso.backend.fosso_backend.order.service.impl;
 
-import com.fosso.backend.fosso_backend.action.service.ActionLogService;
 import com.fosso.backend.fosso_backend.cart.model.CartItem;
+import com.fosso.backend.fosso_backend.cart.service.CartItemService;
+import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.enums.OrderStatus;
-import com.fosso.backend.fosso_backend.common.enums.PaymentMethod;
 import com.fosso.backend.fosso_backend.common.exception.CartEmptyException;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import com.fosso.backend.fosso_backend.image.mapper.ImageMapper;
 import com.fosso.backend.fosso_backend.image.model.Image;
-import com.fosso.backend.fosso_backend.image.repository.ImageRepository;
+import com.fosso.backend.fosso_backend.image.service.ImageService;
 import com.fosso.backend.fosso_backend.order.dto.CheckoutRequest;
 import com.fosso.backend.fosso_backend.order.dto.OrderMerchantDTO;
 import com.fosso.backend.fosso_backend.order.mapper.OrderMapper;
@@ -16,33 +16,23 @@ import com.fosso.backend.fosso_backend.order.model.Order;
 import com.fosso.backend.fosso_backend.order.model.OrderDetail;
 import com.fosso.backend.fosso_backend.order.model.OrderTrack;
 import com.fosso.backend.fosso_backend.product.model.Product;
-import com.fosso.backend.fosso_backend.cart.repository.CartItemRepository;
 import com.fosso.backend.fosso_backend.order.repository.OrderRepository;
 import com.fosso.backend.fosso_backend.product.model.ProductVariant;
-import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
+import com.fosso.backend.fosso_backend.product.service.ProductService;
 import com.fosso.backend.fosso_backend.security.AuthenticatedUserProvider;
 import com.fosso.backend.fosso_backend.user.model.Address;
 import com.fosso.backend.fosso_backend.user.model.User;
-import com.fosso.backend.fosso_backend.user.repository.UserRepository;
 import com.fosso.backend.fosso_backend.order.service.OrderService;
+import com.fosso.backend.fosso_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -53,13 +43,13 @@ import java.util.stream.Stream;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final ProductRepository productRepository;
-    private final CartItemRepository cartItemRepository;
+    private final UserService userService;
+    private final ProductService productService;
+    private final CartItemService cartItemService;
+    private final ImageService imageService;
     private final AuthenticatedUserProvider userProvider;
-    private final ActionLogService actionLogService;
-    private final ImageRepository imageRepository;
 
+    @Override
     public Page<Order> listByPage(String keyword, Pageable pageable) {
         if (keyword != null && !keyword.isEmpty()) {
             return orderRepository.findByKeyword(keyword, pageable);
@@ -67,16 +57,19 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(pageable);
     }
 
+    @Override
     public Order getOrder(String id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + id));
     }
 
+    @Override
     public Order getByTrackingNumber(String trackingNumber) {
         return orderRepository.findByOrderTrackingNumber(trackingNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with tracking number: " + trackingNumber));
     }
 
+    @Override
     public Page<Order> listByCustomer(String customerId, Pageable pageable) {
         Page<Order> orderPage = orderRepository.findByCustomerId(customerId, pageable);
         if (orderPage.isEmpty()){
@@ -85,10 +78,12 @@ public class OrderServiceImpl implements OrderService {
         return orderPage;
     }
 
+    @Override
+    @Loggable(action = "CREATE", entity = "Order", message = "Created a new order")
     public Order createOrder(CheckoutRequest checkoutRequest) {
         User customer = userProvider.getAuthenticatedUser();
 
-        List<CartItem> cartItems = cartItemRepository.findByCustomerId(customer.getUserId());
+        List<CartItem> cartItems = cartItemService.getByCustomerId(customer.getUserId());
         if (cartItems.isEmpty()) {
             throw new CartEmptyException("Shopping cart is empty");
         }
@@ -114,11 +109,9 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal shippingCost = BigDecimal.ZERO;
 
         for (CartItem item : cartItems) {
-            Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + item.getProductId()));
+            Product product = productService.getProductById(item.getProductId());
 
-            User merchant = userRepository.findById(product.getMerchantId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Merchant not found with ID: " + product.getMerchantId()));
+            User merchant = userService.getUserById(product.getMerchantId());
 
             ProductVariant matchingVariant = product.getProductVariants()
                     .stream()
@@ -133,7 +126,7 @@ public class OrderServiceImpl implements OrderService {
             }
             matchingVariant.setStockQuantity(matchingVariant.getStockQuantity() - item.getQuantity());
 
-            productRepository.save(product);
+            productService.updateProduct(product);
 
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setMerchantId(merchant.getUserId());
@@ -190,21 +183,13 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        cartItemRepository.deleteByCustomerId(customer.getUserId());
+        cartItemService.deleteByCustomerId(customer.getUserId());
 
-        //notifyMerchantsViaBot(savedOrder);
-
-        actionLogService.logAction(
-                customer.getUserId(),
-                "CREATE",
-                "Order",
-                savedOrder.getOrderTrackingNumber(),
-                "Created a new order"
-        );
         return savedOrder;
     }
 
     @Override
+    @Loggable(action = "CANCEL", entity = "Order", message = "Cancelled the order")
     public String cancelOrder(String orderId, String notes) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
@@ -228,18 +213,11 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
 
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "CANCEL",
-                "Order",
-                orderId,
-                "Cancelled the order"
-        );
-
         return "Order status updated successfully";
     }
 
 
+    @Loggable(action = "UPDATE", entity = "Order", message = "Updated order status")
     public Order updateStatus(String orderId, OrderStatus status, String notes) {
         if (status == OrderStatus.CANCELLED) {
             throw new IllegalArgumentException("Order status cannot be updated to CANCELLED using this method.");
@@ -256,20 +234,11 @@ public class OrderServiceImpl implements OrderService {
             orderDetail.getOrderTrack().setStatus(status);
         }
 
-        Order updatedOrder = orderRepository.save(order);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "Order",
-                orderId,
-                "Updated order status to " + status
-        );
-
-        return updatedOrder;
+        return orderRepository.save(order);
     }
 
     @Override
+    @Loggable(action = "UPDATE", entity = "Order", message = "Updated product variant status") // needs change
     public Order updateProductStatus(String orderId, String productId, String color, String size, OrderStatus status, String notes) {
         if (status == OrderStatus.CANCELLED) {
             throw new IllegalArgumentException("Order status cannot be updated to CANCELLED using this method.");
@@ -304,17 +273,7 @@ public class OrderServiceImpl implements OrderService {
             order.setStatus(OrderStatus.PROCESSING);
         }
 
-        Order updatedOrder = orderRepository.save(order);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "UPDATE",
-                "Order",
-                orderId,
-                "Updated product variant status for product ID: " + productId + ", color: " + color + ", size: " + size + " to " + status
-        );
-
-        return updatedOrder;
+        return orderRepository.save(order);
     }
 
 
@@ -327,6 +286,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    @Override
+    @Loggable(action = "CANCEL", entity = "Order", message = "Cancelled product variant") // needs change
     public String cancelProductFromOrder(String orderId, String productId, String color, String size, String notes) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
@@ -357,18 +318,10 @@ public class OrderServiceImpl implements OrderService {
         }
 
         orderRepository.save(order);
-
-        actionLogService.logAction(
-                userProvider.getAuthenticatedUser().getUserId(),
-                "CANCEL",
-                "Order",
-                orderId,
-                "Cancelled product variant with ID: " + productId + ", color: " + color + ", size: " + size + " from the order"
-        );
-
         return "Product variant removed from order successfully";
     }
 
+    @Override
     public Page<OrderMerchantDTO> listByMerchant(Pageable pageable) {
         User user = userProvider.getAuthenticatedUser();
         Page<Order> orderPage = orderRepository.findByMerchantIdInOrderDetails(user.getUserId(), pageable);
@@ -380,18 +333,16 @@ public class OrderServiceImpl implements OrderService {
                 .flatMap(order -> {
                     List<OrderDetail> merchantOrderDetails = order.getOrderDetails().stream()
                             .filter(detail -> detail.getMerchantId().equals(user.getUserId()))
-                            .collect(Collectors.toList());
+                            .toList();
 
                     if (merchantOrderDetails.isEmpty()) {
                         return Stream.empty();
                     }
 
                     return merchantOrderDetails.stream().map(orderDetail -> {
-                        Product product = productRepository.findById(orderDetail.getProductId())
-                                .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + orderDetail.getProductId()));
+                        Product product = productService.getProductById(orderDetail.getProductId());
 
-                        Image image = imageRepository.findById(product.getMainImagesId().getFirst())
-                                .orElseThrow(() -> new ResourceNotFoundException("Image not found with ID: " + product.getMainImagesId().getFirst()));
+                        Image image = imageService.getImageById(product.getMainImagesId().getFirst());
 
                         return OrderMapper.convertToMerchantDTO(order, orderDetail, ImageMapper.convertToDTO(image));
                     });
