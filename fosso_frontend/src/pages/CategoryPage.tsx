@@ -57,7 +57,10 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const { categoryId, brandId, keyword } = useParams();
 
   const [pendingFilters, setPendingFilters] = useState({
-    priceRange: [null, null] as [number | null, number | null],
+    priceRange: [undefined, undefined] as [
+      number | undefined,
+      number | undefined
+    ],
     selectedColor: null as string | null,
     selectedBrand: brandId || null,
     selectedGender: preSelectedGender || null,
@@ -71,7 +74,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const { toast } = useToast();
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
 
-  const { data, isLoading, isError, error } = useGetAllProductsQuery({
+  const { data, currentData, isLoading, isFetching, isError, error } = useGetAllProductsQuery({
     filterCriteria: {
       categoryId: categoryId || undefined,
       brandId: appliedFilters.selectedBrand || undefined,
@@ -86,29 +89,28 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     sort: isPopular ? "rating,desc" : undefined,
   });
 
-  if (isError) {
-    const response = error.data as ErrorResponse;
-    if (response.status === 404) {
-      toast({
-        title: t("products.no_results"),
-        description: t("products.no_results_description", {
-          defaultValue: "No products found for this criteria.",
-        }),
-      });
-    } else {
-      console.error("Error fetching products:", response);
-      toast({
-        title: t("products.error"),
-        description: t("products.error_description"),
-        variant: "destructive",
-      });
-    }
-  }
+  const pageProducts = currentData || data;
 
-  const handleApplyFilters = () => {
-    setAppliedFilters(pendingFilters);
-    setPage(1);
-  };
+  useEffect(() => {
+    if (isError && error) {
+      const response = error.data as ErrorResponse;
+      if (response.status === 404) {
+        toast({
+          title: t("products.no_results"),
+          description: t("products.no_results_description", {
+            defaultValue: "No products found for this criteria.",
+          }),
+        });
+      } else {
+        console.error("Error fetching products:", response);
+        toast({
+          title: t("products.error"),
+          description: t("products.error_description"),
+          variant: "destructive",
+        });
+      }
+    }
+  }, [isError, error]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -139,6 +141,11 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     fetchProducts();
   }, [categoryId, brandId, keyword, page]);
 
+  const handleApplyFilters = () => {
+    setAppliedFilters(pendingFilters);
+    setPage(1);
+  };
+
   const handleGenderChange = (gender: Gender | null) => {
     setPendingFilters((prev) => ({
       ...prev,
@@ -150,13 +157,13 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     setPendingFilters((perv) => ({
       ...perv,
       selectedBrand: null,
-      priceRange: [null, null],
+      priceRange: [undefined, undefined],
       selectedColor: null,
       selectedGender: null,
     }));
   };
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     // Show Ant Design's Spin component while loading
     return (
       <div className="flex items-center justify-center h-screen">
@@ -266,8 +273,8 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                   </h3>
                   <Slider
                     value={[
-                      pendingFilters.priceRange[0],
-                      pendingFilters.priceRange[1],
+                      pendingFilters.priceRange[0] || 0,
+                      pendingFilters.priceRange[1] || null,
                     ]}
                     min={0}
                     max={2000}
@@ -361,7 +368,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
             <div className="flex-grow">
               <div className="mb-6 flex items-center justify-between">
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {data?.totalItems} {t("products.items")}
+                  {pageProducts?.totalItems} {t("products.items")}
                 </p>
 
                 <div className="hidden flex items-center gap-2">
@@ -376,9 +383,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                 </div>
               </div>
 
-              {data?.products && data?.products.length > 0 ? (
+              {pageProducts?.products && pageProducts?.products.length > 0 ? (
                 <ProductPagination
-                  paginatedProduct={data}
+                  paginatedProduct={pageProducts}
                   page={page}
                   setPage={setPage}
                 />

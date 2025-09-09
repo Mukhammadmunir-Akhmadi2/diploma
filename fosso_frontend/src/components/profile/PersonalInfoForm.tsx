@@ -4,7 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import type { UserProfileDTO, UserUpdateDTO } from "../../types/user";
 import type { Gender } from "../../types/enums";
-import { checkEmailUnique } from "../../api/Auth";
+import { useLazyCheckEmailUniqueQuery } from "../../api/AuthApiSlice";
 import { updateCurrentUser } from "../../api/User";
 import { useToast } from "../ui/use-toast";
 import type { ErrorResponse } from "../../types/error";
@@ -19,17 +19,23 @@ interface PersonalInfoFormProps {
 
 const PersonalInfoForm: React.FC = () => {
   const { user, setUser } = useOutletContext<PersonalInfoFormProps>();
-  
+
   const schema = Yup.object({
     firstName: Yup.string().required(),
     lastName: Yup.string(),
     email: Yup.string().email().required(),
     phoneNumber: Yup.string().required(),
+    isPhoneNumberPrivate: Yup.boolean().required(),
+    dateOfBirth: Yup.string(), 
+    isDateOfBirthPrivate: Yup.boolean(),
+    gender: Yup.mixed<Gender>().oneOf(["MALE", "FEMALE"]),
+    isGenderPrivate: Yup.boolean(),
   });
 
   const { toast } = useToast();
   const { t } = useLanguage();
   const [emailError, setEmailError] = React.useState<string | null>(null);
+  const [triggerCheckEmailUnique] = useLazyCheckEmailUniqueQuery();
 
   const {
     register,
@@ -47,7 +53,7 @@ const PersonalInfoForm: React.FC = () => {
     setEmailError(null); // reset error
 
     try {
-      await checkEmailUnique(email, user.userId);
+      await triggerCheckEmailUnique({ email, userId: user.userId });
     } catch (error: any) {
       const errorResponse = error as ErrorResponse;
       setEmailError(errorResponse?.message || t("error.emailValidationFailed"));

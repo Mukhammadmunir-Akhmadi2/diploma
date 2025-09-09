@@ -2,25 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useToast } from "../../hooks/useToast";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Heart,
-  Star,
-  ShoppingBag,
-} from "lucide-react";
+import { ChevronLeft, Heart, Star, ShoppingBag } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import ProductReviews from "./ProductReviews";
-import type {
-  ProductDetailedDTO,
-  ProductVariantDTO,
-} from "../../types/product";
-import { getProductById, incrementReviewCount } from "../../api/Product";
+import type { ProductVariantDTO } from "../../types/product";
+import {
+  useGetProductByIdQuery,
+  useIncrementReviewCountMutation,
+} from "../../api/ProductApiSlice";
 import type { ErrorResponse } from "../../types/error";
 import { Spin } from "antd";
-import type { ImageDTO } from "../../types/image";
-import { getAllImagesForOwner } from "../../api/Image";
 import type { CartItemCreateDTO } from "../../types/cart";
 import { addProductToCart } from "../../api/Cart";
 import { type BrandDTO } from "../../types/brand";
@@ -33,8 +25,9 @@ import {
 import { useAppSelector } from "../../store/hooks";
 import { Modal } from "antd";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import ProductDetailImages from "./ProductDetailImages";
 
-const ProductDetail = () => {
+const ProductDetail: React.FC = () => {
   const { t } = useLanguage();
   const user = useAppSelector((state) => state.auth.user);
   const avatar = useAppSelector((state) => state.auth.avatar);
@@ -43,12 +36,9 @@ const ProductDetail = () => {
 
   const { toast } = useToast();
   const { id } = useParams();
-  const [product, setProduct] = useState<ProductDetailedDTO | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [images, setImages] = useState<ImageDTO[]>([]);
+
   const [brand, setBrand] = useState<BrandDTO | null>(null);
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] =
     useState<ProductVariantDTO | null>(null);
   const [availableSizes, setAvailableSizes] = useState<string[]>([]);
@@ -62,87 +52,67 @@ const ProductDetail = () => {
   const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
   const [hasReviewed, setHasReviewed] = useState<boolean>(false);
 
+  const [incrementReviewCount] = useIncrementReviewCountMutation();
+
+  const {
+    data: product,
+    isLoading,
+    isError,
+    error,
+  } = useGetProductByIdQuery(id);
+
+  if (isError) {
+    const errorResponse = error as ErrorResponse;
+    console.error("Error fetching product:", errorResponse);
+    toast({
+      title: t("product.fetchError"),
+      description: t("product.fetchErrorDesc"),
+      variant: "destructive",
+    });
+  }
   useEffect(() => {
-    const fetchProductAndImages = async () => {
-      setIsLoading(true);
-      try {
-        if (id) {
-          // Fetch product details
-          const productData = await getProductById(id);
-          setProduct(productData);
-
-          const mainImages: ImageDTO[] = [];
-          const additionalImages: ImageDTO[] = [];
-
-          // Fetch brand details
-          if (productData.brandId) {
-            const brandData = await getBrandById(productData.brandId);
-            setBrand(brandData);
-          }
-          // Fetch main images
-          if (productData.mainImagesId) {
-            const mainImageData = await getAllImagesForOwner(
-              productData.productId,
-              "PRODUCT_IMAGE_MAIN"
-            );
-            mainImages.push(...mainImageData);
-          }
-
-          // Fetch additional images
-          if (productData.imagesId) {
-            const additionalImageData = await getAllImagesForOwner(
-              productData.productId,
-              "PRODUCT_IMAGE"
-            );
-            additionalImages.push(...additionalImageData);
-          }
-
-          setSelectedVariant(productData.productVariants[0]);
-          // Combine main images and additional images, ensuring main images come first
-          setImages([...mainImages, ...additionalImages]);
-        }
-      } catch (error: any) {
-        const errorResponse = error as ErrorResponse;
-        console.error("Error fetching product or images:", errorResponse);
-        toast({
-          title: t("product.fetchError"),
-          description: t("product.fetchErrorDesc"),
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
+    const fetchProduct = async () => {
+      // Fetch brand details
+      if (product.brandId) {
+        const brandData = await getBrandById(product.brandId);
+        setBrand(brandData);
       }
-    };
 
-    fetchProductAndImages();
+      setSelectedVariant(product.productVariants[0]);
+    };
+    fetchProduct();
   }, []);
 
   useEffect(() => {
     const fetchReviewAndIncementReview = async () => {
-      if (id) {
-        // Increment review count
-        const viewedProducts = JSON.parse(
-          localStorage.getItem("viewedProducts") || "[]"
-        );
+      try {
+        if (id) {
+          // Increment review count
+          const viewedProducts = JSON.parse(
+            localStorage.getItem("viewedProducts") || "[]"
+          );
 
-        if (!viewedProducts.includes(id)) {
-          await incrementReviewCount(id);
-          localStorage.setItem(
-            "viewedProducts",
-            JSON.stringify([...viewedProducts, id])
-          );
-        }
-        if (user) {
-          const userReview = await getReviewByProductIdAndCustomerId(
-            id,
-            user.userId
-          );
-          if (userReview) {
-            setUserRating(userReview.rating);
-            setReviewText(userReview.comment || "");
-            setHasReviewed(true);
+          if (!viewedProducts.includes(id)) {
+            await incrementReviewCount(id);
+            localStorage.setItem(
+              "viewedProducts",
+              JSON.stringify([...viewedProducts, id])
+            );
+          }
+          if (user) {
+            const userReview = await getReviewByProductIdAndCustomerId(
+              id,
+              user.userId
+            );
+            if (userReview) {
+              setUserRating(userReview.rating);
+              setReviewText(userReview.comment || "");
+              setHasReviewed(true);
+            }
           }
         }
+      } catch (error: any) {
+        console.log(error)
       }
     };
     fetchReviewAndIncementReview();
@@ -157,20 +127,6 @@ const ProductDetail = () => {
 
     setUserRating(star);
     setIsReviewModalVisible(true);
-  };
-
-  const nextImage = () => {
-    if (images.length > 0) {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }
-  };
-
-  const prevImage = () => {
-    if (images.length > 0) {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === 0 ? images.length - 1 : prevIndex - 1
-      );
-    }
   };
 
   const handleColorChange = (color: string) => {
@@ -376,7 +332,7 @@ const ProductDetail = () => {
       <div className="container mx-auto px-4 py-8 flex-grow">
         <div className="mb-4">
           <Link
-            to="/category/clothing"
+            to="/category"
             className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
@@ -386,56 +342,7 @@ const ProductDetail = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Images */}
-          <div className="space-y-4">
-            <div className="bg-gray-100 dark:bg-gray-800 aspect-[3/4] relative overflow-hidden">
-              {images && (
-                <img
-                  src={`data:${images[currentImageIndex].contentType};base64,${images[currentImageIndex].base64Data}`}
-                  alt={product?.productName}
-                  className="w-full h-full object-contain"
-                />
-              )}
-
-              {/* Image navigation controls */}
-              <button
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/70 dark:bg-black/70 p-2 rounded-full"
-                onClick={prevImage}
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-
-              <button
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/70 dark:bg-black/70 p-2 rounded-full"
-                onClick={nextImage}
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Thumbnail gallery */}
-            <div className="flex space-x-2 overflow-x-auto pb-2">
-              {images.map((img, idx) => (
-                <button
-                  key={img.imageId}
-                  className={`flex-shrink-0 w-16 h-20 border-2 ${
-                    currentImageIndex === idx
-                      ? "border-blue-500"
-                      : "border-transparent"
-                  }`}
-                  onClick={() => setCurrentImageIndex(idx)}
-                >
-                  <img
-                    src={`data:${img.contentType};base64,${img.base64Data}`}
-                    alt={`${product?.productName} thumbnail ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
+          <ProductDetailImages product={product} />
           {/* Product Information */}
           <div>
             <div className="mb-6">

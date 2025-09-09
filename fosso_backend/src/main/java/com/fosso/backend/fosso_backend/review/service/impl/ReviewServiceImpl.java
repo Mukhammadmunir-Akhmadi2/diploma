@@ -103,8 +103,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Review getReviewByProductIdAndCustomerId(String productId, String customerId) {
-        Review review = reviewRepository.findByCustomerIdAndProductId(customerId, productId)
+        return reviewRepository.findByCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + productId));
-        return review;
     }
 }

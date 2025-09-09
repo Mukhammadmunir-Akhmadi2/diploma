@@ -15,20 +15,23 @@ export interface GetAllProductsRequest {
 
 export const productApiSlice = apiClientSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getAllProducts: builder.query<PaginatedResponse<ProductBriefDTO>,GetAllProductsRequest>({
+    getAllProducts: builder.query<
+      PaginatedResponse<ProductBriefDTO>,
+      GetAllProductsRequest
+    >({
       query: ({ filterCriteria, page, size, sort }) => ({
         url: "products",
         params: { ...filterCriteria, page, size, sort },
       }),
     }),
 
-    getProductById: builder.query<ProductDetailedDTO, { productId: string }>({
+    getProductById: builder.query<ProductDetailedDTO, string>({
       query: (productId) => ({
         url: `products/${productId}`,
       }),
     }),
 
-    incrementReviewCount: builder.mutation<string, { productId: string }>({
+    incrementReviewCount: builder.mutation<string, string>({
       query: (productId) => ({
         url: `products/${productId}/review-count/increment`,
         method: "PUT",
@@ -37,4 +40,8 @@ export const productApiSlice = apiClientSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAllProductsQuery, useGetProductByIdQuery, useIncrementReviewCountMutation} = productApiSlice;
+export const {
+  useGetAllProductsQuery,
+  useGetProductByIdQuery,
+  useIncrementReviewCountMutation,
+} = productApiSlice;

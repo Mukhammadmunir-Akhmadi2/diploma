@@ -26,7 +26,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public List<Brand> listAll() {
-        return brandRepository.findAllAndEnabledTrue(Sort.by("name").ascending());
+        return brandRepository.findAllByEnabledTrue(Sort.by("name").ascending());
     }
 
     @Override
@@ -34,7 +34,7 @@ public class BrandServiceImpl implements BrandService {
         if (keyword != null && !keyword.isEmpty()) {
             return brandRepository.findByKeywordAndEnabledTrue(keyword, pageable);
         }
-        return brandRepository.findAllAndEnabledTrue(pageable);
+        return brandRepository.findAllByEnabledTrue(pageable);
     }
 
     @Override

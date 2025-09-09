@@ -14,9 +14,9 @@ import java.util.Optional;
 @Repository
 public interface BrandRepository extends MongoRepository<Brand, String> {
 
-    Page<Brand> findAllAndEnabledTrue(Pageable pageable);
+    Page<Brand> findAllByEnabledTrue(Pageable pageable);
 
-    List<Brand> findAllAndEnabledTrue(Sort sort);
+    List<Brand> findAllByEnabledTrue(Sort sort);
 
     Optional<Brand> findByName(String name);
 
