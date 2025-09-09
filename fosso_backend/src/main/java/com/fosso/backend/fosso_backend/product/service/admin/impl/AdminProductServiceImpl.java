@@ -35,7 +35,7 @@ public class AdminProductServiceImpl implements AdminProductService {
 
     @Override
     public Page<Product> listDeletedProducts(Pageable pageable) {
-        Page<Product> products = productRepository.findByDeletedTrue(pageable);
+        Page<Product> products = productRepository.findByIsDeletedTrue(pageable);
         if (products == null || products.isEmpty()) {
             throw new ResourceNotFoundException("No deleted products found");
         }

@@ -74,7 +74,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const { toast } = useToast();
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
 
-  const { data, currentData, isLoading, isFetching, isError, error } = useGetAllProductsQuery({
+  const { currentData, isLoading, isFetching, isError, error } = useGetAllProductsQuery({
     filterCriteria: {
       categoryId: categoryId || undefined,
       brandId: appliedFilters.selectedBrand || undefined,
@@ -89,7 +89,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
     sort: isPopular ? "rating,desc" : undefined,
   });
 
-  const pageProducts = currentData || data;
+  const pageProducts = currentData;
 
   useEffect(() => {
     if (isError && error) {
