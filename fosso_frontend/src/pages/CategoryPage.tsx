@@ -4,10 +4,8 @@ import { useLanguage } from "../hooks/useLanguage";
 import { Button } from "../components/ui/button";
 import { Slider } from "../components/ui/slider";
 import { Separator } from "../components/ui/separator";
-import type { ProductBriefDTO } from "../types/product";
 import { listSubcategories, getCategoryById } from "../api/Category";
 import { useGetAllProductsQuery } from "../api/ProductApiSlice";
-import type { PaginatedResponse } from "../types/paginatedResponse";
 import type { Gender } from "../types/enums";
 import { useToast } from "../hooks/useToast";
 import type { Category } from "../types/category";
@@ -58,126 +56,104 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const { t } = useLanguage();
   const { categoryId, brandId, keyword } = useParams();
 
-  const [priceRange, setPriceRange] = useState<[number | null, number | null]>([
-    null,
-    null,
-  ]);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [selectedBrand, setSelectedBrand] = useState<string | null>(
-    brandId || null
-  );
+  const [pendingFilters, setPendingFilters] = useState({
+    priceRange: [null, null] as [number | null, number | null],
+    selectedColor: null as string | null,
+    selectedBrand: brandId || null,
+    selectedGender: preSelectedGender || null,
+  });
 
-  const [selectedGender, setSelectedGender] = useState<Gender | null>(
-    preSelectedGender || null
-  );
+  const [appliedFilters, setAppliedFilters] = useState(pendingFilters);
+
   const [brands, setBrands] = useState<BrandDTO[]>([]);
   const [siblingCategories, setSiblingCategories] = useState<Category[]>([]);
-  const [pageProducts, setPageProducts] =
-    useState<PaginatedResponse<ProductBriefDTO>>();
   const [page, setPage] = useState<number>(1);
   const { toast } = useToast();
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
 
-  const [applyFilters, setApplyFilters] = useState<boolean>(false);
-
   const { data, isLoading, isError, error } = useGetAllProductsQuery({
     filterCriteria: {
       categoryId: categoryId || undefined,
-      brandId: selectedBrand || undefined,
-      gender: selectedGender || undefined,
+      brandId: appliedFilters.selectedBrand || undefined,
+      gender: appliedFilters.selectedGender || undefined,
       keyword: keyword || undefined,
-      color: selectedColor || undefined,
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
+      color: appliedFilters.selectedColor || undefined,
+      minPrice: appliedFilters.priceRange[0],
+      maxPrice: appliedFilters.priceRange[1],
     },
     page,
     size: 4,
     sort: isPopular ? "rating,desc" : undefined,
   });
 
-  
+  if (isError) {
+    const response = error.data as ErrorResponse;
+    if (response.status === 404) {
+      toast({
+        title: t("products.no_results"),
+        description: t("products.no_results_description", {
+          defaultValue: "No products found for this criteria.",
+        }),
+      });
+    } else {
+      console.error("Error fetching products:", response);
+      toast({
+        title: t("products.error"),
+        description: t("products.error_description"),
+        variant: "destructive",
+      });
+    }
+  }
+
+  const handleApplyFilters = () => {
+    setAppliedFilters(pendingFilters);
+    setPage(1);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const response = await getAllProducts(
-          {
-            categoryId: categoryId || undefined,
-            brandId: selectedBrand || undefined,
-            gender: selectedGender || undefined,
-            keyword: keyword || undefined,
-            color: selectedColor || undefined,
-            minPrice: priceRange[0],
-            maxPrice: priceRange[1],
-          },
-          page,
-          4,
-          isPopular ? "rating,desc" : undefined
-        );
-
-        let subcategories;
-        if (categoryId) {
-          subcategories = await listSubcategories(categoryId);
-          const selectedCategory = await getCategoryById(categoryId);
-          setCurrentCategory(selectedCategory || null);
-        } else {
-          subcategories = await listSubcategories("root");
-        }
-
-        const allBrands = await listAllBrands();
-
-        if (brandId) {
-          const selectedBrand = allBrands.find(
-            (brand) => brand.brandId === brandId
-          );
-          setSelectedBrand(selectedBrand?.brandId || null);
-        }
-        setBrands(allBrands);
-
-        setSiblingCategories(subcategories);
-
-        setPageProducts(response);
-      } catch (error) {
-        const response = error as ErrorResponse;
-        if (response.status === 404) {
-          toast({
-            title: t("products.no_results"),
-            description: t("products.no_results_description", {
-              defaultValue: "No products found for this criteria.",
-            }),
-          });
-        } else {
-          console.error("Error fetching products:", response);
-          toast({
-            title: t("products.error"),
-            description: t("products.error_description"),
-            variant: "destructive",
-          });
-        }
-      } finally {
-        setIsLoading(false);
-        setApplyFilters(false);
+      let subcategories;
+      if (categoryId) {
+        subcategories = await listSubcategories(categoryId);
+        const selectedCategory = await getCategoryById(categoryId);
+        setCurrentCategory(selectedCategory || null);
+      } else {
+        subcategories = await listSubcategories("root");
       }
+
+      const allBrands = await listAllBrands();
+
+      if (brandId) {
+        const selectedBrand = allBrands.find(
+          (brand) => brand.brandId === brandId
+        );
+        setPendingFilters((prev) => ({
+          ...prev,
+          selectedBrand: selectedBrand?.brandId || null,
+        }));
+      }
+      setBrands(allBrands);
+
+      setSiblingCategories(subcategories);
     };
     fetchProducts();
-  }, [applyFilters, categoryId, brandId, keyword, page]);
-
-  const handlePriceChange = (value: number[]) => {
-    if (!value[0]) {
-      value[0] = 0;
-    }
-    setPriceRange([value[0], value[1]]);
-  };
+  }, [categoryId, brandId, keyword, page]);
 
   const handleGenderChange = (gender: Gender | null) => {
-    setSelectedGender(gender);
+    setPendingFilters((prev) => ({
+      ...prev,
+      selectedGender: gender,
+    }));
   };
 
   const clearFilters = () => {
-    setPriceRange([null, null]);
-    setSelectedColor(null);
-    setSelectedBrand(null);
-    setSelectedGender(preSelectedGender || null);
+    setPendingFilters((perv) => ({
+      ...perv,
+      selectedBrand: null,
+      priceRange: [null, null],
+      selectedColor: null,
+      selectedGender: null,
+    }));
   };
 
   if (isLoading) {
@@ -199,7 +175,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
           <div className="max-w-screen-2xl mx-auto px-4 py-8 md:px-6">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white capitalize">
               {currentCategory?.name ||
-                brands.find((brand) => brand.brandId === selectedBrand)?.name ||
+                brands.find(
+                  (brand) => brand.brandId === pendingFilters.selectedBrand
+                )?.name ||
                 keyword ||
                 t("products.all")}
             </h1>
@@ -246,12 +224,16 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                   <div className="flex gap-2">
                     <Button
                       variant={
-                        selectedGender === "FEMALE" ? "default" : "outline"
+                        pendingFilters.selectedGender === "FEMALE"
+                          ? "default"
+                          : "outline"
                       }
                       size="sm"
                       onClick={() =>
                         handleGenderChange(
-                          selectedGender === "FEMALE" ? null : "FEMALE"
+                          pendingFilters.selectedGender === "FEMALE"
+                            ? null
+                            : "FEMALE"
                         )
                       }
                     >
@@ -259,12 +241,16 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                     </Button>
                     <Button
                       variant={
-                        selectedGender === "MALE" ? "default" : "outline"
+                        pendingFilters.selectedGender === "MALE"
+                          ? "default"
+                          : "outline"
                       }
                       size="sm"
                       onClick={() =>
                         handleGenderChange(
-                          selectedGender === "MALE" ? null : "MALE"
+                          pendingFilters.selectedGender === "MALE"
+                            ? null
+                            : "MALE"
                         )
                       }
                     >
@@ -279,15 +265,23 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                     {t("products.price")}
                   </h3>
                   <Slider
-                    value={[priceRange[0], priceRange[1]]}
+                    value={[
+                      pendingFilters.priceRange[0],
+                      pendingFilters.priceRange[1],
+                    ]}
                     min={0}
                     max={2000}
                     step={25}
-                    onValueChange={handlePriceChange}
+                    onValueChange={(value) =>
+                      setPendingFilters((perv) => ({
+                        ...perv,
+                        priceRange: value as [number, number],
+                      }))
+                    }
                   />
                   <div className="flex justify-between mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span>${priceRange[0]}</span>
-                    <span>${priceRange[1]}</span>
+                    <span>${pendingFilters.priceRange[0]}</span>
+                    <span>${pendingFilters.priceRange[1]}</span>
                   </div>
                 </div>
 
@@ -301,8 +295,13 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                   <div className="relative">
                     <select
                       className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm text-gray-700 dark:text-gray-300"
-                      value={selectedBrand || ""}
-                      onChange={(e) => setSelectedBrand(e.target.value || null)}
+                      value={pendingFilters.selectedBrand || ""}
+                      onChange={(e) =>
+                        setPendingFilters((perv) => ({
+                          ...perv,
+                          selectedBrand: e.target.value || null,
+                        }))
+                      }
                     >
                       <option value="">{t("products.allBrands")}</option>
                       {brands.map((brand) => (
@@ -326,7 +325,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                       <button
                         key={color.id}
                         className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all ${
-                          selectedColor === color.id
+                          pendingFilters.selectedColor === color.name
                             ? "border-blue-500 ring-2 ring-blue-200"
                             : "border-gray-200 dark:border-gray-600"
                         }`}
@@ -334,10 +333,15 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                           backgroundColor: color.hex,
                           cursor: "pointer",
                         }}
-                        onClick={() => setSelectedColor(color.name)}
+                        onClick={() =>
+                          setPendingFilters((perv) => ({
+                            ...perv,
+                            selectedColor: color.name,
+                          }))
+                        }
                         title={color.name}
                       >
-                        {selectedColor === color.name && (
+                        {pendingFilters.selectedColor === color.name && (
                           <span className="text-white text-xs font-bold">
                             ✓
                           </span>
@@ -347,10 +351,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                   </div>
                 </div>
 
-                <Button
-                  className="w-full"
-                  onClick={() => setApplyFilters(true)}
-                >
+                <Button className="w-full" onClick={handleApplyFilters}>
                   {t("products.apply")}
                 </Button>
               </div>
@@ -360,7 +361,7 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
             <div className="flex-grow">
               <div className="mb-6 flex items-center justify-between">
                 <p className="text-sm text-gray-700 dark:text-gray-300">
-                  {pageProducts?.totalItems} {t("products.items")}
+                  {data?.totalItems} {t("products.items")}
                 </p>
 
                 <div className="hidden flex items-center gap-2">
@@ -375,9 +376,9 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
                 </div>
               </div>
 
-              {pageProducts?.products && pageProducts?.products.length > 0 ? (
+              {data?.products && data?.products.length > 0 ? (
                 <ProductPagination
-                  paginatedProduct={pageProducts}
+                  paginatedProduct={data}
                   page={page}
                   setPage={setPage}
                 />
