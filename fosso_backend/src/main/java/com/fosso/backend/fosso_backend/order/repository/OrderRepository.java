@@ -15,7 +15,6 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends MongoRepository<Order, String> {
 
-    @Query("{'customerId': ?0}")
     Page<Order> findByCustomerId(String customerId, Pageable pageable);
 
     List<Order> findByCustomerId(String customerId);
@@ -24,9 +23,6 @@ public interface OrderRepository extends MongoRepository<Order, String> {
 
     @Query("{'$or': [{'orderTrackingNumber': {$regex: ?0, $options: 'i'}}, {'shippingAddress.addressLine1': {$regex: ?0, $options: 'i'}}, {'shippingAddress.addressLine2': {$regex: ?0, $options: 'i'}}, {'shippingAddress.city': {$regex: ?0, $options: 'i'}}, {'shippingAddress.state': {$regex: ?0, $options: 'i'}}, {'shippingAddress.postalCode': {$regex: ?0, $options: 'i'}}, {'shippingAddress.country': {$regex: ?0, $options: 'i'}}]}")
     Page<Order> findByKeyword(String keyword, Pageable pageable);
-
-    @Query("{'status': ?0}")
-    Page<Order> findByStatus(OrderStatus status, Pageable pageable);
 
     @Query("{'orderDateTime': {$gte: ?0, $lte: ?1}}")
     List<Order> findByOrderTimeBetween(LocalDateTime startDate, LocalDateTime  endDate);

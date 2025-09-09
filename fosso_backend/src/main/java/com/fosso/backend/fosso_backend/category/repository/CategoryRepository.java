@@ -29,8 +29,6 @@ public interface CategoryRepository extends MongoRepository<Category, String> {
 
     Optional<Category> findByCategoryIdAndEnabledTrue(String categoryId);
 
-    List<Category> findByLevel(int level);
-
     boolean existsByName(String name);
 
     List<Category> findByEnabledTrue(Sort sort);

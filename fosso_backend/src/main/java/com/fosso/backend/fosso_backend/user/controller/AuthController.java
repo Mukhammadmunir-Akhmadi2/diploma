@@ -33,7 +33,7 @@ public class AuthController {
         ValidationUtils.validate(bindingResult);
         return new ResponseEntity<>(authService.register(registerRequest), HttpStatus.CREATED);
     }
-    @PostMapping("/check-email")
+    @GetMapping("/check-email")
     @ResponseBody
     public ResponseEntity<String> checkEmailUnique(@RequestParam("email") String email,
                                                    @RequestParam(value = "userId", required = false) String userId) {

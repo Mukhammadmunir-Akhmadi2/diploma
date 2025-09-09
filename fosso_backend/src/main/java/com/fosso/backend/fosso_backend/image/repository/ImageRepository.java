@@ -12,10 +12,9 @@ import java.util.Optional;
 @Repository
 public interface ImageRepository extends MongoRepository<Image, String> {
     Optional<Image> findFirstByOwnerIdAndType(String ownerId, ImageType type);
-    @Query("{'imageId': ?0, 'type': ?1}")
+
     Optional<Image> findByImageIdAndType(String imageId, ImageType type);
 
-    @Query("{'ownerId': ?0}")
     List<Image> findAllByOwnerId(String ownerId);
 
     @Query("{'ownerId': ?0, 'imageId': ?1, 'type': ?2}")

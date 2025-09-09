@@ -22,5 +22,5 @@ export interface RegisterForm {
   password: string;
   confirmPassword: string;
   agreeTerms: boolean;
-  phoneNumber?: string;
+  phoneNumber: string;
 }

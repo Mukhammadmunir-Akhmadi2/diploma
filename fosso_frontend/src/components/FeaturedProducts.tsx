@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { useLanguage } from "../hooks/useLanguage";
 import ProductCard from "./product/ProductCard";
-import { getAllProducts } from "../api/Product";
-import type { PaginatedResponse } from "../types/paginatedResponse";
-import type { ProductBriefDTO } from "../types/product";
+import { useGetAllProductsQuery } from "../api/ProductApiSlice";
 import { useToast } from "../hooks/useToast";
 import type { ErrorResponse } from "../types/error";
 import type { Gender } from "../types/enums";
@@ -30,46 +28,45 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
 }) => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const [products, setProducts] =
-    React.useState<PaginatedResponse<ProductBriefDTO>>();
+
+  const queryParams: Record<string, unknown> = {};
+  if (isNewIn) queryParams.isNewIn = true;
+  if (gender) queryParams.gender = gender;
+
+  const {
+    data: products,
+    isLoading,
+    isError,
+    error,
+  } = useGetAllProductsQuery({
+    filterCriteria: queryParams,
+    page: 1,
+    size: 4,
+    sort: isPopular ? "rating,desc" : undefined,
+  });
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let response: PaginatedResponse<ProductBriefDTO> = {
-          products: [],
-          totalItems: 0,
-          totalPages: 0,
-          currentPage: 1,
-        };
+    if (isError) {
+      const errorResponse = error.data as ErrorResponse;
 
-        if (isNewIn) {
-          response = await getAllProducts({ isNewIn: true, gender }, 1, 4);
-        } else if (isPopular) {
-          response = await getAllProducts({ gender }, 1, 4, "rating,desc");
-        }
-
-        setProducts(response);
-      } catch (error) {
-        const errorResponse = error as ErrorResponse;
-        if (errorResponse.status === 404) {
-          console.error("Error fetching products:", errorResponse);
-          toast({
-            title: t("products.noProductsTitle"),
-            description: t("products.noProductsMessage"),
-          });
-        } else {
-          console.error("Error fetching products:", errorResponse);
-          toast({
-            title: t("new.error"),
-            description: t("new.errorFetchingProducts"),
-            variant: "destructive",
-          });
-        }
+      if (errorResponse.status === 404) {
+        console.error("Error fetching products:", errorResponse);
+        toast({
+          title: t("products.noProductsTitle"),
+          description: t("products.noProductsMessage"),
+        });
+      } else {
+        console.error("Error fetching products:", errorResponse);
+        toast({
+          title: t("new.error"),
+          description: t("new.errorFetchingProducts"),
+          variant: "destructive",
+        });
       }
-    };
+    }
+  }, [isError, error, toast, t]);
 
-    fetchProducts();
-  }, [gender]);
+    
   return (
     <div className="w-full py-8 md:py-12">
       <div className="container px-4 md:px-6 mx-auto">

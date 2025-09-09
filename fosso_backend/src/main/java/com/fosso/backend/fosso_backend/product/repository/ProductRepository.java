@@ -10,11 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends MongoRepository<Product, String>, ProductRepositoryCustom {
     //user
-    @Query("{'$and': [{'enabled': true}, {'isDeleted': false}]}")
-    Page<Product> findAllForUser(Pageable pageable);
-
-    @Query("{'$and': [{'enabled': true}, {'isDeleted': false}, {'$text': {'$search': ?0}}]}")
-    Page<Product> searchForUser(String keyword, Pageable pageable);
 
     //merchant
     Page<Product> findByMerchantIdAndDeletedNot(String merchantId, Pageable pageable);
@@ -24,8 +19,7 @@ public interface ProductRepository extends MongoRepository<Product, String>, Pro
 
     Page<Product> findByEnabledFalse(Pageable pageable);
 
-    Page<Product> findByDeletedTrue(Pageable pageable);
-
+    Page<Product> findByIsDeletedTrue(Pageable pageable);
 
     @Query("{'$text': {'$search': ?0}}")
     Page<Product> findByKeyword(String keyword, Pageable pageable);

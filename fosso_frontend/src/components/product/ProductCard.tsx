@@ -20,6 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [mainImage, setMainImage] = useState<ImageDTO[]>();
   useEffect(() => {
     const fetchImages = async () => {
+      setMainImage(undefined)
       try {
         const images = await getAllImagesForOwner(
           product.productId,
@@ -40,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       }
     };
     fetchImages();
-  }, []);
+  }, [product]);
 
   useEffect(() => {
     const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");

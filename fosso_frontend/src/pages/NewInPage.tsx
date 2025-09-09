@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLanguage } from "../hooks/useLanguage";
-import type { ProductBriefDTO, ProductFilterCriteria } from "../types/product";
-import { getAllProducts } from "../api/Product";
-import type { PaginatedResponse } from "../types/paginatedResponse";
+import type {ProductFilterCriteria } from "../types/product";
+import { useGetAllProductsQuery } from "../api/ProductApiSlice";
 import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../types/error";
@@ -11,45 +10,38 @@ import ProductPagination from "../components/product/ProductsPagination";
 const NewInPage: React.FC = () => {
   const { t } = useLanguage();
   const [page, setPage] = useState<number>(1);
-  const [paginatedProduct, setPaginatedProduct] =
-    useState<PaginatedResponse<ProductBriefDTO> | null>(null);
+
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    setIsLoading(true);
-    const fetchProducts = async () => {
-      try {
-        const data = await getAllProducts(
-          { isNewIn: true } as ProductFilterCriteria,
-          page,
-          8
-        );
+  const {
+    data: paginatedProduct,
+    isLoading,
+    isError,
+    error,
+  } = useGetAllProductsQuery({
+    filterCriteria: { isNewIn: true } as ProductFilterCriteria,
+    page,
+    size: 8,
+  });
 
-        setPaginatedProduct(data);
-      } catch (error) {
-        const errorResponse = error as ErrorResponse;
-        if (errorResponse.status === 404) {
-          console.error("Error fetching products:", errorResponse);
-          toast({
-            title: t("products.noProductsTitle"),
-            description: t("products.noProductsMessage"),
-          });
-        } else {
-          toast({
-            title: t("error.fetchProduct"),
-            description: t("error.tryAgain"),
-            variant: "destructive",
-          });
-          console.error("Error fetching categories:", error);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  if (isError) {
+    const errorResponse = error as ErrorResponse;
 
-    fetchProducts();
-  }, [page]);
+    if (errorResponse.status === 404) {
+      console.error("Error fetching products:", errorResponse);
+      toast({
+        title: t("products.noProductsTitle"),
+        description: t("products.noProductsMessage"),
+      });
+    } else {
+      toast({
+        title: t("error.fetchProduct"),
+        description: t("error.tryAgain"),
+        variant: "destructive",
+      });
+      console.error("Error fetching categories:", error);
+    }
+  }
 
   if (isLoading) {
     // Show Ant Design's Spin component while loading

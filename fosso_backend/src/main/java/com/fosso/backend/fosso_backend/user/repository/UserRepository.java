@@ -13,25 +13,17 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query("{'email': ?0}")
     Optional<User> findByEmail(String email);
 
-    @Query("{'email': ?0, 'isDeleted': false}")
-    Page<User> findAllForUser(Pageable pageable);
-
     @Query(value = "{'email': ?0}", exists = true)
     boolean existsByEmail(String email);
 
     @Query("{'$or': [{'firstName': {$regex: ?0, $options: 'i'}}, {'lastName': {$regex: ?0, $options: 'i'}}, {'email': {$regex: ?0, $options: 'i'}}]}")
     Page<User> findByKeyword(String keyword, Pageable pageable);
 
-
     @Query("{'$or': [{'firstName': {$regex: ?0, $options: 'i'}}, {'lastName': {$regex: ?0, $options: 'i'}}, {'email': {$regex: ?0, $options: 'i'}}], 'isDeleted': false}")
     Page<User> findByKeywordAndIsDeletedFalse(String keyword, Pageable pageable);
 
     @Query("{'email': ?0, 'isDeleted': false}")
     Optional<User> findByEmailAndNotDeleted(String email);
-
-
-    @Query("{'roles.name': ?0}")
-    Page<User> findByRole(String roleName, Pageable pageable);
 
     @Query("{'roles.name': ?0, 'isDeleted': false}")
     Page<User> findByIsDeletedFalse(Pageable pageable);

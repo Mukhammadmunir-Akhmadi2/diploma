@@ -6,17 +6,18 @@ import { Checkbox } from "../components/ui/checkbox";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "../hooks/useLanguage";
 import { useToast } from "../hooks/useToast";
-import { login } from "../api/Auth";
-import { useMutation } from "@tanstack/react-query";
+import { useLoginMutation } from "../api/AuthApiSlice";
 import { type ErrorResponse } from "../types/error";
-import { type AuthRequest, type AuthResponse } from "../types/auth";
+import { type AuthRequest } from "../types/auth";
 import * as Yup from "yup";
 import { useLoginHandler } from "../hooks/useLoginHandler";
 import { Spin } from "antd";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
+type LoginForm = AuthRequest & { rememberMe: boolean };
 
 const Login = () => {
   const { t } = useLanguage();
@@ -31,14 +32,14 @@ const Login = () => {
     password: Yup.string()
       .min(6, t("login.passwordTooShort"))
       .required(t("login.required")),
-    rememberMe: Yup.boolean(),
+    rememberMe: Yup.boolean().required(),
   });
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<AuthRequest & { rememberMe: boolean }>({
+  } = useForm<LoginForm>({
     defaultValues: {
       email: localStorage.getItem("email") || "",
       password: "",
@@ -47,24 +48,32 @@ const Login = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  const [isPasswordVisible, setPasswordVisible] = useState(false); // State for toggling password visibility
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [login, { isLoading }] = useLoginMutation();
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible((prev) => !prev);
-  };
+  const onSubmit: SubmitHandler<LoginForm> = async (data: LoginForm) => {
+    if (data.rememberMe) {
+      localStorage.setItem("rememberMe", "true");
+      localStorage.setItem("email", data.email); // optional
+    } else {
+      localStorage.removeItem("rememberMe");
+      localStorage.removeItem("email");
+    }
 
-  const loginMutation = useMutation({
-    mutationFn: login,
-    onSuccess: async (data: AuthResponse) => {
-      handleLoginSuccess(data);
+    try {
+      const result = await login({
+        email: data.email,
+        password: data.password,
+      }).unwrap();
+
+      handleLoginSuccess(result);
       toast({
         title: t("login.success"),
         description: t("login.redirecting"),
       });
       navigate("/");
-    },
-    onError: (error: any) => {
-      const errorResponse = error as ErrorResponse;
+    } catch (error: any) {
+      const errorResponse = error.data as ErrorResponse;
       console.error("Login error:", errorResponse);
 
       if (errorResponse?.status === 404) {
@@ -82,13 +91,16 @@ const Login = () => {
           variant: "destructive",
         });
       }
-      loginMutation.reset();
-    },
-  });
+    }
+  };
 
   const goBack = () => navigate(-1);
 
-  if (loginMutation.isPending) {
+  const togglePasswordVisibility = () => {
+    setPasswordVisible((prev) => !prev);
+  };
+
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-white dark:bg-gray-900">
         <Spin
@@ -145,23 +157,7 @@ const Login = () => {
                 {t("login.title")}
               </h2>
 
-              <form
-                className="space-y-6"
-                onSubmit={handleSubmit((data) => {
-                  if (data.rememberMe) {
-                    localStorage.setItem("rememberMe", "true");
-                    localStorage.setItem("email", data.email); // optional
-                  } else {
-                    localStorage.removeItem("rememberMe");
-                    localStorage.removeItem("email");
-                  }
-
-                  loginMutation.mutate({
-                    email: data.email,
-                    password: data.password,
-                  });
-                })}
-              >
+              <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-2">
                   <Label htmlFor="email">{t("login.email")}</Label>
                   <Input
@@ -212,7 +208,7 @@ const Login = () => {
 
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     {...register("rememberMe")}
                   />
                   <label
@@ -226,7 +222,7 @@ const Login = () => {
                 <Button
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700"
-                  disabled={isSubmitting || loginMutation.isPending}
+                  disabled={isSubmitting || isLoading}
                 >
                   {t("login.submit")}
                 </Button>
