@@ -137,13 +137,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <div
-      className="group relative shadow-lg flex flex-col h-full bg-white"
+      className="group relative shadow-lg flex flex-col h-full dark:bg-gray-800 bg-white"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image */}
       <Link to={`/product/${product.productId}`} className="block">
-        <div className="aspect-[3/4] overflow-hidden dark:bg-gray-800">
+        <div className="aspect-[3/4] overflow-hidden dark:bg-white">
           <AspectRatio ratio={3 / 4}>
             <img
               src={

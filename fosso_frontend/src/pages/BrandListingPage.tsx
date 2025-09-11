@@ -87,7 +87,7 @@ const BrandListingPage = () => {
               <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full mb-4 flex items-center justify-center">
                 {brand.logo ? (
                   <img
-                    src={brand.logo}
+                    src={`data:${brand.logo.contentType};base64,${brand.logo.base64Data}`}
                     alt={brand.name}
                     className="max-w-full max-h-full object-contain"
                   />
