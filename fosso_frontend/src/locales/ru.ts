@@ -987,6 +987,12 @@ export const ruTranslations: Translations = {
     errorUpdatingRole: "Ошибка обновления роли",
     errorUpdatingRoleDesc: "Произошла ошибка при обновлении роли пользователя.",
   },
+  brands: {
+    errorLoading: "Не удалось загрузить бренды",
+    errorLoadingDesc:
+      "Произошла непредвиденная ошибка при получении данных о брендах.",
+    title: "Бренды",
+  },
   featuredProducts: "Рекомендуемые товары",
   featuredProductsDesc: "Исследуйте наши самые популярные и трендовые товары",
 };

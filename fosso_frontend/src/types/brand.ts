@@ -7,5 +7,6 @@ export interface BrandDTO {
   logoImageId?: string;  
   categoryIds?: Set<string>;
   enabled: boolean; 
-  logo?: ImageDTO
+  logo?: string;
+  image?: ImageDTO;
 }

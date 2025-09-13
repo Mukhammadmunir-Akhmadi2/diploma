@@ -176,7 +176,7 @@ const CategoriesManagement = () => {
   if (isLoading) {
     // Show Ant Design's Spin component while loading
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-full w-full">
         <Spin
           size="large"
           tip={t("profile.loading", { defaultValue: "Loading..." })}

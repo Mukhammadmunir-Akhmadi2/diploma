@@ -994,6 +994,12 @@ export const uzTranslations: Translations = {
     errorUpdatingRoleDesc:
       "Foydalanuvchi rolini yangilashda xatolik yuz berdi.",
   },
+  brands: {
+    errorLoading: "Brendlarni yuklab bo‘lmadi",
+    errorLoadingDesc:
+      "Brend maʼlumotlarini olishda kutilmagan xatolik yuz berdi.",
+    title: "Brendlar",
+  },
   featuredProducts: "Tavsiya etilgan mahsulotlar",
   featuredProductsDesc:
     "Bizning eng mashhur va trend mahsulotlarimizni kashf eting",

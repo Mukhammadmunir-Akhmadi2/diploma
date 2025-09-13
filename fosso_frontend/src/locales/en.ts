@@ -982,6 +982,11 @@ export const enTranslations: Translations = {
     errorUpdatingRole: "Error Updating Role",
     errorUpdatingRoleDesc: "There was an error updating the user role.",
   },
+  brands: {
+    errorLoading: "Failed to load brands",
+    errorLoadingDesc: "An unexpected error occurred while fetching brand data.",
+    title: "Brands",
+  },
   featuredProducts: "Featured Products",
   featuredProductsDesc: "Explore our most popular and trending products",
 };

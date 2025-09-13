@@ -7,6 +7,8 @@ import { getImageById } from "../api/Image";
 import { useEffect, useState } from "react";
 import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
+import placeholder from "../assets/placeholder.svg";
+
 
 const BrandListingPage = () => {
   const { t } = useLanguage();
@@ -31,6 +33,7 @@ const BrandListingPage = () => {
                 );
                 return {
                   ...brand,
+                  image,
                   logo: `data:${image.contentType};base64,${image.base64Data}`,
                 };
               } catch {
@@ -54,13 +57,13 @@ const BrandListingPage = () => {
     };
 
     fetchBrands();
-  }, [t, toast]);
+  }, []);
 
   if (isLoading) {
     // Show Ant Design's Spin component while loading
     return (
       <div className="flex items-center justify-center h-screen">
-        <Spin
+        <Spin 
           size="large"
           tip={t("profile.loading", { defaultValue: "Loading..." })}
         />
@@ -87,7 +90,7 @@ const BrandListingPage = () => {
               <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full mb-4 flex items-center justify-center">
                 {brand.logo ? (
                   <img
-                    src={`data:${brand.logo.contentType};base64,${brand.logo.base64Data}`}
+                    src={brand.logo ? brand.logo : placeholder}
                     alt={brand.name}
                     className="max-w-full max-h-full object-contain"
                   />
