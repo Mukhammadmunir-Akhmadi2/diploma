@@ -1,53 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ProductDetailedDTO } from "../../types/product";
-import type { ImageDTO } from "../../types/image";
-import { getAllImagesForOwner } from "../../api/Image";
+import { useGetAllImagesForOwnerQuery } from "../../api/ImageApiSlice";
 import { useToast } from "../../hooks/useToast";
 import { useLanguage } from "../../hooks/useLanguage";
 
 const ProductDetailImages: React.FC<{ product: ProductDetailedDTO }> = ({
   product,
 }) => {
-  const [images, setImages] = useState<ImageDTO[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { toast } = useToast();
   const { t } = useLanguage();
+  const {
+    data: mainImages,
+    isError: isMainError,
+    error: mainError,
+  } = useGetAllImagesForOwnerQuery({
+    ownerId: product.productId,
+    imageType: "PRODUCT_IMAGE_MAIN",
+  });
+
+  const {
+    data: additionalImages,
+    isError: isAdditionalError,
+    error: additionalError,
+  } = useGetAllImagesForOwnerQuery({
+    ownerId: product.productId,
+    imageType: "PRODUCT_IMAGE",
+  });
+
+  const images = [...(mainImages ?? []), ...(additionalImages ?? [])];
 
   useEffect(() => {
-    const fetchProductImages = async () => {
-      try {
-        const mainImages: ImageDTO[] = [];
-        const additionalImages: ImageDTO[] = [];
-        // Fetch main images
-        if (product.mainImagesId) {
-          const mainImageData = await getAllImagesForOwner(
-            product.productId,
-            "PRODUCT_IMAGE_MAIN"
-          );
-          mainImages.push(...mainImageData);
-        }
-
-        // Fetch additional images
-        if (product.imagesId) {
-          const additionalImageData = await getAllImagesForOwner(
-            product.productId,
-            "PRODUCT_IMAGE"
-          );
-          additionalImages.push(...additionalImageData);
-        }
-        setImages([...mainImages, ...additionalImages]);
-      } catch (error) {
-        console.log(error);
-        toast({
-          title: t("product.fetchError"),
-          description: t("product.fetchErrorDesc"),
-          variant: "destructive",
-        });
-      }
-    };
-    fetchProductImages();
-  }, [product]);
+    if (isMainError || isAdditionalError) {
+      console.error(
+        "Error fetching product images:",
+        mainError || additionalError
+      );
+      toast({
+        title: t("product.fetchError"),
+        description: t("product.fetchErrorDesc"),
+        variant: "destructive",
+      });
+    }
+  }, [isMainError, isAdditionalError, mainError, additionalError, toast, t]);
 
   const nextImage = () => {
     if (images.length > 0) {

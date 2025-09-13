@@ -6,7 +6,7 @@ import { useLanguage } from "../../hooks/useLanguage";
 import type { ProductBriefDTO } from "../../types/product";
 import placeholder from "../../assets/placeholder.svg";
 import { AspectRatio } from "../ui/aspect-ratio";
-import type { ImageDTO } from "../../types/image";
+import { useGetAllImagesForOwnerQuery } from "../../api/ImageApiSlice";
 interface ProductCardProps {
   product: ProductBriefDTO;
 }
@@ -16,31 +16,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [mainImage, setMainImage] = useState<ImageDTO[]>();
+
+  const {
+    data: mainImage,
+    isError,
+    error,
+  } = useGetAllImagesForOwnerQuery({
+    ownerId: product.productId,
+    imageType: "PRODUCT_IMAGE_MAIN",
+  });
+
   useEffect(() => {
-    const fetchImages = async () => {
-      setMainImage(undefined)
-      try {
-        const images = await getAllImagesForOwner(
-          product.productId,
-          "PRODUCT_IMAGE_MAIN"
-        );
-        setMainImage(images);
-      } catch (error) {
-        console.error("Error fetching product images:", error);
-        toast({
-          title: t("error.fetchImage", {
-            defaultValue: "Error Fetching Images",
-          }),
-          description: t("error.tryAgain", {
-            defaultValue: "Please try again later.",
-          }),
-          variant: "destructive",
-        });
-      }
-    };
-    fetchImages();
-  }, [product]);
+    if (isError) {
+      console.error("Error fetching product images:", error);
+      toast({
+        title: t("error.fetchImage", { defaultValue: "Error Fetching Images" }),
+        description: t("error.tryAgain", {
+          defaultValue: "Please try again later.",
+        }),
+        variant: "destructive",
+      });
+    }
+  }, [isError, error]);
 
   useEffect(() => {
     const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");

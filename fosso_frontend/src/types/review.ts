@@ -1,4 +1,3 @@
-import type { ImageDTO } from "./image";
 import type { UserBriefDTO } from "./user";
 
 export interface ReviewDTO {
@@ -10,5 +9,4 @@ export interface ReviewDTO {
   rating: number;
   reviewDateTime?: string;
   user?: UserBriefDTO;
-  userAvatar?: ImageDTO | null;
 }
