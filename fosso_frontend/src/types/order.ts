@@ -25,7 +25,6 @@ export interface OrderDetail {
   shippingCost: number;
   subtotal: number;  
   orderTrack?: OrderTrack;
-  image?: ImageDTO;
   user?: UserBriefDTO
 }
 

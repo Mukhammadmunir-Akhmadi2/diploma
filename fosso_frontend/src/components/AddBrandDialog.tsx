@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { uploadImage } from "../api/Image";
+import { useUploadImageMutation } from "../api/ImageApiSlice";
 import { createBrand } from "../api/merchant/MerchantBrand";
 import type { BrandDTO } from "../types/brand";
 import type { ImageDTO } from "../types/image";
@@ -35,6 +35,7 @@ const AddBrandDialog: React.FC<AddBrandDialogProps> = ({
   const [newBrandDescription, setNewBrandDescription] = useState("");
   const [newBrandLogo, setNewBrandLogo] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadImage] = useUploadImageMutation();
 
   const resetStates = () => {
     setNewBrandName("");
@@ -67,11 +68,11 @@ const AddBrandDialog: React.FC<AddBrandDialogProps> = ({
       // Upload the logo
       let uploadedLogo: ImageDTO | null = null;
       if (newBrandLogo) {
-        uploadedLogo = await uploadImage(
-          createdBrand.brandId,
-          "BRAND_IMAGE",
-          newBrandLogo
-        );
+        uploadedLogo = await uploadImage({
+          ownerId: createdBrand.brandId,
+          imageType: "BRAND_IMAGE",
+          file: newBrandLogo,
+        }).unwrap();
       }
 
       createdBrand.logoImageId = uploadedLogo ? uploadedLogo.imageId : "";

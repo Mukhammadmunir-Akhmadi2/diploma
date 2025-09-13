@@ -9,10 +9,10 @@ import { getOrderById } from "../../api/Order";
 import { type OrderDetail, type OrderDetailedDTO } from "../../types/order";
 import { useToast } from "../../hooks/useToast";
 import { Spin } from "antd";
-import { getImageByOwnerId } from "../../api/Image";
 import { getUserById } from "../../api/User";
 import { type UserBriefDTO } from "../../types/user";
 import type { OrderStatus } from "../../types/enums";
+import EntityImage from "../EntityImage";
 
 const OrderDetailPage: React.FC = () => {
   const { t } = useLanguage();
@@ -35,15 +35,10 @@ const OrderDetailPage: React.FC = () => {
           const updatedOrderDetails = await Promise.all(
             orderDetails.orderDetails.map(async (item) => {
               try {
-                const image = await getImageByOwnerId(
-                  item.productId,
-                  "PRODUCT_IMAGE_MAIN"
-                );
-
                 const merchant: UserBriefDTO = await getUserById(
                   item.merchantId
                 );
-                return { ...item, image, merchant };
+                return { ...item, merchant };
               } catch (error) {
                 console.error(
                   `Error fetching image for product ${item.productId}:`,
@@ -334,53 +329,57 @@ const OrderDetailPage: React.FC = () => {
                 {t("order.orderItems")}
               </h2>
               <div className="space-y-4">
-                {order?.orderDetails.map((item: OrderDetail) => (
+                {order?.orderDetails.map((orderDetail: OrderDetail) => (
                   <div
-                    key={item.productId}
+                    key={orderDetail.productId}
                     className="border dark:border-gray-700 rounded-lg overflow-hidden transition-shadow duration-200 hover:shadow-md"
                   >
                     <div className="p-4 flex flex-col sm:flex-row gap-4">
-                      {item.image && (
-                        <div className="flex-shrink-0 w-16 h-16">
-                          <img
-                            src={`data:${item.image.contentType};base64,${item.image.base64Data}`}
-                            alt={item.productName}
-                            className="w-full h-full object-contain rounded-md"
-                          />
-                        </div>
-                      )}
-
+                      <div className="flex-shrink-0 w-16 h-16">
+                        <EntityImage
+                          ownerId={orderDetail.productId}
+                          imageType="PRODUCT_IMAGE_MAIN"
+                          name={orderDetail.productName}
+                          className="w-full h-full object-contain rounded-md"
+                        />
+                      </div>
                       <div className="flex-grow">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                           <div>
-                            <h3 className="font-medium">{item.productName}</h3>
+                            <h3 className="font-medium">
+                              {orderDetail.productName}
+                            </h3>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {t("product.quantity")}: {item.quantity} × $
-                              {item.price.toFixed(2)}
+                              {t("product.quantity")}: {orderDetail.quantity} ×
+                              ${orderDetail.price.toFixed(2)}
                               <span className="mx-1">•</span>
-                              {item.color}, {item.size}
+                              {orderDetail.color}, {orderDetail.size}
                             </p>
                             <Badge
                               className={`mt-2 ${getStatusClass(
-                                item?.orderTrack?.status
+                                orderDetail?.orderTrack?.status
                               )}`}
                             >
-                              {item.orderTrack?.status}
+                              {orderDetail.orderTrack?.status}
                             </Badge>
                           </div>
                           <div className="flex flex-col items-end">
                             <span className="font-medium">
-                              ${item.subtotal.toFixed(2)}
+                              ${orderDetail.subtotal.toFixed(2)}
                             </span>
                             <Button
                               variant="ghost"
                               size="sm"
                               className="text-sm underline text-blue-600 dark:text-blue-400 p-0 h-auto"
                               onClick={() =>
-                                toggleItemExpand(item.color + item.size)
+                                toggleItemExpand(
+                                  orderDetail.color + orderDetail.size
+                                )
                               }
                             >
-                              {expandedItems.includes(item.color + item.size)
+                              {expandedItems.includes(
+                                orderDetail.color + orderDetail.size
+                              )
                                 ? t("common.lessDetails")
                                 : t("common.moreDetails")}
                             </Button>
@@ -389,7 +388,9 @@ const OrderDetailPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {expandedItems.includes(item.color + item.size) && (
+                    {expandedItems.includes(
+                      orderDetail.color + orderDetail.size
+                    ) && (
                       <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800/50">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
@@ -401,13 +402,13 @@ const OrderDetailPage: React.FC = () => {
                                 <dt className="text-gray-600 dark:text-gray-400">
                                   {t("order.sellerName")}:
                                 </dt>
-                                <dd>{`${item?.merchant?.firstName} ${item.merchant?.lastName}`}</dd>
+                                <dd>{`${orderDetail?.merchant?.firstName} ${orderDetail.merchant?.lastName}`}</dd>
                               </div>
                               <div className="grid grid-cols-2">
                                 <dt className="text-gray-600 dark:text-gray-400">
                                   {t("order.sellerEmail")}:
                                 </dt>
-                                <dd>{item?.merchant?.email}</dd>
+                                <dd>{orderDetail?.merchant?.email}</dd>
                               </div>
                             </dl>
                           </div>
@@ -420,14 +421,16 @@ const OrderDetailPage: React.FC = () => {
                                 <dt className="text-gray-600 dark:text-gray-400">
                                   {t("order.status.status")}:
                                 </dt>
-                                <dd>{item?.orderTrack.status}</dd>
+                                <dd>{orderDetail?.orderTrack.status}</dd>
                               </div>
                               <div className="grid grid-cols-2">
                                 <dt className="text-gray-600 dark:text-gray-400">
                                   {t("order.lastUpdate")}:
                                 </dt>
                                 <dd>
-                                  {formatDate(item?.orderTrack.updatedTime)}
+                                  {formatDate(
+                                    orderDetail?.orderTrack.updatedTime
+                                  )}
                                 </dd>
                               </div>
                               <div className="grid grid-cols-2">
@@ -435,7 +438,9 @@ const OrderDetailPage: React.FC = () => {
                                   {t("order.notes")}:
                                 </dt>
                                 <dd>
-                                  {getDefaultNote(item.orderTrack?.status)}
+                                  {getDefaultNote(
+                                    orderDetail.orderTrack?.status
+                                  )}
                                 </dd>
                               </div>
                             </dl>
@@ -450,19 +455,24 @@ const OrderDetailPage: React.FC = () => {
                                   {t("order.price")}
                                 </span>
                                 <span>
-                                  ${(item.price * item.quantity).toFixed(2)}
+                                  $
+                                  {(
+                                    orderDetail.price * orderDetail.quantity
+                                  ).toFixed(2)}
                                 </span>
                               </div>
                               <div className="flex justify-between text-sm">
                                 <span className="text-gray-600 dark:text-gray-400">
                                   {t("order.shipping")}
                                 </span>
-                                <span>${item.shippingCost.toFixed(2)}</span>
+                                <span>
+                                  ${orderDetail.shippingCost.toFixed(2)}
+                                </span>
                               </div>
                               <Separator className="my-2" />
                               <div className="flex justify-between font-medium">
                                 <span>{t("order.subtotal")}</span>
-                                <span>${item.subtotal.toFixed(2)}</span>
+                                <span>${orderDetail.subtotal.toFixed(2)}</span>
                               </div>
                             </div>
                           </div>

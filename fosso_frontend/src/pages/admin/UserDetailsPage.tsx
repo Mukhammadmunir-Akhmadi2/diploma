@@ -77,7 +77,7 @@ const UserDetailsPage = () => {
   const [selectedTab, setSelectedTab] = useState("profile");
   const [banDuration, setBanDuration] = useState("7");
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [deleteImageByOwnerId, error] = useDeleteImageByOwnerIdMutation();
+  const [deleteImageByOwnerId] = useDeleteImageByOwnerIdMutation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -279,27 +279,27 @@ const UserDetailsPage = () => {
   };
 
   const handleDeleteAvatar = async (userId: string, imageId: string) => {
-      if (!userId) return;
+    if (!userId) return;
 
+    try {
       await deleteImageByOwnerId({
         ownerId: userId,
         imageId: imageId,
         ImageType: "USER_AVATAR",
-      });
-
+      }).unwrap();
 
       toast({
         title: t("admin.avatarDeleted"),
         description: t("admin.avatarDeletedDesc"),
       });
-      if (error) {
-         console.error("Error deleting avatar:", error);
+    } catch (error: any) {
+      console.error("Error deleting avatar:", error);
       toast({
         title: t("admin.errorDeletingAvatar"),
         description: error?.data?.message || t("admin.somethingWentWrong"),
         variant: "destructive",
       });
-      }
+    }
   };
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
