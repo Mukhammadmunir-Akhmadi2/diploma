@@ -1,4 +1,6 @@
-import type { Translations } from "../types/language";
+export interface Translations {
+  [key: string]: string | Translations;
+}
 
 export const getNestedTranslation = (
   obj: Translations,

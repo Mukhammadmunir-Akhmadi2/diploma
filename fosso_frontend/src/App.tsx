@@ -1,7 +1,6 @@
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LanguageProvider } from "./providers/LanguageProvider";
 import { lazy, Suspense, useEffect } from "react";
 import { Spin } from "antd";
 import PersonalInfoForm from "./components/profile/PersonalInfoForm";
@@ -60,7 +59,6 @@ const App = () => {
 
   return (
     <Suspense fallback={<Spin />}>
-      <LanguageProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -189,7 +187,6 @@ const App = () => {
             <Route path="terms" element={<Terms />} />
           </Routes>
         </BrowserRouter>
-      </LanguageProvider>
     </Suspense>
   );
 };

@@ -1,13 +1,18 @@
-"use client";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  setLanguage,
+  type SupportedLanguage,
+  t as translate,
+} from "../slices/languageSlice";
 
-import { useContext } from "react";
-import { LanguageContext } from "../contexts/LanguageContext";
-import type { LanguageContextType } from "../types/language";
+export const useLanguage = () => {
+  const dispatch = useAppDispatch();
+  const { language } = useAppSelector((state) => state.language);
 
-export const useLanguage = (): LanguageContextType => {
-  const context = useContext(LanguageContext);
-  if (context === undefined) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
-  }
-  return context;
+  const setLang = (lang: SupportedLanguage) => dispatch(setLanguage(lang));
+
+  const t = (key: string, args?: Record<string, string | number>) =>
+    translate({ language: { language } }, key, args);
+
+  return { language, setLanguage: setLang, t };
 };
