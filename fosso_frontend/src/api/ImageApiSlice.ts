@@ -78,3 +78,12 @@ export const imageApiSlice = apiClientSlice.injectEndpoints({
     }),
   }),
 });
+
+export const {
+  useGetAllImagesForOwnerQuery,
+  useGetImageByIdQuery,
+  useGetImageByOwnerIdQuery,
+  useUploadImageMutation,
+  useUploadProductImagesMutation,
+  useDeleteImageByOwnerIdMutation,
+} = imageApiSlice;

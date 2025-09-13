@@ -1,13 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { useLanguage } from "../hooks/useLanguage";
 import type { BrandDTO } from "../types/brand";
-import type { ImageDTO } from "../types/image";
 import { listAllBrands } from "../api/Brand";
-import { getImageById } from "../api/Image";
 import { useEffect, useState } from "react";
 import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
-import placeholder from "../assets/placeholder.svg";
+import BrandImage from "../components/BrandImage";
 
 
 const BrandListingPage = () => {
@@ -22,29 +20,7 @@ const BrandListingPage = () => {
       setIsLoading(true);
       try {
         const allBrands = await listAllBrands();
-        // Fetch images for each brand if logoImageId exists
-        const brandsWithImages = await Promise.all(
-          allBrands.map(async (brand) => {
-            if (brand.logoImageId) {
-              try {
-                const image: ImageDTO = await getImageById(
-                  brand.logoImageId,
-                  "BRAND_IMAGE"
-                );
-                return {
-                  ...brand,
-                  image,
-                  logo: `data:${image.contentType};base64,${image.base64Data}`,
-                };
-              } catch {
-                // If image fetch fails, fallback to no logo
-                return { ...brand, logo: null };
-              }
-            }
-            return { ...brand, logo: null };
-          })
-        );
-        setBrands(brandsWithImages);
+        setBrands(allBrands);
       } catch (error) {
         toast({
           title: t("brands.errorLoading"),
@@ -88,17 +64,11 @@ const BrandListingPage = () => {
               className="flex flex-col items-center bg-white dark:bg-gray-800 rounded-lg p-6 hover:shadow-lg transition-all"
             >
               <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full mb-4 flex items-center justify-center">
-                {brand.logo ? (
-                  <img
-                    src={brand.logo ? brand.logo : placeholder}
-                    alt={brand.name}
-                    className="max-w-full max-h-full object-contain"
-                  />
-                ) : (
-                  <span className="text-xl font-bold">
-                    {brand.name.substring(0, 2)}
-                  </span>
-                )}
+                <BrandImage
+                  imageId={brand.logoImageId}
+                  name={brand.name}
+                  className="max-w-full max-h-full object-contain"
+                />
               </div>
               <h3 className="text-center font-medium">{brand.name}</h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2 text-center">
