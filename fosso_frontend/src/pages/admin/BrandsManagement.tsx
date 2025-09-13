@@ -41,17 +41,16 @@ import {
 import type { BrandDTO } from "../../types/brand";
 import { useToast } from "../../hooks/useToast";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
-import { getImageById } from "../../api/Image";
-import type { ImageDTO } from "../../types/image";
 import { Spin } from "antd";
 import AddBrandDialog from "../../components/AddBrandDialog";
 import { useDebounce } from "../../hooks/useDebounce";
+import EntityImage from "../../components/EntityImage";
 
 const BrandsManagement = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [pageBrands, setPageBrands] = useState<PaginatedResponse<BrandDTO>>();
-  const [searchQuery, setSearchQuery] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [selectedBrand, setSelectedBrand] = useState<BrandDTO | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,34 +70,7 @@ const BrandsManagement = () => {
           itemsPerPage
         );
 
-        const updatedProducts = await Promise.all(
-          response.products.map(async (product) => {
-            if (product.logoImageId) {
-              try {
-                const logo: ImageDTO = await getImageById(
-                  product.logoImageId,
-                  "BRAND_IMAGE"
-                );
-                return {
-                  ...product,
-                  logo,
-                };
-              } catch (error) {
-                console.error(
-                  `Error fetching image for brand ${product.name}:`,
-                  error
-                );
-                return product;
-              }
-            }
-            return product;
-          })
-        );
-
-        setPageBrands({
-          ...response,
-          products: updatedProducts,
-        });
+        setPageBrands(response);
       } catch (error: any) {
         console.error("Error fetching brands:", error);
         toast({
@@ -243,10 +215,11 @@ const BrandsManagement = () => {
                         <TableRow key={brand.brandId}>
                           <TableCell className="w-[80px]">
                             <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
-                              {brand.logo ? (
-                                <img
-                                  src={`data:${brand.logo.contentType};base64,${brand.logo.base64Data}`}
-                                  alt={brand.name}
+                              {brand.logoImageId ? (
+                                <EntityImage
+                                  imageId={brand.logoImageId}
+                                  imageType="BRAND_IMAGE"
+                                  name={brand.name}
                                   className="w-10 h-10 object-contain"
                                 />
                               ) : (

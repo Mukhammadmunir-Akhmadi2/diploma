@@ -51,6 +51,7 @@ import type { PaginatedResponse } from "../../types/paginatedResponse";
 import { Spin } from "antd";
 import { useToast } from "../../hooks/useToast";
 import { useDebounce } from "../../hooks/useDebounce";
+import EntityImage from "../../components/EntityImage";
 
 const UsersManagement = () => {
   const { t } = useLanguage();
@@ -198,15 +199,13 @@ const UsersManagement = () => {
                         >
                           <TableCell className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                              {user.image ? (
-                                <img
-                                  src={`data:${user.image.contentType};base64,${user.image.base64Data}`}
-                                  alt={user.firstName}
-                                  className="w-8 h-8 rounded-full object-cover"
-                                />
-                              ) : (
-                                <User size={16} />
-                              )}
+                              <EntityImage
+                                ownerId={user.userId}
+                                imageType="USER_AVATAR"
+                                name={user.firstName}
+                                className="w-8 h-8 rounded-full object-cover"
+                                fallback={<User size={16} />}
+                              />
                             </div>
                             <div>
                               <p className="font-medium">
@@ -338,15 +337,13 @@ const UsersManagement = () => {
                             <CardContent className="p-4 flex flex-col h-full">
                               <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                                  {user.image ? (
-                                    <img
-                                      src={`data:${user.image.contentType};base64,${user.image.base64Data}`}
-                                      alt={user.firstName}
-                                      className="w-10 h-10 rounded-full object-cover"
-                                    />
-                                  ) : (
-                                    <User size={20} />
-                                  )}
+                                  <EntityImage
+                                    ownerId={user.userId}
+                                    imageType="USER_AVATAR"
+                                    name={user.firstName}
+                                    className="w-10 h-10 rounded-full object-cover"
+                                    fallback={<User size={20} />}
+                                  />
                                 </div>
                                 <div>
                                   <p className="font-medium">

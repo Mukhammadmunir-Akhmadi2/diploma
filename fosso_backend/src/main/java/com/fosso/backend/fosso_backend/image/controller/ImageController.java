@@ -31,7 +31,7 @@ public class ImageController {
     public ResponseEntity<ImageDTO> getImageByOwnerId(
             @PathVariable String ownerId,
             @RequestParam ImageType imageType) {
-        Image image = imageService.getImage(ownerId, imageType);
+        Image image = imageService.getOwnerImage(ownerId, imageType);
         return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
     }
 

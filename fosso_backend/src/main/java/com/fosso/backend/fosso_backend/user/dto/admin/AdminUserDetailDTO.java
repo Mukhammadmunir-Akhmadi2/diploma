@@ -2,7 +2,6 @@ package com.fosso.backend.fosso_backend.user.dto.admin;
 
 import com.fosso.backend.fosso_backend.common.enums.Gender;
 import com.fosso.backend.fosso_backend.common.enums.Role;
-import com.fosso.backend.fosso_backend.image.dto.ImageDTO;
 import com.fosso.backend.fosso_backend.user.model.Address;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,6 @@ public class AdminUserDetailDTO {
     private String phoneNumber;
     private Set<Role> roles;
     private Gender gender;
-    private ImageDTO image;
     private String dateOfBirth;
     private Boolean enabled;
     private String banExpirationTime;

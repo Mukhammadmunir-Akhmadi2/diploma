@@ -5,8 +5,7 @@ import { listAllBrands } from "../api/Brand";
 import { useEffect, useState } from "react";
 import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
-import BrandImage from "../components/BrandImage";
-
+import EntityImage from "../components/EntityImage";
 
 const BrandListingPage = () => {
   const { t } = useLanguage();
@@ -39,7 +38,7 @@ const BrandListingPage = () => {
     // Show Ant Design's Spin component while loading
     return (
       <div className="flex items-center justify-center h-screen">
-        <Spin 
+        <Spin
           size="large"
           tip={t("profile.loading", { defaultValue: "Loading..." })}
         />
@@ -64,8 +63,9 @@ const BrandListingPage = () => {
               className="flex flex-col items-center bg-white dark:bg-gray-800 rounded-lg p-6 hover:shadow-lg transition-all"
             >
               <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full mb-4 flex items-center justify-center">
-                <BrandImage
+                <EntityImage
                   imageId={brand.logoImageId}
+                  imageType="BRAND_IMAGE"
                   name={brand.name}
                   className="max-w-full max-h-full object-contain"
                 />
