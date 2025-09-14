@@ -35,7 +35,6 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
 
   const {
     data: products,
-    isLoading,
     isError,
     error,
   } = useGetAllProductsQuery({

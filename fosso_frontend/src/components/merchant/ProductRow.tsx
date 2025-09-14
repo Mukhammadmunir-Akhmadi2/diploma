@@ -8,9 +8,8 @@ import { Eye, PenLine, Plus, Minus } from "lucide-react";
 import { getCategoryById } from "../../api/Category";
 import type { Category } from "../../types/category";
 import { useToast } from "../ui/use-toast";
-import { getImageById } from "../../api/Image";
 import { useLanguage } from "../../hooks/useLanguage";
-import type { ImageDTO } from "../../types/image";
+import EntityImage from "../EntityImage";
 
 const ProductRow: React.FC<{
   product: ProductMerchantDTO;
@@ -19,7 +18,6 @@ const ProductRow: React.FC<{
 }> = ({ product, handleUpdateStock, handleToggleStatus }) => {
   const { toast } = useToast();
   const [category, setCategory] = useState<Category>();
-  const [image, setImage] = useState<ImageDTO | null>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -27,14 +25,6 @@ const ProductRow: React.FC<{
       try {
         const fetchedCategory = await getCategoryById(product.categoryId);
         setCategory(fetchedCategory);
-
-        if (product.mainImagesId && product.mainImagesId.length > 0) {
-          const image: ImageDTO = await getImageById(
-            product.mainImagesId[0],
-            "PRODUCT_IMAGE_MAIN"
-          );
-          setImage(image);
-        }
       } catch (error) {
         console.error("Error fetching product details:", error);
         toast({
@@ -55,9 +45,10 @@ const ProductRow: React.FC<{
     <>
       <TableRow key={product.productId}>
         <TableCell>
-          <img
-            src={`data:${image?.contentType};base64,${image?.base64Data}`}
-            alt={product.productName}
+          <EntityImage
+            imageId={product.mainImagesId[0]}
+            imageType="PRODUCT_IMAGE_MAIN"
+            name={product.productName}
             className="w-25 h-25 object-contain rounded"
           />
         </TableCell>

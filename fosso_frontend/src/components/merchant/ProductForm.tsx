@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router-dom";
@@ -27,8 +27,7 @@ import type {
   ProductVariantDTO,
   ProductCreateDTO,
 } from "../../types/product";
-import type { ImageDTO } from "../../types/image";
-import { getImageById, uploadImage } from "../../api/Image";
+import { useUploadImageMutation } from "../../api/ImageApiSlice";
 import type { UserDTO } from "../../types/user";
 import type { ImageType } from "../../types/enums";
 import {
@@ -86,46 +85,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       : []
   );
 
-  const [images, setImages] = useState<ImageDTO[]>([]);
-  const [mainImage, setMainImage] = useState<ImageDTO[]>([]);
   const [imageFiles, setImageFiles] = useState<
     { id: string; file: File; type: ImageType }[]
   >([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (initialData) {
-      const fetchImages = async () => {
-        try {
-          const mainImages = await Promise.all(
-            initialData.mainImagesId.map((imageId) =>
-              getImageById(imageId, "PRODUCT_IMAGE_MAIN")
-            )
-          );
-          const galleryImages = await Promise.all(
-            initialData.imagesId.map((imageId) =>
-              getImageById(imageId, "PRODUCT_IMAGE")
-            )
-          );
-          setMainImage(mainImages);
-          setImages(galleryImages);
-        } catch (error) {
-          console.error("Error fetching images:", error);
-          toast({
-            title: t("error.fetchImages", {
-              defaultValue: "Error Fetching Images",
-            }),
-            description: t("error.tryAgain", {
-              defaultValue: "Please try again later.",
-            }),
-            variant: "destructive",
-          });
-        }
-      };
-
-      fetchImages();
-    }
-  }, []);
+  const [uploadImage] = useUploadImageMutation();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -163,12 +127,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
       }
       if (imageFiles) {
         for (const file of imageFiles) {
-          await uploadImage(newProduct.productId, file.type, file.file);
+          await uploadImage({
+            ownerId: newProduct.productId,
+            imageType: file.type,
+            file: file.file,
+          }).unwrap();
         }
       }
 
       onSuccess(newProduct);
-      navigate("/merchant/dashboard");
+      if (user.roles.includes("ADMIN")) {
+        navigate("/admin/products");
+      } else {
+        navigate("/merchant/dashboard");
+      }
     } catch (error) {
       toast({
         title: t("merchant.errorSavingProduct"),
@@ -307,10 +279,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <TabsContent value="images" className="space-y-6">
           <ProductFormImages
             initialData={initialData}
-            images={images}
-            setImages={setImages}
-            mainImage={mainImage}
-            setMainImage={setMainImage}
             imageFiles={imageFiles}
             setImageFiles={setImageFiles}
           />
@@ -321,7 +289,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Button
           type="button"
           variant="outline"
-          onClick={() => navigate("/merchant/dashboard")}
+          onClick={() =>
+            user.roles.includes("ADMIN")
+              ? navigate("/admin/product")
+              : navigate("/merchant/dashboard")
+          }
         >
           {t("merchant.cancel")}
         </Button>

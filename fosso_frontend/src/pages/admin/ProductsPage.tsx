@@ -44,12 +44,12 @@ import {
 } from "../../api/admin/AdminProduct";
 import type { AdminProductBriefDTO } from "../../types/admin/adminProduct";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
-import { getImageById } from "../../api/Image";
 import { getCategoryById } from "../../api/Category";
 import { getBrandById } from "../../api/Brand";
 import { getUserById } from "../../api/User";
 import { Spin } from "antd";
 import { useDebounce } from "../../hooks/useDebounce";
+import EntityImage from "../../components/EntityImage";
 
 const ProductsPage = () => {
   const { t } = useLanguage();
@@ -74,20 +74,16 @@ const ProductsPage = () => {
 
         const productsWithDetails = await Promise.all(
           response.products.map(async (product) => {
-            const [brand, category, merchant, image] = await Promise.all([
+            const [brand, category, merchant] = await Promise.all([
               product.brandId ? getBrandById(product.brandId) : undefined,
               product.categoryId
                 ? getCategoryById(product.categoryId)
                 : undefined,
               product.merchantId ? getUserById(product.merchantId) : undefined,
-              product.mainImagesId[0]
-                ? getImageById(product.mainImagesId[0], "PRODUCT_IMAGE_MAIN")
-                : undefined,
             ]);
 
             return {
               ...product,
-              image,
               brand,
               category,
               merchant,
@@ -274,10 +270,11 @@ const ProductsPage = () => {
                         <TableRow key={product.productId}>
                           <TableCell className="flex items-center gap-3">
                             <div className="w-18 h-14 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
-                              {product.image ? (
-                                <img
-                                  src={`data:${product.image.contentType};base64,${product.image.base64Data}`}
-                                  alt={product.productName}
+                              {product.mainImagesId[0] ? (
+                                <EntityImage
+                                  imageId={product.mainImagesId[0]}
+                                  imageType="PRODUCT_IMAGE_MAIN"
+                                  name={product.productName}
                                   className="w-14 h-14 rounded object-cover"
                                 />
                               ) : (

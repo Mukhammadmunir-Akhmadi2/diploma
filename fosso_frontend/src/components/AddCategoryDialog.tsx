@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { uploadImage } from "../api/Image";
+import { useUploadImageMutation } from "../api/ImageApiSlice";
 import { saveCategory } from "../api/merchant/MerchantCategory";
 import type { Category } from "../types/category";
 import type { ImageDTO } from "../types/image";
@@ -36,6 +36,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
   const [newCategoryName, setNewCategoryName] = useState<string>("");
   const [newCategoryLogo, setNewCategoryLogo] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadImage] = useUploadImageMutation();
 
   const resetStates = () => {
     setNewCategoryName("");
@@ -62,11 +63,11 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
 
       let uploadedLogo: ImageDTO | null = null;
       if (newCategoryLogo) {
-        uploadedLogo = await uploadImage(
-          createdCategory.categoryId,
-          "CATEGORY_IMAGE",
-          newCategoryLogo
-        );
+        uploadedLogo = await uploadImage({
+          ownerId: createdCategory.categoryId,
+          imageType: "CATEGORY_IMAGE",
+          file: newCategoryLogo,
+      }).unwrap();
       }
 
       createdCategory.imageId = uploadedLogo?.imageId || null;

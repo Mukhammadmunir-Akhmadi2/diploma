@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLanguage } from "../../hooks/useLanguage";
 import { Star } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import type { ReviewDTO } from "../../types/review";
 import {
   Pagination,
@@ -15,10 +14,9 @@ import type { UserBriefDTO } from "../../types/user";
 import { getReviewsByProductId } from "../../api/Review";
 import { getUserById } from "../../api/User";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
-import { getImageById } from "../../api/Image";
-import type { ImageDTO } from "../../types/image";
 import type { ErrorResponse } from "../../types/error";
 import { useToast } from "../../hooks/useToast";
+import EntityAvatar from "../EntityAvatar";
 interface ProductReviewsProps {
   productId: string;
   averageRating?: number;
@@ -44,14 +42,9 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
         pageReviews.products = await Promise.all(
           pageReviews.products.map(async (review) => {
             const user: UserBriefDTO = await getUserById(review.customerId);
-            let userAvatar: ImageDTO | null = null;
-            if (user.imageId) {
-              userAvatar = await getImageById(user.imageId, "USER_AVATAR");
-            }
             return {
               ...review,
               user: user,
-              userAvatar: userAvatar,
             };
           })
         );
@@ -122,16 +115,14 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({
               className="border-b dark:border-gray-800 pb-6 last:border-0"
             >
               <div className="flex items-start">
-                <Avatar className="h-10 w-10 mr-4">
-                  <AvatarImage
-                    src={`data:${review.userAvatar?.contentType};base64,${review.userAvatar?.base64Data}`}
-                  />
-                  <AvatarFallback>
-                    {`${review.user?.firstName.charAt(
-                      0
-                    )}${review.user?.lastName.charAt(0)}`.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <EntityAvatar
+                  ownerId={review.user?.userId}
+                  imageType="USER_AVATAR"
+                  name={`${review.user?.firstName} ${
+                    review.user?.lastName ?? ""
+                  }`}
+                  className="h-10 w-10 mr-4"
+                />
                 <div className="flex-1">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
                     <div>

@@ -48,8 +48,8 @@ import type { ReviewDTO } from "../../types/review";
 import { Spin } from "antd";
 import { getProductsByMerchant } from "../../api/admin/AdminProduct";
 import type { AdminProductBriefDTO } from "../../types/admin/adminProduct";
-import { deleteImageByOwnerId } from "../../api/Image";
-import type { ImageDTO } from "../../types/image";
+import EntityImage from "../../components/EntityImage";
+import { useDeleteImageByOwnerIdMutation } from "../../api/ImageApiSlice";
 
 const UserDetailsPage = () => {
   const { t } = useLanguage();
@@ -71,11 +71,13 @@ const UserDetailsPage = () => {
     reviews: null,
     products: null,
   });
+  const [imageId, setImageId] = useState<string>();
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState<AdminUserDetailDTO>();
   const [selectedTab, setSelectedTab] = useState("profile");
   const [banDuration, setBanDuration] = useState("7");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [deleteImageByOwnerId] = useDeleteImageByOwnerIdMutation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -276,21 +278,15 @@ const UserDetailsPage = () => {
     }
   };
 
-  const handleDeleteAvatar = async (userId: string, image: ImageDTO) => {
+  const handleDeleteAvatar = async (userId: string, imageId: string) => {
+    if (!userId) return;
+
     try {
-      if (!userId) return;
-
-      await deleteImageByOwnerId(userId, image.imageId, "USER_AVATAR");
-
-      setUserData((prev) => ({
-        ...prev,
-        user: prev.user
-          ? {
-              ...prev.user,
-              image: null,
-            }
-          : null,
-      }));
+      await deleteImageByOwnerId({
+        ownerId: userId,
+        imageId: imageId,
+        ImageType: "USER_AVATAR",
+      }).unwrap();
 
       toast({
         title: t("admin.avatarDeleted"),
@@ -300,7 +296,7 @@ const UserDetailsPage = () => {
       console.error("Error deleting avatar:", error);
       toast({
         title: t("admin.errorDeletingAvatar"),
-        description: error.message || t("admin.somethingWentWrong"),
+        description: error?.data?.message || t("admin.somethingWentWrong"),
         variant: "destructive",
       });
     }
@@ -405,18 +401,14 @@ const UserDetailsPage = () => {
           <CardContent className="p-6">
             <div className="flex flex-col sm:flex-row gap-4 sm:items-center">
               <div className="flex-shrink-0 w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                {userData.user?.image ? (
-                  <img
-                    src={`data:${userData.user.image.contentType};base64,${userData.user?.image.base64Data}`}
-                    alt={userData.user.firstName}
-                    className="w-20 h-20 rounded-full object-cover"
-                  />
-                ) : (
-                  <User
-                    size={32}
-                    className="text-gray-500 dark:text-gray-400"
-                  />
-                )}
+                <EntityImage
+                  ownerId={userData.user?.userId}
+                  imageType="USER_AVATAR"
+                  name={userData.user?.firstName}
+                  className="w-20 h-20 rounded-full object-cover"
+                  fallback={<User size={32} />}
+                  onImageIdChange={(imageId) => setImageId(imageId)}
+                />
               </div>
 
               <div className="flex-grow">
@@ -506,14 +498,11 @@ const UserDetailsPage = () => {
                       </Button>
                     )}
 
-                    {userData.user?.image && (
+                    {imageId && (
                       <Button
                         variant="outline"
                         onClick={() =>
-                          handleDeleteAvatar(
-                            userData.user?.userId,
-                            userData.user?.image
-                          )
+                          handleDeleteAvatar(userData.user?.userId, imageId)
                         }
                         className="text-red-500 px-4 py-2"
                       >

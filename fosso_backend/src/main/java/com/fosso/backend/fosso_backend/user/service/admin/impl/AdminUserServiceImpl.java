@@ -1,9 +1,6 @@
 package com.fosso.backend.fosso_backend.user.service.admin.impl;
 
 import com.fosso.backend.fosso_backend.common.aop.Loggable;
-import com.fosso.backend.fosso_backend.common.enums.ImageType;
-import com.fosso.backend.fosso_backend.image.model.Image;
-import com.fosso.backend.fosso_backend.image.repository.ImageRepository;
 import com.fosso.backend.fosso_backend.order.model.Order;
 import com.fosso.backend.fosso_backend.order.repository.OrderRepository;
 import com.fosso.backend.fosso_backend.user.dto.AddressDTO;
@@ -38,7 +35,6 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final AuthenticatedUserProvider userProvider;
-    private final ImageRepository imageRepository;
     private final OrderRepository orderRepository;
 
     @Override
@@ -129,11 +125,10 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
 
         return users.map(user -> {
-            Image image = fetchUserImage(user);
             List<Order> orders = fetchUserOrders(user);
             BigDecimal totalSpend = calculateTotalSpend(orders);
 
-            return AdminUserMapper.toAdminUserBriefDTO(user, image, orders.size(), totalSpend);
+            return AdminUserMapper.toAdminUserBriefDTO(user, orders.size(), totalSpend);
         });
     }
 
@@ -142,10 +137,9 @@ public class AdminUserServiceImpl implements AdminUserService {
         User user =  userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
-        Image image = fetchUserImage(user);
         List<Order> orders = fetchUserOrders(user);
         BigDecimal totalSpend = calculateTotalSpend(orders);
-        return AdminUserMapper.toAdminUserDetailDTO(user, image, orders.size(),totalSpend);
+        return AdminUserMapper.toAdminUserDetailDTO(user, orders.size(), totalSpend);
     }
 
     @Override
@@ -202,10 +196,6 @@ public class AdminUserServiceImpl implements AdminUserService {
 
        return "User restored successfully";
    }
-
-    private Image fetchUserImage(User user) {
-        return imageRepository.findByImageIdAndType(user.getImageId(), ImageType.USER_AVATAR).orElse(null);
-    }
 
     private List<Order> fetchUserOrders(User user) {
         List<Order> orders =orderRepository.findByCustomerId(user.getUserId());

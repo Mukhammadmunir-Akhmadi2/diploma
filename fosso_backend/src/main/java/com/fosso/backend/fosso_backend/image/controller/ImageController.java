@@ -22,8 +22,8 @@ public class ImageController {
 
     @GetMapping("/user/{imageId}")
     public ResponseEntity<ImageDTO> getImageById(@PathVariable String imageId,
-                                                 @RequestParam ImageType type) {
-        Image image = imageService.getImageById(imageId, type);
+                                                 @RequestParam ImageType imageType) {
+        Image image = imageService.getImageById(imageId, imageType);
         return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
     }
 
@@ -31,7 +31,7 @@ public class ImageController {
     public ResponseEntity<ImageDTO> getImageByOwnerId(
             @PathVariable String ownerId,
             @RequestParam ImageType imageType) {
-        Image image = imageService.getImage(ownerId, imageType);
+        Image image = imageService.getOwnerImage(ownerId, imageType);
         return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
     }
 
@@ -48,24 +48,23 @@ public class ImageController {
     public ResponseEntity<ImageDTO> uploadImage(
             @PathVariable String ownerId,
             @RequestParam ImageType imageType,
-            @RequestParam("file") MultipartFile file) {
-        Image image = imageService.uploadImage(file, ownerId, imageType);
-        return ResponseEntity.ok(ImageMapper.convertToDTO(image));
+            @RequestParam("image") MultipartFile image) {
+        return ResponseEntity.ok(ImageMapper.convertToDTO(imageService.uploadImage(image, ownerId, imageType)));
     }
 
     @DeleteMapping("/merchant/{ownerId}/{imageId}/delete")
     public ResponseEntity<String> deleteImageByOwnerId(
             @PathVariable String ownerId,
             @PathVariable String imageId,
-            @RequestParam ImageType type) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(imageService.deleteImage(ownerId, imageId, type));
+            @RequestParam ImageType imageType) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(imageService.deleteImage(ownerId, imageId, imageType));
     }
 
     @GetMapping("/user/{ownerId}/all")
     public ResponseEntity<List<ImageDTO>> getAllImagesForOwner(
             @PathVariable String ownerId,
-            @RequestParam ImageType type) {
-        List<Image> images = imageService.getAllImagesForOwner(ownerId, type);
+            @RequestParam ImageType imageType) {
+        List<Image> images = imageService.getAllImagesForOwner(ownerId, imageType);
         return ResponseEntity.ok(images.stream().map(ImageMapper::convertToDTO).toList());
     }
 }

@@ -1,5 +1,4 @@
 import type { Gender, Role } from "../enums";
-import type { ImageDTO } from "../image";
 import type { Address } from "../user";
 
 export interface AdminUserBriefDTO {
@@ -9,7 +8,6 @@ export interface AdminUserBriefDTO {
   email: string;
   phoneNumber: string;
   gender: Gender;
-  image: ImageDTO | null; 
   enabled: boolean;
   roles: Role[]; 
   isDeleted: boolean; 
@@ -26,7 +24,6 @@ export interface AdminUserDetailDTO {
   phoneNumber: string;
   roles: Role[];
   gender: Gender; 
-  image: ImageDTO | null; 
   dateOfBirth: string | null; 
   enabled: boolean; 
   banExpirationTime: string | null; 

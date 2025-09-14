@@ -52,7 +52,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image getImage(String ownerId, ImageType type) {
+    public Image getOwnerImage(String ownerId, ImageType type) {
         return imageRepository.findFirstByOwnerIdAndType(ownerId, type)
                 .orElseThrow(() -> new ResourceNotFoundException("Image not found"));
     }

@@ -4,43 +4,47 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Trash, Upload } from "lucide-react";
 import { useLanguage } from "../../hooks/useLanguage";
-import { deleteImageByOwnerId } from "../../api/Image";
 import { useToast } from "../../hooks/useToast";
 import type { ProductMerchantDTO } from "../../types/product";
 import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
-import type { ImageDTO } from "../../types/image";
 import type { ImageType } from "../../types/enums";
+import { useDeleteImageByOwnerIdMutation } from "../../api/ImageApiSlice";
+import EntityImage from "../EntityImage";
 interface ProductFormImagesProps {
-    initialData?: ProductMerchantDTO | AdminProductDetailedDTO;
-    images: ImageDTO[];
-    setImages: React.Dispatch<React.SetStateAction<ImageDTO[]>>;
-    mainImage: ImageDTO[];
-    setMainImage: React.Dispatch<React.SetStateAction<ImageDTO[]>>;
-    imageFiles: { id: string; file: File; type: ImageType }[];
-    setImageFiles: React.Dispatch<React.SetStateAction<{ id: string; file: File; type: ImageType }[]>>;
+  initialData?: ProductMerchantDTO | AdminProductDetailedDTO;
+  imageFiles: { id: string; file: File; type: ImageType }[];
+  setImageFiles: React.Dispatch<
+    React.SetStateAction<{ id: string; file: File; type: ImageType }[]>
+  >;
 }
-const ProductFormImages: React.FC<ProductFormImagesProps> = ({initialData, images, setImages, mainImage, setMainImage, imageFiles, setImageFiles}) => {
+const ProductFormImages: React.FC<ProductFormImagesProps> = ({
+  initialData,
+  imageFiles,
+  setImageFiles,
+}) => {
   const { t } = useLanguage();
-    const { toast } = useToast();
-
+  const { toast } = useToast();
+  const [deleteImageByOwnerId] = useDeleteImageByOwnerIdMutation();
 
   const handleRemoveImageFile = async (id: string) => {
     setImageFiles((prev) => prev.filter((img) => img.id !== id));
   };
   const handleRemoveImage = async (id: string) => {
-    if (initialData && images) {
-      await deleteImageByOwnerId(initialData?.productId, id, "PRODUCT_IMAGE");
-      setImages((prev) => prev.filter((imag) => imag.imageId !== id));
+    if (initialData) {
+      await deleteImageByOwnerId({
+        ownerId: initialData?.productId,
+        imageId: id,
+        imageType: "PRODUCT_IMAGE",
+      }).unwrap();
     }
   };
   const handleRemoveMainImage = async (id: string) => {
-    if (initialData && mainImage) {
-      await deleteImageByOwnerId(
-        initialData?.productId,
-        id,
-        "PRODUCT_IMAGE_MAIN"
-      );
-      setMainImage((prev) => prev.filter((imag) => imag.imageId !== id));
+    if (initialData) {
+      await deleteImageByOwnerId({
+        ownerId: initialData?.productId,
+        imageId: id,
+        ImageType: "PRODUCT_IMAGE_MAIN",
+      }).unwrap();
     }
   };
 
@@ -96,16 +100,14 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({initialData, image
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Main images */}
-          {(mainImage.length > 0 || imageFiles) && (
+          {(initialData?.mainImagesId?.length > 0 || imageFiles) && (
             <>
-              {mainImage.map((image) => (
-                <div
-                  key={image.imageId}
-                  className="border rounded-md p-3 relative"
-                >
-                  <img
-                    src={`data:${image.contentType};base64,${image.base64Data}`}
-                    alt="Product"
+              {initialData?.mainImagesId.map((imageId) => (
+                <div key={imageId} className="border rounded-md p-3 relative">
+                  <EntityImage
+                    imageId={imageId}
+                    imageType="PRODUCT_IMAGE_MAIN"
+                    name="product"
                     className="w-full h-48 object-contain"
                   />
                   <Button
@@ -113,7 +115,7 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({initialData, image
                     variant="destructive"
                     size="icon"
                     className="absolute top-2 right-2"
-                    onClick={() => handleRemoveMainImage(image.imageId)}
+                    onClick={() => handleRemoveMainImage(imageId)}
                   >
                     <Trash className="h-4 w-4" />
                   </Button>
@@ -145,7 +147,7 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({initialData, image
             </>
           )}
           {/* Upload slots for main images */}
-          {mainImage.length < 2 && imageFiles.length < 2 && (
+          {initialData?.mainImagesId?.length < 2 && imageFiles.length < 2 && (
             <div className="border border-dashed rounded-md p-6 flex flex-col items-center justify-center">
               <Label
                 htmlFor="main-image-upload"
@@ -181,16 +183,14 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({initialData, image
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {/* Gallery images */}
-          {(images.length > 0 || imageFiles) && (
+          {(initialData?.imagesId.length > 0 || imageFiles) && (
             <>
-              {images.map((image) => (
-                <div
-                  key={image.imageId}
-                  className="border rounded-md p-2 relative"
-                >
-                  <img
-                    src={`data:${image.contentType};base64,${image.base64Data}`}
-                    alt="Product"
+              {initialData?.imagesId.map((imageId) => (
+                <div key={imageId} className="border rounded-md p-2 relative">
+                  <EntityImage
+                    imageId={imageId}
+                    imageType="PRODUCT_IMAGE"
+                    name="product"
                     className="w-full h-32 object-contain"
                   />
                   <Button
@@ -198,7 +198,7 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({initialData, image
                     variant="destructive"
                     size="icon"
                     className="absolute top-1 right-1 h-6 w-6"
-                    onClick={() => handleRemoveImage(image.imageId)}
+                    onClick={() => handleRemoveImage(imageId)}
                   >
                     <Trash className="h-3 w-3" />
                   </Button>
