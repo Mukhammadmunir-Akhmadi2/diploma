@@ -14,10 +14,13 @@ import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { Image, Upload, Trash } from "lucide-react";
 import type { BrandDTO } from "../../types/brand";
-import type { ImageDTO } from "../../types/image";
-import { deleteImageByOwnerId, uploadImage } from "../../api/Image";
+import {
+  useDeleteImageByOwnerIdMutation,
+  useUploadImageMutation,
+} from "../../api/ImageApiSlice";
 import { updateBrand } from "../../api/admin/AdminBrand";
 import { useToast } from "../ui/use-toast";
+import EntityImage from "../EntityImage";
 
 interface EditBrandModalProps {
   brand: BrandDTO;
@@ -35,9 +38,9 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
   const { t } = useLanguage();
   const { toast } = useToast();
   const [editedBrand, setEditedBrand] = useState<BrandDTO>({ ...brand });
-  const [tempLogo, setTempLogo] = useState<ImageDTO | File | null>(
-    brand.logo || null
-  );
+  const [tempLogo, setTempLogo] = useState<File | null>(null);
+  const [deleteImageByOwnerId] = useDeleteImageByOwnerIdMutation();
+  const [uploadImage] = useUploadImageMutation();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -48,38 +51,28 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
 
   const handleSaveChanges = async () => {
     try {
-      let updatedLogo = tempLogo;
-
-      // Check if the logo has changed
-      if (tempLogo !== brand.logo) {
+      if (tempLogo) {
         // Delete the old logo if it exists
-        if (tempLogo === null && brand.logo && brand.logo.imageId) {
-          await deleteImageByOwnerId(
-            brand.brandId,
-            brand.logo.imageId,
-            "BRAND_IMAGE"
-          );
+        if (brand.logoImageId) {
+          await deleteImageByOwnerId({
+            ownerId: brand.brandId,
+            imageId: brand.logoImageId,
+            ImageType: "BRAND_IMAGE",
+          }).unwrap();
         }
 
         // Upload the new logo if it exists
         if (tempLogo && tempLogo instanceof File) {
-          const uploadedImage = await uploadImage(
-            brand.brandId,
-            "BRAND_IMAGE",
-            tempLogo
-          );
-          updatedLogo = uploadedImage;
+          await uploadImage({
+            ownerId: brand.brandId,
+            imageType: "BRAND_IMAGE",
+            file: tempLogo,
+          }).unwrap();
         }
       }
 
-      // Update the brand with the new logo
-      const updatedBrand = {
-        ...editedBrand,
-        logo: updatedLogo,
-      };
-
-      const result = await updateBrand(brand.brandId, updatedBrand);
-      onSave({ ...result, logo: updatedLogo });
+      const result = await updateBrand(brand.brandId, editedBrand);
+      onSave({ ...result });
       toast({
         title: t("admin.brandUpdated"),
         description: t("admin.brandUpdatedDesc"),
@@ -147,9 +140,10 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
                     className="max-w-full max-h-full object-contain"
                   />
                 ) : (
-                  <img
-                    src={`data:${tempLogo.contentType};base64,${tempLogo.base64Data}`}
-                    alt={editedBrand.name}
+                  <EntityImage
+                    ownerId={editedBrand.logoImageId}
+                    imageType="BRAND_IMAGE"
+                    name={editedBrand.name}
                     className="max-w-full max-h-full object-contain"
                   />
                 )
