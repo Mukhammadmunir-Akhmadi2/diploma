@@ -85,14 +85,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
       : []
   );
 
-
   const [imageFiles, setImageFiles] = useState<
     { id: string; file: File; type: ImageType }[]
   >([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadImage] = useUploadImageMutation();
-
- 
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -130,12 +127,20 @@ const ProductForm: React.FC<ProductFormProps> = ({
       }
       if (imageFiles) {
         for (const file of imageFiles) {
-          await uploadImage({ownerId: newProduct.productId, imageType: file.type, file: file.file}).unwrap();
+          await uploadImage({
+            ownerId: newProduct.productId,
+            imageType: file.type,
+            file: file.file,
+          }).unwrap();
         }
       }
 
       onSuccess(newProduct);
-      navigate("/merchant/dashboard");
+      if (user.roles.includes("ADMIN")) {
+        navigate("/admin/products");
+      } else {
+        navigate("/merchant/dashboard");
+      }
     } catch (error) {
       toast({
         title: t("merchant.errorSavingProduct"),
@@ -284,7 +289,11 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <Button
           type="button"
           variant="outline"
-          onClick={() => navigate("/merchant/dashboard")}
+          onClick={() =>
+            user.roles.includes("ADMIN")
+              ? navigate("/admin/product")
+              : navigate("/merchant/dashboard")
+          }
         >
           {t("merchant.cancel")}
         </Button>

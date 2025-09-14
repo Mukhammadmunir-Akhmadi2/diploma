@@ -57,7 +57,7 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
           await deleteImageByOwnerId({
             ownerId: brand.brandId,
             imageId: brand.logoImageId,
-            ImageType: "BRAND_IMAGE",
+            imageType: "BRAND_IMAGE",
           }).unwrap();
         }
 
@@ -133,22 +133,21 @@ const EditBrandModal: React.FC<EditBrandModalProps> = ({
           <div className="flex items-center justify-center mb-2">
             <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
               {tempLogo ? (
-                tempLogo instanceof File ? (
-                  <img
-                    src={URL.createObjectURL(tempLogo)}
-                    alt={editedBrand.name}
-                    className="max-w-full max-h-full object-contain"
-                  />
-                ) : (
-                  <EntityImage
-                    ownerId={editedBrand.logoImageId}
-                    imageType="BRAND_IMAGE"
-                    name={editedBrand.name}
-                    className="max-w-full max-h-full object-contain"
-                  />
-                )
+                <img
+                  src={URL.createObjectURL(tempLogo)}
+                  alt={editedBrand.name}
+                  className="max-w-full max-h-full object-contain"
+                />
               ) : (
-                <Image size={32} className="text-muted-foreground" />
+                <EntityImage
+                  imageId={editedBrand.logoImageId}
+                  imageType="BRAND_IMAGE"
+                  name={editedBrand.name}
+                  className="max-w-full max-h-full object-contain"
+                  fallback={
+                    <Image size={32} className="text-muted-foreground" />
+                  }
+                />
               )}
             </div>
           </div>

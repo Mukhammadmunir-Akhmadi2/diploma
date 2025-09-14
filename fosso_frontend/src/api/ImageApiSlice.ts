@@ -12,6 +12,9 @@ export const imageApiSlice = apiClientSlice.injectEndpoints({
         url: `images/user/${imageId}`,
         params: { imageType },
       }),
+      providesTags: (result, error, { ownerId, imageType }) => [
+        { type: "Images", id: `${ownerId}-${imageType}` },
+      ],
     }),
 
     getImageByOwnerId: builder.query<
@@ -22,6 +25,9 @@ export const imageApiSlice = apiClientSlice.injectEndpoints({
         url: `images/user/owner/${ownerId}`,
         params: { imageType },
       }),
+      providesTags: (result, error, { ownerId, imageType }) => [
+        { type: "Images", id: `${ownerId}-${imageType}` },
+      ],
     }),
 
     getAllImagesForOwner: builder.query<
@@ -32,6 +38,9 @@ export const imageApiSlice = apiClientSlice.injectEndpoints({
         url: `images/user/${ownerId}/all`,
         params: { imageType },
       }),
+      providesTags: (result, error, { ownerId, imageType }) => [
+        { type: "Images", id: `${ownerId}-${imageType}` },
+      ],
     }),
 
     uploadProductImages: builder.mutation<
@@ -64,17 +73,23 @@ export const imageApiSlice = apiClientSlice.injectEndpoints({
           body: formData,
         };
       },
+      invalidatesTags: (result, error, { ownerId, imageType }) => [
+        { type: "Images", id: `${ownerId}-${imageType}` },
+      ],
     }),
 
     deleteImageByOwnerId: builder.mutation<
       string,
-      { ownerId: string; imageId: string; ImageType: ImageType }
+      { ownerId: string; imageId: string; imageType: ImageType }
     >({
-      query: ({ ownerId, imageId, ImageType }) => ({
+      query: ({ ownerId, imageId, imageType }) => ({
         url: `images/merchant/${ownerId}/${imageId}/delete`,
         method: "DELETE",
-        params: { ImageType },
+        params: { imageType },
       }),
+      invalidatesTags: (result, error, { ownerId, imageType }) => [
+        { type: "Images", id: `${ownerId}-${imageType}` },
+      ],
     }),
   }),
 });

@@ -29,7 +29,7 @@ const CreateProduct = lazy(() => import("./pages/CreateProduct"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
 const BrandListingPage = lazy(() => import("./pages/BrandListingPage"));
 const OrderDetailPage = lazy(
-  () => import("./components/profile/OrderDetailPage")
+  () => import("./pages/OrderDetailPage")
 );
 const MerchantOrderedProducts = lazy(
   () => import("./pages/MerchantOrderedProducts")

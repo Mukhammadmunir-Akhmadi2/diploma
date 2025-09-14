@@ -155,7 +155,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> getMarchantProducts(Pageable pageable) {
         User currentUser = userProvider.getAuthenticatedUser();
-        Page<Product> products = productRepository.findByMerchantIdAndDeletedNot(currentUser.getUserId(), pageable);
+        Page<Product> products = productRepository.findByMerchantIdAndIsDeletedFalse(currentUser.getUserId(), pageable);
         if (products == null || products.isEmpty()) {
             throw new ResourceNotFoundException("No products found matching the criteria");
         }

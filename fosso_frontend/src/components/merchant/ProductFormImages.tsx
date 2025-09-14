@@ -34,7 +34,7 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({
       await deleteImageByOwnerId({
         ownerId: initialData?.productId,
         imageId: id,
-        ImageType: "PRODUCT_IMAGE",
+        imageType: "PRODUCT_IMAGE",
       }).unwrap();
     }
   };

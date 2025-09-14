@@ -12,7 +12,7 @@ public interface ProductRepository extends MongoRepository<Product, String>, Pro
     //user
 
     //merchant
-    Page<Product> findByMerchantIdAndDeletedNot(String merchantId, Pageable pageable);
+    Page<Product> findByMerchantIdAndIsDeletedFalse(String merchantId, Pageable pageable);
 
     //admin
     Page<Product> findByMerchantId(String merchantId, Pageable pageable);

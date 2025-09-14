@@ -49,5 +49,6 @@ const baseQueryWithAuth: BaseQueryFn<
 export const apiClientSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithAuth,
+  tagTypes: ["Images"],
   endpoints: () => ({}),
 });

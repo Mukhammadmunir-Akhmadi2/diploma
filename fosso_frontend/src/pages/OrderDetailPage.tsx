@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../hooks/useLanguage";
+import { useLanguage } from "../hooks/useLanguage";
 import { Truck, ArrowLeft, CheckCircle } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Separator } from "../../components/ui/separator";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
 import { useNavigate, useParams } from "react-router-dom";
-import { getOrderById } from "../../api/Order";
-import { type OrderDetail, type OrderDetailedDTO } from "../../types/order";
-import { useToast } from "../../hooks/useToast";
+import { getOrderById } from "../api/Order";
+import { type OrderDetail, type OrderDetailedDTO } from "../types/order";
+import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
-import { getUserById } from "../../api/User";
-import { type UserBriefDTO } from "../../types/user";
-import type { OrderStatus } from "../../types/enums";
-import EntityImage from "../EntityImage";
+import { getUserById } from "../api/User";
+import { type UserBriefDTO } from "../types/user";
+import type { OrderStatus } from "../types/enums";
+import EntityImage from "../components/EntityImage";
 
 const OrderDetailPage: React.FC = () => {
   const { t } = useLanguage();
@@ -64,7 +64,7 @@ const OrderDetailPage: React.FC = () => {
     };
 
     fetchOrderDetails();
-  }, [id, t, toast]);
+  }, []);
 
   const toggleItemExpand = (itemId: string) => {
     setExpandedItems((prev) =>
@@ -140,7 +140,7 @@ const OrderDetailPage: React.FC = () => {
         <div className="flex justify-between mb-2">
           {statuses.map((status, index) => (
             <div
-              key={status}
+              key={index}
               className={`flex flex-col items-center ${
                 index <= currentStatusIndex
                   ? "text-blue-600 dark:text-blue-400"
@@ -329,9 +329,9 @@ const OrderDetailPage: React.FC = () => {
                 {t("order.orderItems")}
               </h2>
               <div className="space-y-4">
-                {order?.orderDetails.map((orderDetail: OrderDetail) => (
+                {order?.orderDetails.map((orderDetail: OrderDetail, index) => (
                   <div
-                    key={orderDetail.productId}
+                    key={`${orderDetail.productId}${index}`}
                     className="border dark:border-gray-700 rounded-lg overflow-hidden transition-shadow duration-200 hover:shadow-md"
                   >
                     <div className="p-4 flex flex-col sm:flex-row gap-4">

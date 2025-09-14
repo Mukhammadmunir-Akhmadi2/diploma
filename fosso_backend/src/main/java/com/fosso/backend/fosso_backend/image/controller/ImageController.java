@@ -48,7 +48,7 @@ public class ImageController {
     public ResponseEntity<ImageDTO> uploadImage(
             @PathVariable String ownerId,
             @RequestParam ImageType imageType,
-            @RequestParam("file") MultipartFile image) {
+            @RequestParam("image") MultipartFile image) {
         return ResponseEntity.ok(ImageMapper.convertToDTO(imageService.uploadImage(image, ownerId, imageType)));
     }
 
