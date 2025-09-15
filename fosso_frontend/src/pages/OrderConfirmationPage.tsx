@@ -9,7 +9,6 @@ const OrderConfirmationPage = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
 
-  // In a real app, this would come from the order API/context
   const orderNumber = slug;
 
   return (
