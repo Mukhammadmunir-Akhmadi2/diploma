@@ -1,4 +1,4 @@
-package com.fosso.backend.fosso_backend.common.controller;
+package com.fosso.backend.fosso_backend.common.handler;
 
 import com.fosso.backend.fosso_backend.common.exception.*;
 import org.slf4j.Logger;

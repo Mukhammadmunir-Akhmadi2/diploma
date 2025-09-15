@@ -73,10 +73,10 @@ The frontend is built with **React**, **Vite**, and **Tailwind CSS**, designed t
 ### ✨ Key Features
 
 - Functional React components with hooks
-- Zustand for global state management
-- Forms with React Hook Form and validation using Zod/Yup
+- Redux for global state management
+- Forms with React Hook Form and validation using Yup
 - Tailwind CSS, Radix UI, and Lucide Icons for sleek UI
-- Data fetching with React Query and Axios
+- Data fetching with RTK Query and Axios
 
 ### 🛠 Tech Stack
 
@@ -84,10 +84,10 @@ The frontend is built with **React**, **Vite**, and **Tailwind CSS**, designed t
 |---------------------|---------------------------|
 | Framework           | React 18 + Vite           |
 | Styling             | Tailwind CSS              |
-| State Management    | Zustand                   |
-| Form & Validation   | React Hook Form + Yup/Zod |
+| State Management    | Redux                   |
+| Form & Validation   | React Hook Form + Yup |
 | Routing             | React Router DOM          |
-| Data Fetching       | Axios + React Query       |
+| Data Fetching       | Axios + RTK Query       |
 
 ### 🚀 Getting Started
 
