@@ -138,7 +138,7 @@ const CheckoutPage: React.FC = () => {
 
       toast({
         title: t("checkout.orderError"),
-        description: t("checkout.orderErrorDesc"),
+        description: errorResponse.message || t("checkout.orderErrorDesc"),
         variant: "destructive",
       });
       setIsProcessingOrder(false);
