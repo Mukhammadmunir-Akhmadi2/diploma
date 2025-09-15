@@ -20,7 +20,7 @@ const CartPage = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
   const [cartItems, setCartItems] = useState<CartResponse>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -50,6 +50,8 @@ const CartPage = () => {
     };
     if (user) {
       fetchCardtItems();
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
