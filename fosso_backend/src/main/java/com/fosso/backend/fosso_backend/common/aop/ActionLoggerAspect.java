@@ -27,7 +27,12 @@ public class ActionLoggerAspect {
         try {
             Object result = joinPoint.proceed();
 
-            Object firstArg = joinPoint.getArgs()[0];
+            Object firstArg = null;
+
+            if (joinPoint.getArgs() != null && joinPoint.getArgs().length != 0) {
+                firstArg = joinPoint.getArgs()[0];
+            }
+
             if (firstArg instanceof String) {
                 entityId = (String) firstArg;
             } else if (result instanceof LoggableEntity) {

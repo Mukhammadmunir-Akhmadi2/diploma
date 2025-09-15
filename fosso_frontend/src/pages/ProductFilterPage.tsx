@@ -44,12 +44,12 @@ const colors = [
   { id: "26", name: "Ecru", hex: "#C2B280" },
 ];
 
-interface CategoryPageProps {
+interface ProductFilterPageProps {
   gender?: Gender | null;
   isPopular?: boolean;
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = ({
+const ProductFilterPage: React.FC<ProductFilterPageProps> = ({
   gender: preSelectedGender,
   isPopular,
 }) => {
@@ -74,20 +74,21 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   const { toast } = useToast();
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
 
-  const { currentData, isLoading, isFetching, isError, error } = useGetAllProductsQuery({
-    filterCriteria: {
-      categoryId: categoryId || undefined,
-      brandId: appliedFilters.selectedBrand || undefined,
-      gender: appliedFilters.selectedGender || undefined,
-      keyword: keyword || undefined,
-      color: appliedFilters.selectedColor || undefined,
-      minPrice: appliedFilters.priceRange[0],
-      maxPrice: appliedFilters.priceRange[1],
-    },
-    page,
-    size: 4,
-    sort: isPopular ? "rating,desc" : undefined,
-  });
+  const { currentData, isLoading, isFetching, isError, error } =
+    useGetAllProductsQuery({
+      filterCriteria: {
+        categoryId: categoryId || undefined,
+        brandId: appliedFilters.selectedBrand || undefined,
+        gender: appliedFilters.selectedGender || undefined,
+        keyword: keyword || undefined,
+        color: appliedFilters.selectedColor || undefined,
+        minPrice: appliedFilters.priceRange[0],
+        maxPrice: appliedFilters.priceRange[1],
+      },
+      page,
+      size: 4,
+      sort: isPopular ? "rating,desc" : undefined,
+    });
 
   const pageProducts = currentData;
 
@@ -404,4 +405,4 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
   );
 };
 
-export default CategoryPage;
+export default ProductFilterPage;
