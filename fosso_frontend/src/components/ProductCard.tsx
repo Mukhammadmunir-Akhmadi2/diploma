@@ -7,6 +7,8 @@ import type { ProductBriefDTO } from "../types/product";
 import placeholder from "../assets/placeholder.svg";
 import { AspectRatio } from "./ui/aspect-ratio";
 import { useGetAllImagesForOwnerQuery } from "../api/ImageApiSlice";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { addToWishlist, removeFromWishlist } from "../slices/wishlistSlice";
 interface ProductCardProps {
   product: ProductBriefDTO;
 }
@@ -15,7 +17,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const isWishlisted = useAppSelector((state) =>
+    state.wishlist.products.some((p) => p.productId === product.productId)
+  );
+  const dispatch = useAppDispatch();
 
   const {
     data: mainImage,
@@ -39,15 +45,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   }, [isError, error]);
 
-  useEffect(() => {
-    const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    setIsWishlisted(
-      wishlist.some(
-        (item: ProductBriefDTO) => item.productId === product.productId
-      )
-    );
-  }, [product.productId]);
-
   const discountPercentage =
     product.price && product.discountPrice
       ? Math.round(
@@ -55,37 +52,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         )
       : 0;
 
-  const handleWishlistToggle = (e: React.MouseEvent) => {
+  const handleWishlistToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
-    let wishlist: ProductBriefDTO[] = [];
-    if (localStorage.getItem("wishlist")) {
-      wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    }
-
-    const isAlreadyWishlisted = wishlist.some(
-      (item) => item.productId === product.productId
-    );
-
-    let updatedWishlist: ProductBriefDTO[];
-    if (isAlreadyWishlisted) {
-      updatedWishlist = wishlist.filter(
-        (item) => item.productId !== product.productId
-      );
-      setIsWishlisted(false);
+    if (isWishlisted) {
+      dispatch(removeFromWishlist(product.productId));
     } else {
-      updatedWishlist = [...wishlist, product];
-      setIsWishlisted(true);
+      dispatch(addToWishlist(product));
     }
-
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
 
     toast({
-      title: isAlreadyWishlisted
+      title: isWishlisted
         ? t("product.removedFromWishlist")
         : t("product.addedToWishlist"),
       description: `${product.productName} ${
-        isAlreadyWishlisted
+        isWishlisted
           ? t("product.removedFromWishlistDesc")
           : t("product.addedToWishlistDesc")
       }`,

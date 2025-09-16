@@ -21,6 +21,9 @@ export const uzTranslations: Translations = {
     title: "Sizning istaklar ro'yxatingiz",
     empty: "Sizning istaklar ro'yxatingiz bo'sh.",
     continueShopping: "Xarid qilishni davom ettirish",
+    emptyMessage: "Sizning istaklar ro'yxatingiz hozircha bo‘sh.",
+    removed: "Istaklar ro'yxatidan o‘chirildi",
+    removedDesc: "Mahsulot istaklar ro'yxatingizdan muvaffaqiyatli o‘chirildi.",
   },
   basket: "Savatcha",
   back: "Orqaga",
@@ -32,6 +35,7 @@ export const uzTranslations: Translations = {
     subtitle: "O‘tgan hafta qo‘shilgan so‘nggi mahsulotlar",
     title: "Yangi kelganlar",
     newIn: "O‘tgan hafta yangi mahsulotlar qo‘shilmadi.",
+    products: "Yangi kelgan mahsulotlar",
   },
   terms: {
     back: "Ortga",

@@ -74,28 +74,39 @@ const ProductFilterPage: React.FC<ProductFilterPageProps> = ({
   const { toast } = useToast();
   const [currentCategory, setCurrentCategory] = useState<Category | null>(null);
 
-  const { currentData, isLoading, isFetching, isError, error } =
-    useGetAllProductsQuery({
-      filterCriteria: {
-        categoryId: categoryId || undefined,
-        brandId: appliedFilters.selectedBrand || undefined,
-        gender: appliedFilters.selectedGender || undefined,
-        keyword: keyword || undefined,
-        color: appliedFilters.selectedColor || undefined,
-        minPrice: appliedFilters.priceRange[0],
-        maxPrice: appliedFilters.priceRange[1],
-      },
-      page,
-      size: 4,
-      sort: isPopular ? "rating,desc" : undefined,
-    });
+  const {
+    currentData = {
+      products: [],
+      totalItems: 0,
+      currentPage: 1,
+      totalPages: 0,
+    },
+    isLoading,
+    isFetching,
+    isError,
+    error,
+  } = useGetAllProductsQuery({
+    filterCriteria: {
+      categoryId: categoryId || undefined,
+      brandId: appliedFilters.selectedBrand || undefined,
+      gender: appliedFilters.selectedGender || undefined,
+      keyword: keyword || undefined,
+      color: appliedFilters.selectedColor || undefined,
+      minPrice: appliedFilters.priceRange[0],
+      maxPrice: appliedFilters.priceRange[1],
+    },
+    page,
+    size: 4,
+    sort: isPopular ? "rating,desc" : undefined,
+  });
 
   const pageProducts = currentData;
 
   useEffect(() => {
     if (isError && error) {
-      const response = error.data as ErrorResponse;
-      if (response.status === 404) {
+      const errorResponse = error.data as ErrorResponse;
+
+      if (error.status === 404) {
         toast({
           title: t("products.no_results"),
           description: t("products.no_results_description", {
@@ -103,7 +114,7 @@ const ProductFilterPage: React.FC<ProductFilterPageProps> = ({
           }),
         });
       } else {
-        console.error("Error fetching products:", response);
+        console.error("Error fetching products:", errorResponse);
         toast({
           title: t("products.error"),
           description: t("products.error_description"),
@@ -115,29 +126,33 @@ const ProductFilterPage: React.FC<ProductFilterPageProps> = ({
 
   useEffect(() => {
     const fetchProducts = async () => {
-      let subcategories;
-      if (categoryId) {
-        subcategories = await listSubcategories(categoryId);
-        const selectedCategory = await getCategoryById(categoryId);
-        setCurrentCategory(selectedCategory || null);
-      } else {
-        subcategories = await listSubcategories("root");
+      try {
+        let subcategories;
+        if (categoryId) {
+          subcategories = await listSubcategories(categoryId);
+          const selectedCategory = await getCategoryById(categoryId);
+          setCurrentCategory(selectedCategory || null);
+        } else {
+          subcategories = await listSubcategories("root");
+        }
+
+        const allBrands = await listAllBrands();
+
+        if (brandId) {
+          const selectedBrand = allBrands.find(
+            (brand) => brand.brandId === brandId
+          );
+          setPendingFilters((prev) => ({
+            ...prev,
+            selectedBrand: selectedBrand?.brandId || null,
+          }));
+        }
+        setBrands(allBrands);
+
+        setSiblingCategories(subcategories);
+      } catch (err) {
+        console.error("Error fetching filter data:", err);
       }
-
-      const allBrands = await listAllBrands();
-
-      if (brandId) {
-        const selectedBrand = allBrands.find(
-          (brand) => brand.brandId === brandId
-        );
-        setPendingFilters((prev) => ({
-          ...prev,
-          selectedBrand: selectedBrand?.brandId || null,
-        }));
-      }
-      setBrands(allBrands);
-
-      setSiblingCategories(subcategories);
     };
     fetchProducts();
   }, [categoryId, brandId, keyword, page]);

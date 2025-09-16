@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../hooks/useLanguage";
 import type { ProductFilterCriteria } from "../types/product";
 import { useGetAllProductsQuery } from "../api/ProductApiSlice";
@@ -14,7 +14,12 @@ const NewInPage: React.FC = () => {
   const { toast } = useToast();
 
   const {
-    data: paginatedProduct,
+    data: paginatedProduct = {
+      products: [],
+      totalItems: 0,
+      currentPage: 1,
+      totalPages: 0,
+    },
     isLoading,
     isError,
     error,
@@ -24,24 +29,27 @@ const NewInPage: React.FC = () => {
     size: 8,
   });
 
-  if (isError) {
-    const errorResponse = error as ErrorResponse;
+  useEffect(() => {
+ if (isError) {
+   const errorResponse = error as ErrorResponse;
 
-    if (errorResponse.status === 404) {
-      console.error("Error fetching products:", errorResponse);
-      toast({
-        title: t("products.noProductsTitle"),
-        description: t("products.noProductsMessage"),
-      });
-    } else {
-      toast({
-        title: t("error.fetchProduct"),
-        description: t("error.tryAgain"),
-        variant: "destructive",
-      });
-      console.error("Error fetching categories:", error);
-    }
-  }
+   if (error.status === 404) {
+     console.error("Error fetching products:", errorResponse);
+     toast({
+       title: t("products.noProductsTitle"),
+       description: t("products.noProductsMessage"),
+     });
+   } else {
+     toast({
+       title: t("error.fetchProduct"),
+       description: t("error.tryAgain"),
+       variant: "destructive",
+     });
+     console.error("Error fetching categories:", error);
+   }
+ }
+  }, [isError, error]);
+ 
 
   if (isLoading) {
     // Show Ant Design's Spin component while loading

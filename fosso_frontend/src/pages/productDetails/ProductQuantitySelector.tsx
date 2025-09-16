@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLanguage } from "../../hooks/useLanguage";
 import { Heart, ShoppingBag } from "lucide-react";
 import { Button } from "../../components/ui/button";
@@ -12,6 +12,8 @@ import type { CartItemCreateDTO } from "../../types/cart";
 import { addProductToCart } from "../../api/Cart";
 import type { ErrorResponse } from "../../types/error";
 import type { UserDTO } from "../../types/user";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { addToWishlist, removeFromWishlist } from "../../slices/wishlistSlice";
 
 interface ProductQuantitySelectorProps {
   user: UserDTO | null;
@@ -33,7 +35,10 @@ const ProductQuantitySelector: React.FC<ProductQuantitySelectorProps> = ({
   const { t } = useLanguage();
   const { toast } = useToast();
 
-  const [isInWishlist, setIsInWishlist] = useState(false);
+  const isInWishlist = useAppSelector((state) =>
+    state.wishlist.products.some((p) => p.productId === product?.productId)
+  );
+  const dispatch = useAppDispatch();
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -68,7 +73,11 @@ const ProductQuantitySelector: React.FC<ProductQuantitySelectorProps> = ({
   };
 
   const handleToggleWishlist = () => {
-    setIsInWishlist(!isInWishlist);
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(product!.productId));
+    } else {
+      dispatch(addToWishlist(product as ProductBriefDTO));
+    }
     toast({
       title: isInWishlist
         ? t("product.removedFromWishlist")

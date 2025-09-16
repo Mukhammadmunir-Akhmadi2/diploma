@@ -21,6 +21,9 @@ export const ruTranslations: Translations = {
     title: "Ваш список желаний",
     empty: "Ваш список желаний пуст.",
     continueShopping: "Продолжить покупки",
+    emptyMessage: "Ваш список желаний пока пуст.",
+    removed: "Удалено из списка желаний",
+    removedDesc: "Товар успешно удалён из вашего списка желаний.",
   },
   basket: "Корзина",
   back: "Назад",
@@ -32,6 +35,7 @@ export const ruTranslations: Translations = {
     subtitle: "Последние поступления за прошлую неделю",
     title: "Новинки",
     newIn: "За последнюю неделю новых товаров не добавлено.",
+    products: "Новые поступления",
   },
   terms: {
     back: "Назад",

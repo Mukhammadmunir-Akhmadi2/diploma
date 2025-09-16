@@ -34,7 +34,12 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   if (gender) queryParams.gender = gender;
 
   const {
-    data: products,
+    data: products = {
+      products: [],
+      totalItems: 0,
+      currentPage: 1,
+      totalPages: 0,
+    },
     isError,
     error,
   } = useGetAllProductsQuery({
@@ -48,7 +53,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
     if (isError) {
       const errorResponse = error.data as ErrorResponse;
 
-      if (errorResponse.status === 404) {
+      if (error.status === 404) {
         console.error("Error fetching products:", errorResponse);
         toast({
           title: t("products.noProductsTitle"),
@@ -63,7 +68,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
         });
       }
     }
-  }, [isError, error, toast, t]);
+  }, [isError, error]);
 
   return (
     <div className="w-full py-8 md:py-12">

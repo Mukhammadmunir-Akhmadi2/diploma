@@ -1,46 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLanguage } from "../hooks/useLanguage";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { Trash, Heart } from "lucide-react";
-import type { ProductBriefDTO } from "../types/product";
 import { useToast } from "../hooks/useToast";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { removeFromWishlist } from "../slices/wishlistSlice";
 
 const WishlistPage: React.FC = () => {
   const { t } = useLanguage();
-  const [wishlist, setWishlist] = useState<ProductBriefDTO[]>([]);
   const { toast } = useToast();
 
-  useEffect(() => {
-    try {
-      const storedWishlist = localStorage.getItem("wishlist");
-      if (storedWishlist) {
-        const parsedWishlist: ProductBriefDTO[] = JSON.parse(storedWishlist);
-        setWishlist(parsedWishlist);
-      } else {
-        setWishlist([]);
-      }
-    } catch (error) {
-      console.error("Error fetching wishlist:", error);
-      toast({
-        title: t("error.fetchProduct", {
-          defaultValue: "Error Fetching Wishlist",
-        }),
-        description: t("error.tryAgain", {
-          defaultValue: "Please try again later.",
-        }),
-        variant: "destructive",
-      });
-    }
-  }, []);
+  const wishlist = useAppSelector((state) => state.wishlist.products);
+  const dispatch = useAppDispatch();
 
-  const removeFromWishlist = (productId: string) => {
-    const updatedWishlist = wishlist.filter(
-      (item) => item.productId !== productId
-    );
-    setWishlist(updatedWishlist);
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+  const removeFromWishlistHandler = (productId: string) => {
+    dispatch(removeFromWishlist(productId));
     toast({
       title: t("wishlist.removed"),
       description: t("wishlist.removedDesc"),
@@ -59,7 +35,7 @@ const WishlistPage: React.FC = () => {
                 <div key={product.productId} className="relative group">
                   <ProductCard product={product} />
                   <button
-                    onClick={() => removeFromWishlist(product.productId)}
+                    onClick={() => removeFromWishlistHandler(product.productId)}
                     className="absolute top-2 right-2 p-2 bg-white dark:bg-gray-800 rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <Trash size={16} className="text-red-500" />

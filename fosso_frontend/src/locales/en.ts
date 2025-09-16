@@ -20,6 +20,10 @@ export const enTranslations: Translations = {
     title: "Your Wishlist",
     empty: "Your wishlist is empty.",
     continueShopping: "Continue Shopping",
+    emptyMessage: "Your wishlist is currently empty.",
+    removed: "Removed from Wishlist",
+    removedDesc:
+      "The product has been successfully removed from your wishlist.",
   },
   basket: "Basket",
   back: "Back",
@@ -31,6 +35,7 @@ export const enTranslations: Translations = {
     subtitle: "Latest arrivals from the past week",
     title: "New In",
     newIn: "No new products have been added in the past week.",
+    products: "New Arrivals",
   },
   terms: {
     back: "Back",
