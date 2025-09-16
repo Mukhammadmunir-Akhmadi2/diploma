@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -13,13 +14,12 @@ import * as Yup from "yup";
 import { useLoginHandler } from "../hooks/useLoginHandler";
 import { Spin } from "antd";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 type LoginForm = AuthRequest & { rememberMe: boolean };
 
-const Login = () => {
+const LoginPage: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -242,4 +242,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

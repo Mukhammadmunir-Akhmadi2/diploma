@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "../hooks/useLanguage";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { Trash, Heart } from "lucide-react";
 import type { ProductBriefDTO } from "../types/product";
 import { useToast } from "../hooks/useToast";
 
-const Wishlist = () => {
+const WishlistPage: React.FC = () => {
   const { t } = useLanguage();
   const [wishlist, setWishlist] = useState<ProductBriefDTO[]>([]);
   const { toast } = useToast();
@@ -87,4 +87,4 @@ const Wishlist = () => {
   );
 };
 
-export default Wishlist;
+export default WishlistPage;

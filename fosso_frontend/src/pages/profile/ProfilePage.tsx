@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { useLanguage } from "../../hooks/useLanguage";
 import ProfileSidebar from "./ProfileSidebar";
@@ -8,7 +8,7 @@ import { useToast } from "../../hooks/useToast";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../../types/error";
 
-const Profile = () => {
+const ProfilePage: React.FC = () => {
   const { t } = useLanguage();
   const [user, setUser] = useState<UserProfileDTO>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -67,4 +67,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfilePage;

@@ -9,7 +9,7 @@ import OrdersSection from "./pages/profile/OrdersSection";
 import WishlistSection from "./pages/profile/WishlistSection";
 import SettingsSection from "./pages/profile/SettingsSection";
 import ProtectedLayout from "./layout/ProtectedLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import { useAppSelector } from "./store/hooks";
 import UsersManagement from "./pages/admin/UsersManagement";
 import UserDetailsPage from "./pages/admin/UserDetailsPage";
@@ -18,22 +18,22 @@ import BrandsManagement from "./pages/admin/BrandsManagement";
 import ProductsPage from "./pages/admin/ProductsPage";
 import Layout from "./layout/Layout";
 import Index from "./pages/Index";
-import Wishlist from "./pages/Wishlist";
+import WishlistPage from "./pages/WishlistPage";
 import CartPage from "./pages/CartPage";
 import ProductFilterPage from "./pages/ProductFilterPage";
-import ProductDetail from "./pages/productDetails/ProductDetail";
+import ProductDetailPage from "./pages/productDetails/ProductDetailPage";
 import BrandListingPage from "./pages/BrandListingPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
-import CreateProduct from "./pages/productCreate/CreateProduct";
-import Login from "./pages/Login";
-import MerchantDashboard from "./pages/MerchantDashboard";
-import MerchantOrderedProducts from "./pages/MerchantOrderedProducts";
+import CreateProductPage from "./pages/productCreate/CreateProductPage";
+import LoginPage from "./pages/LoginPage";
+import MerchantDashboardPage from "./pages/MerchantDashboardPage";
+import MerchantOrderedProductsPage from "./pages/MerchantOrderedProductsPage";
 import NewInPage from "./pages/NewInPage";
-import NotFound from "./pages/NotFound";
+import NotFoundPage from "./pages/NotFoundPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
-import Profile from "./pages/profile/Profile";
-import Signup from "./pages/Signup";
+import ProfilePage from "./pages/profile/ProfilePage";
+import SignupPage from "./pages/SignupPage";
 import Terms from "./pages/Terms";
 
 const App = () => {
@@ -54,7 +54,7 @@ const App = () => {
             <Route path="womenswear" element={<Index gender="FEMALE" />} />
             <Route path="menswear" element={<Index gender="MALE" />} />
 
-            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="wishlist" element={<WishlistPage />} />
             <Route path="cart" element={<CartPage />} />
 
             <Route path="category" element={<ProductFilterPage />} />
@@ -118,12 +118,12 @@ const App = () => {
 
             <Route path="search/:keyword" element={<ProductFilterPage />} />
 
-            <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="product/:id" element={<ProductDetailPage />} />
             <Route path="brands" element={<BrandListingPage />} />
 
             {/* Profile Routes */}
             <Route element={<ProtectedLayout />}>
-              <Route path="profile" element={<Profile />}>
+              <Route path="profile" element={<ProfilePage />}>
                 <Route index element={<PersonalInfoForm />} />
                 <Route path="addresses" element={<AddressesSection />} />
                 <Route path="payment" element={<PaymentSection />} />
@@ -132,7 +132,7 @@ const App = () => {
                 <Route path="settings" element={<SettingsSection />} />
               </Route>
               <Route path="order/:id" element={<OrderDetailPage />} />
-              <Route path="logout" element={<Login />} />
+              <Route path="logout" element={<LoginPage />} />
               <Route path="checkout" element={<CheckoutPage />} />
               <Route
                 path="order-confirmation/:slug"
@@ -142,37 +142,40 @@ const App = () => {
               {/* Merchant Routes */}
               <Route
                 path="merchant/dashboard"
-                element={<MerchantDashboard />}
+                element={<MerchantDashboardPage />}
               />
               <Route
                 path="merchant/create-product"
-                element={<CreateProduct />}
+                element={<CreateProductPage />}
               />
               <Route
                 path="merchant/edit-product/:id"
-                element={<CreateProduct />}
+                element={<CreateProductPage />}
               />
               <Route
                 path="merchant/ordered-products"
-                element={<MerchantOrderedProducts />}
+                element={<MerchantOrderedProductsPage />}
               />
 
               {/* Admin Routes */}
-              <Route path="admin" element={<AdminDashboard />}>
+              <Route path="admin" element={<AdminDashboardPage />}>
                 <Route index path="users" element={<UsersManagement />} />
                 <Route path="users/:userId" element={<UserDetailsPage />} />
                 <Route path="categories" element={<CategoriesManagement />} />
                 <Route path="brands" element={<BrandsManagement />} />
                 <Route path="products" element={<ProductsPage />} />
-                <Route path="products/edit/:id" element={<CreateProduct />} />
+                <Route
+                  path="products/edit/:id"
+                  element={<CreateProductPage />}
+                />
               </Route>
             </Route>
 
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
 
-          <Route path="login" element={<Login />} />
-          <Route path="signup" element={<Signup />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
           <Route path="terms" element={<Terms />} />
         </Routes>
       </BrowserRouter>

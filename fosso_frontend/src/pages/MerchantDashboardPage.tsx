@@ -15,7 +15,7 @@ import type { ErrorResponse } from "../types/error";
 
 // This is a mock function that would be replaced by real auth
 
-const MerchantDashboard: React.FC = () => {
+const MerchantDashboardPage: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const user = useAppSelector((state) => state.auth.user);
@@ -144,4 +144,4 @@ const MerchantDashboard: React.FC = () => {
   );
 };
 
-export default MerchantDashboard;
+export default MerchantDashboardPage;

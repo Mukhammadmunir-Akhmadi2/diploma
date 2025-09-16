@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -17,7 +17,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import type { RegisterForm, RegisterRequest } from "../types/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-const Signup = () => {
+const SignupPage: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -289,4 +289,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignupPage;

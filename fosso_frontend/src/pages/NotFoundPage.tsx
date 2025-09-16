@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Button } from "../components/ui/button";
 
-const NotFound = () => {
+const NotFoundPage: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
@@ -34,4 +34,4 @@ const NotFound = () => {
   );
 };
 
-export default NotFound;
+export default NotFoundPage;

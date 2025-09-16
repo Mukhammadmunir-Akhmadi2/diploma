@@ -10,7 +10,7 @@ import { getProductById } from "../../api/admin/AdminProduct";
 import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
 import { Spin } from "antd";
 
-const CreateProduct: React.FC = () => {
+const CreateProductPage: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const user = useAppSelector((state) => state.auth.user);
@@ -100,4 +100,4 @@ const CreateProduct: React.FC = () => {
   );
 };
 
-export default CreateProduct;
+export default CreateProductPage;

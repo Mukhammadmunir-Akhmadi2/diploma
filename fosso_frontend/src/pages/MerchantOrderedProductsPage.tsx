@@ -6,7 +6,7 @@ import OrderedProductsList from "../components/OrderedProductsList";
 import { useAppSelector } from "../store/hooks";
 // This is a mock function that would be replaced by real auth
 
-const MerchantOrderedProducts: React.FC = () => {
+const MerchantOrderedProductsPage: React.FC = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const user = useAppSelector((state) => state.auth.user);
@@ -46,4 +46,4 @@ const MerchantOrderedProducts: React.FC = () => {
   );
 };
 
-export default MerchantOrderedProducts;
+export default MerchantOrderedProductsPage;
