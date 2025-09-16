@@ -16,7 +16,7 @@ import { MapPin, Edit2, Plus } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { Label } from "../../components/ui/label";
 import type { Address, UserDTO } from "../../types/user";
-import AddressForm from "../../components/profile/AddressForm";
+import AddressForm from "../../components/AddressForm";
 import { useLanguage } from "../../hooks/useLanguage";
 import { updateCurrentUserAddress } from "../../api/User";
 import { useToast } from "../../hooks/useToast";

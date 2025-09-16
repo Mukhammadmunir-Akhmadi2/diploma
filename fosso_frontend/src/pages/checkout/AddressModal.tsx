@@ -1,5 +1,5 @@
 import React from "react";
-import AddressForm from "../../components/profile/AddressForm";
+import AddressForm from "../../components/AddressForm";
 import {
   Dialog,
   DialogContent,

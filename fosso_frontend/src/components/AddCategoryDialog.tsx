@@ -67,7 +67,7 @@ const AddCategoryDialog: React.FC<AddCategoryDialogProps> = ({
           ownerId: createdCategory.categoryId,
           imageType: "CATEGORY_IMAGE",
           file: newCategoryLogo,
-      }).unwrap();
+        }).unwrap();
       }
 
       createdCategory.imageId = uploadedLogo?.imageId || null;

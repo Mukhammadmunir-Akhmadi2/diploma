@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../hooks/useLanguage";
-import { useToast } from "../../hooks/useToast";
+import { useLanguage } from "../hooks/useLanguage";
+import { useToast } from "../hooks/useToast";
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
+} from "./ui/table";
 import {
   Pagination,
   PaginationContent,
@@ -17,22 +17,17 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "../../components/ui/pagination";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
-import { Button } from "../../components/ui/button";
+} from "./ui/pagination";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
+} from "./ui/select";
 import {
   Package,
   PackageCheck,
@@ -41,18 +36,18 @@ import {
   XCircle,
   BadgeDollarSign,
 } from "lucide-react";
-import { useIsMobile } from "../../hooks/useMobile";
-import type { OrderStatus } from "../../types/enums";
-import type { OrderMerchantDTO } from "../../types/order";
-import type { PaginatedResponse } from "../../types/paginatedResponse";
+import { useIsMobile } from "../hooks/useMobile";
+import type { OrderStatus } from "../types/enums";
+import type { OrderMerchantDTO } from "../types/order";
+import type { PaginatedResponse } from "../types/paginatedResponse";
 import { Spin } from "antd";
 import {
   getOrdersByMerchant,
   updateProductStatus,
-} from "../../api/merchant/MerchantOrder";
-import { getUserProfileById } from "../../api/User";
+} from "../api/merchant/MerchantOrder";
+import { getUserProfileById } from "../api/User";
 import { Modal, Input } from "antd";
-import type { ErrorResponse } from "../../types/error";
+import type { ErrorResponse } from "../types/error";
 
 const OrderedProductsList: React.FC = () => {
   const { t } = useLanguage();

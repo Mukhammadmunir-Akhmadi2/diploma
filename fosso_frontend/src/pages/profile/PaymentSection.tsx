@@ -11,7 +11,7 @@ import {
 import { useToast } from "../../hooks/useToast";
 import PaymentForm, {
   type PaymentFormValues,
-} from "../../components/profile/PaymentForm";
+} from "../../components/PaymentForm";
 
 interface PaymentMethod {
   id: number;

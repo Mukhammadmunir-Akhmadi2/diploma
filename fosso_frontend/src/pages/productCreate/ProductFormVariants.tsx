@@ -1,14 +1,14 @@
 import React from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { Plus, X } from "lucide-react";
 import { useLanguage } from "../../hooks/useLanguage";
 import type { ProductVariantDTO } from "../../types/product";
 
 interface ProductVariantsProps {
-    variants: ProductVariantDTO[];
-    setVariants: React.Dispatch<React.SetStateAction<ProductVariantDTO[]>>;
+  variants: ProductVariantDTO[];
+  setVariants: React.Dispatch<React.SetStateAction<ProductVariantDTO[]>>;
 }
 const ProductFormVariants: React.FC<ProductVariantsProps> = ({
   variants,

@@ -3,8 +3,13 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useToast } from "../../hooks/useToast";
 import { ChevronLeft, Heart, Star, ShoppingBag } from "lucide-react";
-import { Button } from "../ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../../components/ui/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
 import ProductReviews from "./ProductReviews";
 import type { ProductVariantDTO } from "../../types/product";
 import {
@@ -24,7 +29,11 @@ import {
 } from "../../api/Review";
 import { useAppSelector } from "../../store/hooks";
 import { Modal } from "antd";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "../../components/ui/avatar";
 import ProductDetailImages from "./ProductDetailImages";
 
 const ProductDetail: React.FC = () => {
@@ -112,7 +121,7 @@ const ProductDetail: React.FC = () => {
           }
         }
       } catch (error: any) {
-        console.log(error)
+        console.log(error);
       }
     };
     fetchReviewAndIncementReview();

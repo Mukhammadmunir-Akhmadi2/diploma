@@ -16,8 +16,8 @@ import {
   listRootCategories,
   getCategoryById,
 } from "../../api/Category";
-import { useToast } from "../ui/use-toast";
-import AddCategoryDialog from "../AddCategoryDialog";
+import { useToast } from "../../components/ui/use-toast";
+import AddCategoryDialog from "../../components/AddCategoryDialog";
 
 interface CategorySelectProps {
   categoryId: string | null;

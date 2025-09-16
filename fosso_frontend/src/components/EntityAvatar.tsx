@@ -1,7 +1,10 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import type { ImageType } from "../types/enums";
-import { useGetImageByIdQuery, useGetImageByOwnerIdQuery } from "../api/ImageApiSlice";
+import {
+  useGetImageByIdQuery,
+  useGetImageByOwnerIdQuery,
+} from "../api/ImageApiSlice";
 
 interface EntityAvatarProps {
   imageId?: string;

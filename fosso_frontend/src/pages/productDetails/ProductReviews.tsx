@@ -9,14 +9,14 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "../ui/pagination";
+} from "../../components/ui/pagination";
 import type { UserBriefDTO } from "../../types/user";
 import { getReviewsByProductId } from "../../api/Review";
 import { getUserById } from "../../api/User";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import type { ErrorResponse } from "../../types/error";
 import { useToast } from "../../hooks/useToast";
-import EntityAvatar from "../EntityAvatar";
+import EntityAvatar from "../../components/EntityAvatar";
 interface ProductReviewsProps {
   productId: string;
   averageRating?: number;

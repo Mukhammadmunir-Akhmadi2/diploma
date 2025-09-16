@@ -13,8 +13,8 @@ import { Plus, Search } from "lucide-react";
 import { Dialog, DialogTrigger } from "../../components/ui/dialog";
 import type { BrandDTO } from "../../types/brand";
 import { listAllBrands } from "../../api/Brand";
-import { useToast } from "../ui/use-toast";
-import AddBrandDialog from "../AddBrandDialog";
+import { useToast } from "../../components/ui/use-toast";
+import AddBrandDialog from "../../components/AddBrandDialog";
 
 interface BrandSelectProps {
   brandId: string | null;

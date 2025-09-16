@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLanguage } from "../hooks/useLanguage";
-import ProductCard from "./product/ProductCard";
+import ProductCard from "./ProductCard";
 import { useGetAllProductsQuery } from "../api/ProductApiSlice";
 import { useToast } from "../hooks/useToast";
 import type { ErrorResponse } from "../types/error";
@@ -65,7 +65,6 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
     }
   }, [isError, error, toast, t]);
 
-    
   return (
     <div className="w-full py-8 md:py-12">
       <div className="container px-4 md:px-6 mx-auto">

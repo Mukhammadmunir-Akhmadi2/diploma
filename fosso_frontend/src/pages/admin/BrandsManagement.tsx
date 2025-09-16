@@ -33,7 +33,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../components/ui/pagination";
-import EditBrandModal from "../../components/admin/EditBrandModal";
+import EditBrandModal from "./EditBrandModal";
 import {
   updateBrandEnabledStatus,
   listBrandsByPage,

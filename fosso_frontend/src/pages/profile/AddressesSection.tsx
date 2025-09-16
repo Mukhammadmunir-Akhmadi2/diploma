@@ -18,7 +18,7 @@ import {
 } from "../../api/User";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../../types/error";
-import AddressForm from "./AddressForm";
+import AddressForm from "../../components/AddressForm";
 
 const AddressesSection: React.FC = () => {
   const { t } = useLanguage();

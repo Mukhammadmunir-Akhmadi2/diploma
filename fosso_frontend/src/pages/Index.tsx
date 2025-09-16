@@ -3,7 +3,7 @@ import HeroBanner from "../components/HeroBanner";
 import FeaturedProducts from "../components/FeaturedProducts";
 import type { Gender } from "../types/enums";
 interface IndexProps {
-  gender?: Gender
+  gender?: Gender;
 }
 
 const Index: React.FC<IndexProps> = ({ gender }) => {

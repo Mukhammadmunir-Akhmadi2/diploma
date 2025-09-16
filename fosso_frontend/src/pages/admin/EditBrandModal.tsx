@@ -19,8 +19,8 @@ import {
   useUploadImageMutation,
 } from "../../api/ImageApiSlice";
 import { updateBrand } from "../../api/admin/AdminBrand";
-import { useToast } from "../ui/use-toast";
-import EntityImage from "../EntityImage";
+import { useToast } from "../../components/ui/use-toast";
+import EntityImage from "../../components/EntityImage";
 
 interface EditBrandModalProps {
   brand: BrandDTO;

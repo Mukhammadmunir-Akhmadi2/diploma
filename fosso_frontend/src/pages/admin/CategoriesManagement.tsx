@@ -26,7 +26,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../components/ui/pagination";
-import EditCategoryModal from "../../components/admin/EditCategoryModal";
+import EditCategoryModal from "./EditCategoryModal";
 import {
   listCategoriesByPage,
   updateCategoryEnabledStatus,

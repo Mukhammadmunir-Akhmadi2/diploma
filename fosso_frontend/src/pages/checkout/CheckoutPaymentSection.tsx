@@ -15,7 +15,10 @@ interface CheckoutPaymentSectionProps {
   paymentMethod: PaymentMethod;
   setPaymentMethod: React.Dispatch<React.SetStateAction<PaymentMethod>>;
 }
-const CheckoutPaymentSection: React.FC<CheckoutPaymentSectionProps> = ({paymentMethod, setPaymentMethod}) => {
+const CheckoutPaymentSection: React.FC<CheckoutPaymentSectionProps> = ({
+  paymentMethod,
+  setPaymentMethod,
+}) => {
   const { t } = useLanguage();
 
   return (

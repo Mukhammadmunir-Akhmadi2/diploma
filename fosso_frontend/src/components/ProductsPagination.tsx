@@ -6,11 +6,11 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "../ui/pagination";
+} from "./ui/pagination";
 import ProductCard from "./ProductCard";
 
-import type { PaginatedResponse } from "../../types/paginatedResponse";
-import type { ProductBriefDTO } from "../../types/product";
+import type { PaginatedResponse } from "../types/paginatedResponse";
+import type { ProductBriefDTO } from "../types/product";
 
 interface ProductPaginationProps {
   paginatedProduct: PaginatedResponse<ProductBriefDTO>;

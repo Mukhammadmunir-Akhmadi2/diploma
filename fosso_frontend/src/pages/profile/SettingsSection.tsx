@@ -5,7 +5,7 @@ import { Switch } from "../../components/ui/switch";
 import { Label } from "../../components/ui/label";
 import { Bell, Shield } from "lucide-react";
 import { changePassword, deleteUser } from "../../api/User";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../components/ui/use-toast";
 import { Modal } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -14,7 +14,7 @@ import * as Yup from "yup";
 import { Eye, EyeOff } from "lucide-react";
 import type { PasswordChangeRequest } from "../../types/user";
 import type { ErrorResponse } from "../../types/error";
-import { Input } from "../ui/input";
+import { Input } from "../../components/ui/input";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const SettingsSection: React.FC = () => {

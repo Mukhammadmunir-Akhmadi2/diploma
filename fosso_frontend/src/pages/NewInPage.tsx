@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useLanguage } from "../hooks/useLanguage";
-import type {ProductFilterCriteria } from "../types/product";
+import type { ProductFilterCriteria } from "../types/product";
 import { useGetAllProductsQuery } from "../api/ProductApiSlice";
 import { useToast } from "../hooks/useToast";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../types/error";
-import ProductPagination from "../components/product/ProductsPagination";
+import ProductPagination from "../components/ProductsPagination";
 
 const NewInPage: React.FC = () => {
   const { t } = useLanguage();

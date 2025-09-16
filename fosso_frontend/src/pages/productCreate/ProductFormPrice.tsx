@@ -1,13 +1,13 @@
 import React from "react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Switch } from "../ui/switch";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
+import { Switch } from "../../components/ui/switch";
 import { useLanguage } from "../../hooks/useLanguage";
 import type { ProductCreateDTO } from "../../types/product";
 
 interface ProductPriceProps {
-    formData: ProductCreateDTO
-    setFormData: React.Dispatch<React.SetStateAction<ProductCreateDTO>>;
+  formData: ProductCreateDTO;
+  setFormData: React.Dispatch<React.SetStateAction<ProductCreateDTO>>;
 }
 const ProductFormPrice: React.FC<ProductPriceProps> = ({
   formData,

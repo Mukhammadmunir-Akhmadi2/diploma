@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import type { ProductMerchantDTO } from "../../types/product";
+import type { ProductMerchantDTO } from "../types/product";
 import { Link } from "react-router-dom";
-import { TableCell, TableRow } from "../../components/ui/table";
-import { Button } from "../../components/ui/button";
-import { Switch } from "../../components/ui/switch";
+import { TableCell, TableRow } from "./ui/table";
+import { Button } from "./ui/button";
+import { Switch } from "./ui/switch";
 import { Eye, PenLine, Plus, Minus } from "lucide-react";
-import { getCategoryById } from "../../api/Category";
-import type { Category } from "../../types/category";
-import { useToast } from "../ui/use-toast";
-import { useLanguage } from "../../hooks/useLanguage";
-import EntityImage from "../EntityImage";
+import { getCategoryById } from "../api/Category";
+import type { Category } from "../types/category";
+import { useToast } from "./ui/use-toast";
+import { useLanguage } from "../hooks/useLanguage";
+import EntityImage from "./EntityImage";
 
 const ProductRow: React.FC<{
   product: ProductMerchantDTO;

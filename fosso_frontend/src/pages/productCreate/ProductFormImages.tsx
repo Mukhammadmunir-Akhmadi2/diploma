@@ -1,7 +1,7 @@
 import React from "react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
 import { Trash, Upload } from "lucide-react";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useToast } from "../../hooks/useToast";
@@ -9,7 +9,7 @@ import type { ProductMerchantDTO } from "../../types/product";
 import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
 import type { ImageType } from "../../types/enums";
 import { useDeleteImageByOwnerIdMutation } from "../../api/ImageApiSlice";
-import EntityImage from "../EntityImage";
+import EntityImage from "../../components/EntityImage";
 interface ProductFormImagesProps {
   initialData?: ProductMerchantDTO | AdminProductDetailedDTO;
   imageFiles: { id: string; file: File; type: ImageType }[];
@@ -43,7 +43,7 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({
       await deleteImageByOwnerId({
         ownerId: initialData?.productId,
         imageId: id,
-        ImageType: "PRODUCT_IMAGE_MAIN",
+        imageType: "PRODUCT_IMAGE_MAIN",
       }).unwrap();
     }
   };
@@ -147,29 +147,29 @@ const ProductFormImages: React.FC<ProductFormImagesProps> = ({
             </>
           )}
           {/* Upload slots for main images */}
-          {initialData?.mainImagesId?.length < 2 && imageFiles.length < 2 && (
-            <div className="border border-dashed rounded-md p-6 flex flex-col items-center justify-center">
-              <Label
-                htmlFor="main-image-upload"
-                className="cursor-pointer text-center"
-              >
-                <Upload className="h-12 w-12 mb-2 text-gray-400 mx-auto" />
-                <span className="block font-medium text-sm mb-1">
-                  {t("merchant.uploadImage")}
-                </span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {t("merchant.dragOrClick")}
-                </span>
-                <Input
-                  id="main-image-upload"
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, "PRODUCT_IMAGE_MAIN")}
-                />
-              </Label>
-            </div>
-          )}
+          {(initialData?.mainImagesId?.length ?? 0) + imageFiles.length < 2 && (
+              <div className="border border-dashed rounded-md p-6 flex flex-col items-center justify-center">
+                <Label
+                  htmlFor="main-image-upload"
+                  className="cursor-pointer text-center"
+                >
+                  <Upload className="h-12 w-12 mb-2 text-gray-400 mx-auto" />
+                  <span className="block font-medium text-sm mb-1">
+                    {t("merchant.uploadImage")}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {t("merchant.dragOrClick")}
+                  </span>
+                  <Input
+                    id="main-image-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, "PRODUCT_IMAGE_MAIN")}
+                  />
+                </Label>
+              </div>
+            )}
         </div>
       </div>
 

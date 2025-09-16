@@ -62,7 +62,9 @@ const Signup = () => {
   const [registerUser, { isLoading }] = useRegisterMutation();
   const [triggerCheckEmailUnique] = useLazyCheckEmailUniqueQuery();
 
-  const onSubmit: SubmitHandler<RegisterForm> = async (values: RegisterForm) => {
+  const onSubmit: SubmitHandler<RegisterForm> = async (
+    values: RegisterForm
+  ) => {
     const [firstName, ...rest] = values.name.trim().split(" ");
     const lastName = rest.join(" ").trim();
     const payload: RegisterRequest = {
@@ -182,7 +184,8 @@ const Signup = () => {
                         setEmailError(null);
                       } catch (error: any) {
                         const errMsg =
-                          error?.data.message || t("error.emailValidationFailed");
+                          error?.data.message ||
+                          t("error.emailValidationFailed");
                         setEmailError(errMsg);
                       }
                     }}

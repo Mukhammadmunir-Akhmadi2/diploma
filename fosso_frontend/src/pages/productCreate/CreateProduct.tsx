@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { useToast } from "../hooks/useToast";
-import { useLanguage } from "../hooks/useLanguage";
-import ProductForm from "../components/merchant/ProductForm";
-import { useAppSelector } from "../store/hooks";
-import { getMerchantProductById } from "../api/merchant/MerchantProduct";
-import type { ProductMerchantDTO } from "../types/product";
-import { getProductById } from "../api/admin/AdminProduct";
-import type { AdminProductDetailedDTO } from "../types/admin/adminProduct";
+import { useToast } from "../../hooks/useToast";
+import { useLanguage } from "../../hooks/useLanguage";
+import ProductForm from "./ProductForm";
+import { useAppSelector } from "../../store/hooks";
+import { getMerchantProductById } from "../../api/merchant/MerchantProduct";
+import type { ProductMerchantDTO } from "../../types/product";
+import { getProductById } from "../../api/admin/AdminProduct";
+import type { AdminProductDetailedDTO } from "../../types/admin/adminProduct";
 import { Spin } from "antd";
 
 const CreateProduct: React.FC = () => {

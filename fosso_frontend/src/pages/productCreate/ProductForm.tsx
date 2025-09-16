@@ -3,24 +3,12 @@ import { useLanguage } from "../../hooks/useLanguage";
 import { useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Textarea } from "../../components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-import CategorySelect from "./CategorySelect";
-import BrandSelect from "./BrandSelect";
 import type {
   ProductMerchantDTO,
   ProductUpdateDTO,
@@ -39,6 +27,7 @@ import ProductFormPrice from "./ProductFormPrice";
 import ProductFormVariants from "./ProductFormVariants";
 import ProductFormDetails from "./ProductFormDetails";
 import ProductFormImages from "./ProductFormImages";
+import ProductFormBasic from "./ProductFormBasic";
 
 interface ProductFormProps {
   onSuccess: (data: ProductMerchantDTO) => void;
@@ -90,17 +79,6 @@ const ProductForm: React.FC<ProductFormProps> = ({
   >([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadImage] = useUploadImageMutation();
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,99 +143,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
 
         {/* Basic Info */}
         <TabsContent value="basic" className="space-y-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
-              <Label htmlFor="productName">{t("merchant.productName")} *</Label>
-              <Input
-                id="productName"
-                name="productName"
-                value={formData.productName}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <Label htmlFor="shortDescription">
-                {t("merchant.shortDescription")} *
-              </Label>
-              <Textarea
-                id="shortDescription"
-                name="shortDescription"
-                value={formData.shortDescription}
-                onChange={handleInputChange}
-                required
-                rows={2}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <Label htmlFor="fullDescription">
-                {t("merchant.fullDescription")}
-              </Label>
-              <Textarea
-                id="fullDescription"
-                name="fullDescription"
-                value={formData.fullDescription}
-                onChange={handleInputChange}
-                rows={5}
-              />
-            </div>
-
-            <div>
-              <Label>{t("merchant.category")} *</Label>
-              <CategorySelect
-                categoryId={formData.categoryId}
-                onChange={(id) => handleSelectChange("categoryId", id)}
-              />
-            </div>
-
-            <div>
-              <Label>{t("merchant.brand")} *</Label>
-              <BrandSelect
-                brandId={formData.brandId}
-                onChange={(id) => handleSelectChange("brandId", id)}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="gender">{t("merchant.gender")}</Label>
-              <Select
-                value={formData.gender}
-                onValueChange={(value) => handleSelectChange("gender", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("merchant.selectGender")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MALE">{t("merchant.male")}</SelectItem>
-                  <SelectItem value="FEMALE">{t("merchant.female")}</SelectItem>
-                  <SelectItem value="UNISEX">{t("merchant.unisex")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="season">{t("merchant.season")}</Label>
-              <Select
-                value={formData.season}
-                onValueChange={(value) => handleSelectChange("season", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("merchant.selectSeason")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL_SEASON">
-                    {t("merchant.allSeason")}
-                  </SelectItem>
-                  <SelectItem value="SPRING">{t("merchant.spring")}</SelectItem>
-                  <SelectItem value="SUMMER">{t("merchant.summer")}</SelectItem>
-                  <SelectItem value="FALL">{t("merchant.fall")}</SelectItem>
-                  <SelectItem value="WINTER">{t("merchant.winter")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <ProductFormBasic formData={formData} setFormData={setFormData} />
         </TabsContent>
 
         {/* Pricing */}

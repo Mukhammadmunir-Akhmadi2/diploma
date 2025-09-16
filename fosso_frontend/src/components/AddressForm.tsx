@@ -1,9 +1,9 @@
 import React from "react";
-import { useLanguage } from "../../hooks/useLanguage";
+import { useLanguage } from "../hooks/useLanguage";
 import * as Yup from "yup";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import type { Address } from "../../types/user";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import type { Address } from "../types/user";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 

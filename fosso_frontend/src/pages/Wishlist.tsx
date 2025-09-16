@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "../hooks/useLanguage";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
-import ProductCard from "../components/product/ProductCard";
+import ProductCard from "../components/ProductCard";
 import { Trash, Heart } from "lucide-react";
 import type { ProductBriefDTO } from "../types/product";
 import { useToast } from "../hooks/useToast";

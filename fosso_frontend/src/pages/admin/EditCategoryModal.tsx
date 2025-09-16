@@ -26,7 +26,7 @@ import {
 } from "../../components/ui/tabs";
 import type { Category } from "../../types/category";
 import { updateCategory, mergeCategories } from "../../api/admin/AdminCategory";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../components/ui/use-toast";
 
 interface EditCategoryModalProps {
   category: Category;

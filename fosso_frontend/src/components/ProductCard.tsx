@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Star, StarHalf } from "lucide-react";
-import { useToast } from "../../hooks/useToast";
-import { useLanguage } from "../../hooks/useLanguage";
-import type { ProductBriefDTO } from "../../types/product";
-import placeholder from "../../assets/placeholder.svg";
-import { AspectRatio } from "../ui/aspect-ratio";
-import { useGetAllImagesForOwnerQuery } from "../../api/ImageApiSlice";
+import { useToast } from "../hooks/useToast";
+import { useLanguage } from "../hooks/useLanguage";
+import type { ProductBriefDTO } from "../types/product";
+import placeholder from "../assets/placeholder.svg";
+import { AspectRatio } from "./ui/aspect-ratio";
+import { useGetAllImagesForOwnerQuery } from "../api/ImageApiSlice";
 interface ProductCardProps {
   product: ProductBriefDTO;
 }

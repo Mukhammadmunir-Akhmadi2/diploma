@@ -68,8 +68,7 @@ It provides a responsive storefront, merchant dashboard, and powerful admin inte
 src/
 ├─ api/             # RTK Query API definitions
 ├─ components/      # Reusable UI & feature components
-│  ├─ ui/           # Toaster, Sonner, etc.
-│  └─ profile/      # Profile-related sections
+│  └─ ui/           # Toaster, Sonner, etc.
 ├─ hooks/           # Custom hooks (e.g., useLanguage)
 ├─ layout/          # Shared layouts (Layout, ProtectedLayout)
 ├─ locales/         # en/ru/uz translation files

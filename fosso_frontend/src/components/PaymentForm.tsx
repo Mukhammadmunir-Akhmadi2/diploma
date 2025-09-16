@@ -1,8 +1,8 @@
 import React from "react";
-import { useLanguage } from "../../hooks/useLanguage";
+import { useLanguage } from "../hooks/useLanguage";
 import { useForm } from "react-hook-form";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import {
   Form,
   FormControl,
@@ -10,7 +10,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../components/ui/form";
+} from "./ui/form";
 
 interface PaymentFormProps {
   onSubmit: (data: PaymentFormValues) => void;
@@ -25,8 +25,6 @@ export interface PaymentFormValues {
   expiryDate: string;
   cvv: string;
 }
-
-
 
 const PaymentForm: React.FC<PaymentFormProps> = ({
   onSubmit,

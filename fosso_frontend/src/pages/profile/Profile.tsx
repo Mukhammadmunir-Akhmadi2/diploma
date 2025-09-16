@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
-import { useLanguage } from "../hooks/useLanguage";
-import ProfileSidebar from "../components/profile/ProfileSidebar";
-import { getCurrentUserProfile } from "../api/User";
-import { type UserProfileDTO } from "../types/user";
-import { useToast } from "../hooks/useToast";
+import { useLanguage } from "../../hooks/useLanguage";
+import ProfileSidebar from "./ProfileSidebar";
+import { getCurrentUserProfile } from "../../api/User";
+import { type UserProfileDTO } from "../../types/user";
+import { useToast } from "../../hooks/useToast";
 import { Spin } from "antd";
-import type { ErrorResponse } from "../types/error";
+import type { ErrorResponse } from "../../types/error";
 
 const Profile = () => {
   const { t } = useLanguage();

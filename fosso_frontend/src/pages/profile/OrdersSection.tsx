@@ -7,7 +7,7 @@ import { type OrderBriefDTO } from "../../types/order";
 import { getOrdersByCustomer } from "../../api/Order";
 import { type PaginatedResponse } from "../../types/paginatedResponse";
 import { Spin } from "antd";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../components/ui/use-toast";
 import type { ErrorResponse } from "../../types/error";
 import {
   Pagination,
@@ -20,11 +20,10 @@ import {
 import { Card, CardContent } from "../../components/ui/card";
 import type { OrderStatus } from "../../types/enums";
 import { useIsMobile } from "../../hooks/useMobile";
-import type {UserProfileDTO } from "../../types/user";
+import type { UserProfileDTO } from "../../types/user";
 
 const OrdersSection: React.FC = () => {
-
-  const { user } = useOutletContext<{user: UserProfileDTO}>();
+  const { user } = useOutletContext<{ user: UserProfileDTO }>();
 
   const { t } = useLanguage();
   const [paginatedOrder, setPaginatedOrder] =

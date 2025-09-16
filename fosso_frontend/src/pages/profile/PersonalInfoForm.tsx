@@ -6,7 +6,7 @@ import type { UserProfileDTO, UserUpdateDTO } from "../../types/user";
 import type { Gender } from "../../types/enums";
 import { useLazyCheckEmailUniqueQuery } from "../../api/AuthApiSlice";
 import { updateCurrentUser } from "../../api/User";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "../../components/ui/use-toast";
 import type { ErrorResponse } from "../../types/error";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import * as Yup from "yup";
@@ -26,7 +26,7 @@ const PersonalInfoForm: React.FC = () => {
     email: Yup.string().email().required(),
     phoneNumber: Yup.string().required(),
     isPhoneNumberPrivate: Yup.boolean().required(),
-    dateOfBirth: Yup.string(), 
+    dateOfBirth: Yup.string(),
     isDateOfBirthPrivate: Yup.boolean(),
     gender: Yup.mixed<Gender>().oneOf(["MALE", "FEMALE"]),
     isGenderPrivate: Yup.boolean(),

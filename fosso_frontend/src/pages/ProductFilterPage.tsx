@@ -13,7 +13,7 @@ import type { BrandDTO } from "../types/brand";
 import { listAllBrands } from "../api/Brand";
 import { Spin } from "antd";
 import type { ErrorResponse } from "../types/error";
-import ProductPagination from "../components/product/ProductsPagination";
+import ProductPagination from "../components/ProductsPagination";
 
 const colors = [
   { id: "1", name: "Black", hex: "#000000" },
