@@ -35,7 +35,6 @@ public class CartItemServiceImpl implements CartItemService {
     private final ProductService productService;
     private final AuthenticatedUserProvider userProvider;
     private final BrandService brandService;
-    private final ImageService imageService;
 
     @Override
     public List<CartItemDTO> listCartItems(String customerId) {
@@ -52,9 +51,7 @@ public class CartItemServiceImpl implements CartItemService {
 
             Brand brand = brandService.getByBrandId(product.getBrandId());
 
-            Image image = imageService.getImageById(product.getMainImagesId().getFirst());
-
-            return CartItemMapper.convertToDTO(cartItem, product, brand, image);
+            return CartItemMapper.convertToDTO(cartItem, product, brand);
         }).toList();
     }
 
@@ -120,11 +117,9 @@ public class CartItemServiceImpl implements CartItemService {
 
         Brand brand = brandService.getByBrandId(product.getBrandId());
 
-        Image image = imageService.getImageById(product.getMainImagesId().getFirst());
-
         CartItem updatedItem = cartItemRepository.save(item);
 
-        return CartItemMapper.convertToDTO(updatedItem, product, brand, image);    }
+        return CartItemMapper.convertToDTO(updatedItem, product, brand);    }
 
     @Override
     @Loggable(action = "DELETE", entity = "CartItem", message = "Removed product from cart")

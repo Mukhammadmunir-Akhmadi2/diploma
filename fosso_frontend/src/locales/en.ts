@@ -1,7 +1,15 @@
-import type { Translations } from "../types/language";
+import type { Translations } from "../utils/translationUtils";
+
 export const enTranslations: Translations = {
   welcome: "Welcome to FOSSO",
   search: "Search",
+  main: {
+    newArrivals: "New Arrivals",
+    newArrivalsDesc: "Check out the latest additions to our collection",
+    trendingNow: "Trending Now",
+    featuredProducts: "Featured Products",
+    trendingNowDesc: "Explore our most popular and trending products",
+  },
   account: {
     account: "Account",
     myAccount: "My Account",
@@ -36,6 +44,7 @@ export const enTranslations: Translations = {
     title: "New In",
     newIn: "No new products have been added in the past week.",
     products: "New Arrivals",
+    noProducts: "No new arrivals found.",
   },
   terms: {
     back: "Back",
@@ -992,6 +1001,4 @@ export const enTranslations: Translations = {
     errorLoadingDesc: "An unexpected error occurred while fetching brand data.",
     title: "Brands",
   },
-  featuredProducts: "Featured Products",
-  featuredProductsDesc: "Explore our most popular and trending products",
 };

@@ -53,7 +53,11 @@ const EntityImage: React.FC<EntityImageProps> = ({
     return (
       <>
         {fallback ?? (
-          <span className="text-xl font-bold">{name.substring(0, 2)}</span>
+          <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center rounded-md">
+            <span className="text-xl text-center font-bold">
+              {name.substring(0, 2)}
+            </span>
+          </div>
         )}
       </>
     );

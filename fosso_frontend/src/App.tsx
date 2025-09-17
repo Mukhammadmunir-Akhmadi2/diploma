@@ -19,7 +19,7 @@ import ProductsPage from "./pages/admin/ProductsPage";
 import Layout from "./layout/Layout";
 import Index from "./pages/Index";
 import WishlistPage from "./pages/WishlistPage";
-import CartPage from "./pages/CartPage";
+import CartPage from "./pages/cart/CartPage";
 import ProductFilterPage from "./pages/ProductFilterPage";
 import ProductDetailPage from "./pages/productDetails/ProductDetailPage";
 import BrandListingPage from "./pages/BrandListingPage";

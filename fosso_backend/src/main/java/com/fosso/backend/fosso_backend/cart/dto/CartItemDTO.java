@@ -15,7 +15,7 @@ public class CartItemDTO {
     private String customerId;
     private String productId;
     private String productName;
-    private ImageDTO productImage;
+    private String productMainImgId;
     private String brandName;
     private String color;
     private String size;

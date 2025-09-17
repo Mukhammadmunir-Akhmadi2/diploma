@@ -8,8 +8,6 @@ import type { Gender } from "../types/enums";
 export interface FeaturedProductsProps {
   gender?: Gender;
   hideTitle?: boolean;
-  title?: string;
-  subtitle?: string;
   actionLabel?: string;
   actionUrl?: string;
   isNewIn?: boolean;
@@ -21,8 +19,6 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   gender,
   isPopular,
   hideTitle = false,
-  title,
-  subtitle,
   actionLabel,
   actionUrl,
 }) => {
@@ -76,10 +72,10 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
         {!hideTitle && (
           <div className="flex flex-col items-center justify-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center">
-              {title || t("featuredProducts")}
+              {isNewIn ? t("main.newArrivals") : t("main.trendingNow")}
             </h2>
             <p className="mt-2 text-gray-500 dark:text-gray-400 text-center">
-              {subtitle || t("featuredProductsDesc")}
+              {isNewIn ? t("main.newArrivalsDesc") : t("main.trendingNowDesc")}
             </p>
 
             {actionLabel && actionUrl && (

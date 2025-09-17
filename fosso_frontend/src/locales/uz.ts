@@ -1,8 +1,16 @@
-import type { Translations } from "../types/language";
+import type { Translations } from "../utils/translationUtils";
 
 export const uzTranslations: Translations = {
   welcome: "FOSSOga xush kelibsiz",
   search: "Qidirish",
+  main: {
+    newArrivals: "Yangi kelganlar",
+    newArrivalsDesc:
+      "To‘plamimizga qo‘shilgan eng so‘nggi mahsulotlarni ko‘ring",
+    trendingNow: "Trendda",
+    featuredProducts: "Tavsiya etilgan mahsulotlar",
+    trendingNowDesc: "Eng mashhur va trenddagi mahsulotlarimizni o‘rganing",
+  },
   account: {
     account: "Hisob",
     myAccount: "Mening hisobim",
@@ -36,6 +44,7 @@ export const uzTranslations: Translations = {
     title: "Yangi kelganlar",
     newIn: "O‘tgan hafta yangi mahsulotlar qo‘shilmadi.",
     products: "Yangi kelgan mahsulotlar",
+    noProducts: "Yangi kelgan mahsulotlar topilmadi.",
   },
   terms: {
     back: "Ortga",
@@ -1004,8 +1013,5 @@ export const uzTranslations: Translations = {
       "Brend maʼlumotlarini olishda kutilmagan xatolik yuz berdi.",
     title: "Brendlar",
   },
-  featuredProducts: "Tavsiya etilgan mahsulotlar",
-  featuredProductsDesc:
-    "Bizning eng mashhur va trend mahsulotlarimizni kashf eting",
   setAsDefault: "Asosiy qilish",
 };

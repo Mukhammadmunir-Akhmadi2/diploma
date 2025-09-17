@@ -18,6 +18,7 @@ import { useToast } from "../../hooks/useToast";
 import type { Address } from "../../types/user";
 import type { PaymentMethod } from "../../types/enums";
 import type { CartItemDTO } from "../../types/cart";
+import EntityImage from "../../components/EntityImage";
 
 interface CheckoutSummaryProps {
   addresses: Address[];
@@ -104,9 +105,10 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
           {cartItems.map((item) => (
             <div key={item.cartId} className="flex gap-3">
               <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded overflow-hidden flex-shrink-0">
-                <img
-                  src={`data:${item.productImage.contentType};base64,${item.productImage.base64Data}`}
-                  alt={item.productName}
+                <EntityImage
+                  imageId={item.productMainImgId}
+                  imageType="PRODUCT_IMAGE_MAIN"
+                  name={item.productName}
                   className="w-full h-full object-cover"
                 />
               </div>

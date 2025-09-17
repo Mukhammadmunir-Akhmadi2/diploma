@@ -1,8 +1,15 @@
-import type { Translations } from "../types/language";
+import type { Translations } from "../utils/translationUtils";
 
 export const ruTranslations: Translations = {
   welcome: "Добро пожаловать в FOSSO",
   search: "Поиск",
+  main: {
+    newArrivals: "Новые поступления",
+    newArrivalsDesc: "Ознакомьтесь с последними добавлениями в нашу коллекцию",
+    trendingNow: "В тренде",
+    featuredProducts: "Рекомендуемые товары",
+    trendingNowDesc: "Исследуйте наши самые популярные и трендовые товары",
+  },
   account: {
     account: "Аккаунт",
     myAccount: "Мой аккаунт",
@@ -36,6 +43,7 @@ export const ruTranslations: Translations = {
     title: "Новинки",
     newIn: "За последнюю неделю новых товаров не добавлено.",
     products: "Новые поступления",
+    noProducts: "Новых поступлений не найдено.",
   },
   terms: {
     back: "Назад",
@@ -997,6 +1005,4 @@ export const ruTranslations: Translations = {
       "Произошла непредвиденная ошибка при получении данных о брендах.",
     title: "Бренды",
   },
-  featuredProducts: "Рекомендуемые товары",
-  featuredProductsDesc: "Исследуйте наши самые популярные и трендовые товары",
 };

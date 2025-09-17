@@ -4,7 +4,6 @@ import { useToast } from "../hooks/useToast";
 import { useLanguage } from "../hooks/useLanguage";
 import OrderedProductsList from "../components/OrderedProductsList";
 import { useAppSelector } from "../store/hooks";
-// This is a mock function that would be replaced by real auth
 
 const MerchantOrderedProductsPage: React.FC = () => {
   const { t } = useLanguage();

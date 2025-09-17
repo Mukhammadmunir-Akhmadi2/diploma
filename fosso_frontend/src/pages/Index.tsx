@@ -14,8 +14,6 @@ const Index: React.FC<IndexProps> = ({ gender }) => {
         <FeaturedProducts
           isNewIn={true}
           gender={gender}
-          title="New Arrivals"
-          subtitle="The latest styles added to the collection"
           actionLabel="View All"
           actionUrl="/new-in"
         />
@@ -23,7 +21,6 @@ const Index: React.FC<IndexProps> = ({ gender }) => {
         <FeaturedProducts
           isPopular={true}
           gender={gender}
-          title="Trending Now"
           actionLabel="Explore"
           actionUrl="/trending"
         />

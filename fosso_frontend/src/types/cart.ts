@@ -1,5 +1,3 @@
-import type { ImageDTO } from "./image";
-
 export interface CartItemCreateDTO {
   productId: string; 
   size: string; 
@@ -12,7 +10,7 @@ export interface CartItemDTO {
   customerId: string;
   productId: string;
   productName: string;
-  productImage: ImageDTO;
+  productMainImgId: string;
   brandName: string;
   color: string;
   size: string;
