@@ -31,7 +31,7 @@ import MerchantOrderedProductsPage from "./pages/MerchantOrderedProductsPage";
 import NewInPage from "./pages/NewInPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
-import OrderDetailPage from "./pages/OrderDetailPage";
+import OrderDetailPage from "./pages/orderDetail/OrderDetailPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import SignupPage from "./pages/SignupPage";
 import Terms from "./pages/Terms";

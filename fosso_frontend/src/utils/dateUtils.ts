@@ -1,7 +1,6 @@
-
 export const formatDateOfBirth = (date: string | null): string | null => {
   if (!date || date.trim() === "") {
-    return null; 
+    return null;
   }
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(date)) {
@@ -15,3 +14,7 @@ export const formatDateOfBirth = (date: string | null): string | null => {
   }
   return date;
 };
+
+export function formatDate(dateString: string) {
+  return new Date(dateString).toLocaleString();
+}

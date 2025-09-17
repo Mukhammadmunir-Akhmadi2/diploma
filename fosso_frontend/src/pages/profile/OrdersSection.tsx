@@ -18,9 +18,9 @@ import {
   PaginationPrevious,
 } from "../../components/ui/pagination";
 import { Card, CardContent } from "../../components/ui/card";
-import type { OrderStatus } from "../../types/enums";
 import { useIsMobile } from "../../hooks/useMobile";
 import type { UserProfileDTO } from "../../types/user";
+import { getStatusClass } from "../../utils/statusUtils";
 
 const OrdersSection: React.FC = () => {
   const { user } = useOutletContext<{ user: UserProfileDTO }>();
@@ -70,25 +70,6 @@ const OrdersSection: React.FC = () => {
 
   const totalPages = paginatedOrder?.totalPages || 0;
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-  const getStatusBadgeClass = (status: OrderStatus) => {
-    switch (status) {
-      case "DELIVERED":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "PROCESSING":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "COMPLETED":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
-      case "SHIPPED":
-        return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200";
-      case "NEW":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200";
-      case "CANCELLED":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
-    }
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
@@ -140,7 +121,7 @@ const OrdersSection: React.FC = () => {
                         </p>
                       </div>
                       <span
-                        className={`inline-block px-2 py-1 text-xs rounded ${getStatusBadgeClass(
+                        className={`inline-block px-2 py-1 text-xs rounded ${getStatusClass(
                           order.orderStatus
                         )}`}
                       >

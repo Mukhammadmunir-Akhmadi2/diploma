@@ -28,14 +28,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import {
-  Package,
-  PackageCheck,
-  Truck,
-  CheckCircle,
-  XCircle,
-  BadgeDollarSign,
-} from "lucide-react";
 import { useIsMobile } from "../hooks/useMobile";
 import type { OrderStatus } from "../types/enums";
 import type { OrderMerchantDTO } from "../types/order";
@@ -48,6 +40,7 @@ import {
 import { getUserProfileById } from "../api/User";
 import { Modal, Input } from "antd";
 import type { ErrorResponse } from "../types/error";
+import { getStatusClass, getStatusIcon } from "../utils/statusUtils";
 
 const OrderedProductsList: React.FC = () => {
   const { t } = useLanguage();
@@ -187,54 +180,6 @@ const OrderedProductsList: React.FC = () => {
         description: t("merchant.errorUpdatingStatusDesc"),
         variant: "destructive",
       });
-    }
-  };
-
-  // Get the status icon based on status
-  const getStatusIcon = (status: OrderStatus) => {
-    switch (status) {
-      case "NEW":
-        return <Package className="h-5 w-5 text-gray-500" />;
-      case "PROCESSING":
-        return <PackageCheck className="h-5 w-5 text-blue-500" />;
-      case "SHIPPED":
-        return <Truck className="h-5 w-5 text-purple-500" />;
-      case "DELIVERED":
-        return <Truck className="h-5 w-5 text-green-500" />;
-      case "PAID":
-        return <BadgeDollarSign className="h-5 w-5 text-emerald-500" />;
-      case "COMPLETED":
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
-      case "CANCELLED":
-        return <XCircle className="h-5 w-5 text-red-500" />;
-      case "RETURNED":
-        return <XCircle className="h-5 w-5 text-amber-500" />;
-      default:
-        return <Package className="h-5 w-5 text-gray-500" />;
-    }
-  };
-
-  // Get the status color for badges
-  const getStatusColor = (status: OrderStatus) => {
-    switch (status) {
-      case "NEW":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
-      case "PROCESSING":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "SHIPPED":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
-      case "DELIVERED":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
-      case "PAID":
-        return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300";
-      case "COMPLETED":
-        return "bg-green-200 text-green-900 dark:bg-green-800 dark:text-green-200";
-      case "CANCELLED":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
-      case "RETURNED":
-        return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
     }
   };
 
@@ -490,7 +435,7 @@ const OrderedProductsList: React.FC = () => {
                       {item.productName}
                     </CardTitle>
                   </div>
-                  <Badge className={getStatusColor(item?.orderTrack?.status)}>
+                  <Badge className={getStatusClass(item?.orderTrack?.status)}>
                     <span className="flex items-center gap-1">
                       {getStatusIcon(item.orderTrack?.status)}
                       {t(
@@ -671,7 +616,7 @@ const OrderedProductsList: React.FC = () => {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        className={getStatusColor(item.orderTrack?.status)}
+                        className={getStatusClass(item.orderTrack?.status)}
                       >
                         <span className="flex items-center gap-1">
                           {getStatusIcon(item.orderTrack?.status)}
