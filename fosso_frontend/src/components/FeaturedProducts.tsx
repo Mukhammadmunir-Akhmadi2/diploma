@@ -5,6 +5,13 @@ import { useGetAllProductsQuery } from "../api/ProductApiSlice";
 import { useToast } from "../hooks/useToast";
 import type { ErrorResponse } from "../types/error";
 import type { Gender } from "../types/enums";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
 export interface FeaturedProductsProps {
   gender?: Gender;
   hideTitle?: boolean;
@@ -41,7 +48,7 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
   } = useGetAllProductsQuery({
     filterCriteria: queryParams,
     page: 1,
-    size: 4,
+    size: 8,
     sort: isPopular ? "rating,desc" : undefined,
   });
 
@@ -90,25 +97,35 @@ const FeaturedProducts: React.FC<FeaturedProductsProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 items-stretch">
-          {products && products.products.length > 0 ? (
-            products.products.map((product, index) => (
-              <div key={index} className="w-full">
-                <ProductCard product={product} />
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 dark:text-gray-400">
-              {isNewIn
-                ? t("products.noNewInProducts", {
-                    defaultValue: "No new arrivals found.",
-                  })
-                : t("products.noPopularProducts", {
-                    defaultValue: "No trending products found.",
-                  })}
-            </p>
-          )}
-        </div>
+        {products && products.products.length > 0 ? (
+          <Carousel
+            opts={{ align: "start", loop: true }}
+            className="w-full h-auto"
+          >
+            <CarouselContent>
+              {products.products.map((product) => (
+                <CarouselItem
+                  key={product.productId}
+                  className="basis-1/2 sm:basis-1/3 lg:basis-1/4"
+                >
+                  <ProductCard product={product} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute top-1/2 left-3 -translate-y-1/2 z-10" />
+            <CarouselNext className="absolute top-1/2 right-3 -translate-y-1/2 z-10" />
+          </Carousel>
+        ) : (
+          <p className="text-center text-gray-500 dark:text-gray-400">
+            {isNewIn
+              ? t("products.noNewInProducts", {
+                  defaultValue: "No new arrivals found.",
+                })
+              : t("products.noPopularProducts", {
+                  defaultValue: "No trending products found.",
+                })}
+          </p>
+        )}
       </div>
     </div>
   );
