@@ -16,6 +16,6 @@ public class ProductFilterCriteria {
     private String merchantId;
     private boolean newIn;
     private String color;
-    private BigDecimal minPrice = BigDecimal.ZERO;
+    private BigDecimal minPrice;
     private BigDecimal maxPrice;
 }
