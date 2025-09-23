@@ -64,7 +64,6 @@ export interface OrderMerchantDTO {
   orderId: string;
   orderTrackingNumber: string;
   customerId: string;
-  customer?: UserDetailedDTO;
   merchantId: string;
   productId: string;
   productName: string;

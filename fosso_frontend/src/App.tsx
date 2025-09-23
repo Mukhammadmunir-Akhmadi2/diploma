@@ -27,7 +27,7 @@ import CheckoutPage from "./pages/checkout/CheckoutPage";
 import CreateProductPage from "./pages/productCreate/CreateProductPage";
 import LoginPage from "./pages/LoginPage";
 import MerchantDashboardPage from "./pages/MerchantDashboardPage";
-import MerchantOrderedProductsPage from "./pages/MerchantOrderedProductsPage";
+import MerchantOrderedProductsPage from "./pages/merchantOrderedProducts/MerchantOrderedProductsPage";
 import NewInPage from "./pages/NewInPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";

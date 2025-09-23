@@ -1,9 +1,9 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useToast } from "../hooks/useToast";
-import { useLanguage } from "../hooks/useLanguage";
-import OrderedProductsList from "../components/OrderedProductsList";
-import { useAppSelector } from "../store/hooks";
+import { useToast } from "../../hooks/useToast";
+import { useLanguage } from "../../hooks/useLanguage";
+import OrderedProductsList from "./OrderedProductsList";
+import { useAppSelector } from "../../store/hooks";
 
 const MerchantOrderedProductsPage: React.FC = () => {
   const { t } = useLanguage();
