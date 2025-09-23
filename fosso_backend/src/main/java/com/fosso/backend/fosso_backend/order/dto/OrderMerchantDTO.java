@@ -18,7 +18,6 @@ public class OrderMerchantDTO {
     private String merchantId;
     private String productId;
     private String productName;
-    private ImageDTO productImage;
     private int quantity;
     private String color;
     private String size;

@@ -32,7 +32,7 @@ const UserDialog: React.FC<UserDialogProps> = ({
 
   return (
     <Dialog open={userDialogOpen} onOpenChange={setUserDialogOpen}>
-      <DialogContent className="max-w-lg bg-gray-50">
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
             {customer ? `${customer?.firstName} ${customer?.lastName}` : ""}
@@ -80,7 +80,7 @@ const UserDialog: React.FC<UserDialogProps> = ({
               {t("order.deliveryAddress")}
             </h3>
 
-            <div className="rounded bg-white border p-4 shadow-sm space-y-1 text-sm">
+            <div className="rounded border p-4 shadow-sm space-y-1 text-sm">
               <div>
                 <span className="font-medium">{t("address.line1")}:</span>{" "}
                 {order.shippingAddress.addressLine1}

@@ -1,6 +1,5 @@
-import type { Address, UserBriefDTO, UserDetailedDTO } from "../types/user";
+import type { Address, UserBriefDTO } from "../types/user";
 import type { OrderStatus, PaymentMethod } from "../types/enums"; 
-import type { ImageDTO } from "./image";
 
 export interface OrderBriefDTO {
   orderId: string; 
@@ -67,7 +66,6 @@ export interface OrderMerchantDTO {
   merchantId: string;
   productId: string;
   productName: string;
-  productImage: ImageDTO;
   quantity: number;
   color: string;
   size: string;

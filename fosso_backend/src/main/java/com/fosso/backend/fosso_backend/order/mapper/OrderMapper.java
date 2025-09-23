@@ -1,6 +1,5 @@
 package com.fosso.backend.fosso_backend.order.mapper;
 
-import com.fosso.backend.fosso_backend.image.dto.ImageDTO;
 import com.fosso.backend.fosso_backend.order.dto.OrderBriefDTO;
 import com.fosso.backend.fosso_backend.order.dto.OrderDetailedDTO;
 import com.fosso.backend.fosso_backend.order.dto.OrderMerchantDTO;
@@ -40,7 +39,7 @@ public class OrderMapper {
         return dto;
     }
 
-    public static OrderMerchantDTO convertToMerchantDTO(Order order, OrderDetail orderDetail, ImageDTO imageDTO) {
+    public static OrderMerchantDTO convertToMerchantDTO(Order order, OrderDetail orderDetail) {
         OrderMerchantDTO dto = new OrderMerchantDTO();
         dto.setOrderId(order.getOrderId());
         dto.setOrderTrackingNumber(order.getOrderTrackingNumber());
@@ -48,7 +47,6 @@ public class OrderMapper {
         dto.setMerchantId(orderDetail.getMerchantId());
         dto.setProductId(orderDetail.getProductId());
         dto.setProductName(orderDetail.getProductName());
-        dto.setProductImage(imageDTO);
         dto.setQuantity(orderDetail.getQuantity());
         dto.setColor(orderDetail.getColor());
         dto.setSize(orderDetail.getSize());

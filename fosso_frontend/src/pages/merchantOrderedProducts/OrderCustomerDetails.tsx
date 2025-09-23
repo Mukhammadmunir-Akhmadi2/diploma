@@ -25,10 +25,9 @@ const OrderCustomerDetails: React.FC<OrderCustomerDetailsProps> = ({
   return (
     <>
       <Button
-        variant="outline"
+        variant="link"
         className={className}
         onClick={() => setOpen(true)}
-        type="button"
       >
         {customerDetails?.email ?? "View customer"}
       </Button>

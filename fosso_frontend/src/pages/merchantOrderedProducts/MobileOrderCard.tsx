@@ -12,6 +12,7 @@ import OrderCustomerDetails from "./OrderCustomerDetails";
 import type { OrderMerchantDTO } from "../../types/order";
 import OrderStatusManager from "./OrderStatusManager";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
+import EntityImage from "../../components/EntityImage";
 
 interface MobileOrderCardProps {
   orders: OrderMerchantDTO[];
@@ -19,7 +20,10 @@ interface MobileOrderCardProps {
     React.SetStateAction<PaginatedResponse<OrderMerchantDTO>>
   >;
 }
-const MobileOrderCard: React.FC<MobileOrderCardProps> = ({ orders, setPaginatedOrders }) => {
+const MobileOrderCard: React.FC<MobileOrderCardProps> = ({
+  orders,
+  setPaginatedOrders,
+}) => {
   const { t } = useLanguage();
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -32,9 +36,10 @@ const MobileOrderCard: React.FC<MobileOrderCardProps> = ({ orders, setPaginatedO
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-3">
                 <div className="h-10 w-10 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                  <img
-                    src={`data:${order.productImage.contentType};base64,${order.productImage.base64Data}`}
-                    alt={order.productName}
+                  <EntityImage
+                    ownerId={order.productId}
+                    imageType="PRODUCT_IMAGE_MAIN"
+                    name={order.productName}
                     className="h-full w-full object-contain"
                   />
                 </div>

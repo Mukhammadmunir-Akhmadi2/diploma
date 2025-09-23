@@ -6,9 +6,6 @@ import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.common.enums.OrderStatus;
 import com.fosso.backend.fosso_backend.common.exception.CartEmptyException;
 import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
-import com.fosso.backend.fosso_backend.image.mapper.ImageMapper;
-import com.fosso.backend.fosso_backend.image.model.Image;
-import com.fosso.backend.fosso_backend.image.service.ImageService;
 import com.fosso.backend.fosso_backend.order.dto.CheckoutRequest;
 import com.fosso.backend.fosso_backend.order.dto.OrderMerchantDTO;
 import com.fosso.backend.fosso_backend.order.mapper.OrderMapper;
@@ -46,7 +43,6 @@ public class OrderServiceImpl implements OrderService {
     private final UserService userService;
     private final ProductService productService;
     private final CartItemService cartItemService;
-    private final ImageService imageService;
     private final AuthenticatedUserProvider userProvider;
 
     @Override
@@ -339,16 +335,11 @@ public class OrderServiceImpl implements OrderService {
                         return Stream.empty();
                     }
 
-                    return merchantOrderDetails.stream().map(orderDetail -> {
-                        Product product = productService.getProductById(orderDetail.getProductId());
-
-                        Image image = imageService.getImageById(product.getMainImagesId().getFirst());
-
-                        return OrderMapper.convertToMerchantDTO(order, orderDetail, ImageMapper.convertToDTO(image));
-                    });
+                    return merchantOrderDetails.stream()
+                            .map(orderDetail -> OrderMapper.convertToMerchantDTO(order, orderDetail));
                 })
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(filteredOrders, pageable, filteredOrders.size());
+        return new PageImpl<>(filteredOrders, pageable, orderPage.getTotalPages());
     }
 }

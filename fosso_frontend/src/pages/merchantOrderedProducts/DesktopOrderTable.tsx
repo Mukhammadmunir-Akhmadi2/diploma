@@ -15,6 +15,7 @@ import OrderCustomerDetails from "./OrderCustomerDetails";
 import OrderStatusManager from "./OrderStatusManager";
 import type { PaginatedResponse } from "../../types/paginatedResponse";
 import type { OrderMerchantDTO } from "../../types/order";
+import EntityImage from "../../components/EntityImage";
 
 interface DesktopOrderTableProps {
   orders: OrderMerchantDTO[];
@@ -54,9 +55,10 @@ const DesktopOrderTable: React.FC<DesktopOrderTableProps> = ({
               <TableCell>
                 <div className="flex items-center space-x-2">
                   <div className="h-16 w-16 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center overflow-hidden">
-                    <img
-                      src={`data:${order.productImage.contentType};base64,${order.productImage.base64Data}`}
-                      alt={order.productName}
+                    <EntityImage
+                      ownerId={order.productId}
+                      imageType="PRODUCT_IMAGE_MAIN"
+                      name={order.productName}
                       className="h-full w-full object-contain"
                     />
                   </div>

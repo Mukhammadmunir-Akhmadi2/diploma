@@ -66,8 +66,10 @@ const OrderedProductsList: React.FC = () => {
   }, [page]);
 
   const totalPages = paginatedOrders?.totalPages || 0;
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
+const pageNumbers = Array.from(
+  { length: paginatedOrders.totalPages },
+  (_, i) => i + 1
+);
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
