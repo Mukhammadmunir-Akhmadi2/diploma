@@ -1,22 +1,15 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import { logout } from "../../slices/authSlice";
 import { Button } from "../ui/button";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { Heart, Sun, Moon, Globe, Search } from "lucide-react";
+import { Heart, Search, User } from "lucide-react";
 import { useLanguage } from "../../hooks/useLanguage";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { toggleTheme } from "../../slices/themeSlice";
+import { useAppDispatch } from "../../store/hooks";
 import type { UserDTO } from "../../types/user";
 import type { ImageDTO } from "../../types/image";
-import { Toggle } from "../ui/toggle";
+import ThemeToggle from "./ThemeToggle";
+import LanguageDropdown from "./LanguageDropdown";
 
 interface MobileMenuProps {
   user: UserDTO | null;
@@ -40,15 +33,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   isLoggedIn,
 }) => {
   const navigate = useNavigate();
-  const theme = useAppSelector((state) => state.theme.theme);
   const dispatch = useAppDispatch();
-  const { language, setLanguage, t } = useLanguage();
-
-  const languages = [
-    { code: "en", name: "English", flag: "🇬🇧" },
-    { code: "ru", name: "Русский", flag: "🇷🇺" },
-    { code: "uz", name: "O'zbek", flag: "🇺🇿" },
-  ];
+  const { t } = useLanguage();
 
   const handleGenderChange = (value: string) => {
     if (value === gender) {
@@ -82,29 +68,33 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         {/* User section for mobile */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           {isLoggedIn && user ? (
-            <div className="flex items-center gap-3">
-              <div className="bg-gray-200 dark:bg-gray-700 h-12 w-12 rounded-full flex items-center justify-center">
-                {avatar ? (
-                  <img
-                    src={`data:${avatar.contentType};base64,${avatar.base64Data}`}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    className="h-full w-full rounded-full object-cover"
-                  />
-                ) : (
-                  <span className="text-lg font-semibold">
-                    {`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
-                  </span>
-                )}
+            <div className="w-full flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-gray-200 dark:bg-gray-700 h-12 w-12 rounded-full flex items-center justify-center">
+                  {avatar ? (
+                    <img
+                      src={`data:${avatar.contentType};base64,${avatar.base64Data}`}
+                      alt={`${user.firstName} ${user.lastName}`}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-lg font-semibold">
+                      {`${user.firstName.charAt(0)}${user.lastName.charAt(0)}`}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium">{`${user.firstName} ${user.lastName}`}</p>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium">{`${user.firstName} ${user.lastName}`}</p>
-                <Link
-                  to="/profile"
-                  className="text-sm text-primary hover:underline"
-                >
-                  {t("account.viewProfile")}
-                </Link>
-              </div>
+              <Link
+                to="/profile"
+                className="cursor-pointer flex items-center text-sm text-primary hover:underline p-2"
+              >
+                <User className="mr-2 h-4 w-4" />
+                {t("account.viewProfile")}
+              </Link>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -190,47 +180,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
 
         {/* Theme and Language */}
         <div className="flex justify-between border-t dark:border-gray-800 pt-3">
-          <Toggle
-            aria-label="Toggle theme"
-            pressed={theme === "dark"}
-            onPressedChange={() => dispatch(toggleTheme())}
+          <ThemeToggle
+            isMobile={true}
             className="flex items-center gap-2 text-gray-800 dark:text-gray-300"
-          >
-            {theme === "dark" ? (
-              <>
-                <Sun size={18} />
-                <span>{t("theme.light")}</span>
-              </>
-            ) : (
-              <>
-                {" "}
-                <Moon size={18} />
-                <span>{t("theme.dark")}</span>
-              </>
-            )}
-          </Toggle>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center gap-2 text-gray-800 dark:text-gray-300">
-              <Globe size={18} />
-              <span>
-                {languages.find((lang) => lang.code === language)?.name}
-              </span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="bg-white dark:bg-gray-900"
-            >
-              {languages.map((lang) => (
-                <DropdownMenuItem
-                  key={lang.code}
-                  onClick={() => setLanguage(lang.code as "en" | "ru" | "uz")}
-                >
-                  <span className="mr-2">{lang.flag}</span>
-                  <span>{lang.name}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          />
+          <LanguageDropdown
+            isMobile={true}
+            className="inline-flex items-center gap-2 text-gray-800 dark:text-gray-300"
+          />
         </div>
       </div>
     </div>

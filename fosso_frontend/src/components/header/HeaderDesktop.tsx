@@ -1,19 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { Heart, ShoppingBag, Sun, Moon, Globe } from "lucide-react";
-import { Toggle } from "../ui/toggle";
-import { toggleTheme } from "../../slices/themeSlice";
+import { Heart, ShoppingBag } from "lucide-react";
 import UserDropdown from "./UserDropdown";
 import { useLanguage } from "../../hooks/useLanguage";
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import type { UserDTO } from "../../types/user";
 import type { ImageDTO } from "../../types/image";
+import ThemeToggle from "./ThemeToggle";
+import LanguageDropdown from "./LanguageDropdown";
 
 interface HeaderDesktopProps {
   user: UserDTO | null;
@@ -28,15 +21,7 @@ const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
   gender,
   isLoggedIn,
 }) => {
-  const { language, setLanguage, t } = useLanguage();
-  const theme = useAppSelector((state) => state.theme.theme);
-  const dispatch = useAppDispatch();
-
-  const languages = [
-    { code: "en", name: "English", flag: "🇬🇧" },
-    { code: "ru", name: "Русский", flag: "🇷🇺" },
-    { code: "uz", name: "O'zbek", flag: "🇺🇿" },
-  ];
+  const { t } = useLanguage();
 
   return (
     <div className="hidden md:flex justify-between items-center px-6 py-4">
@@ -75,38 +60,16 @@ const HeaderDesktop: React.FC<HeaderDesktopProps> = ({
       {/* Right side elements: Search, Theme, Language, Account icons */}
       <div className="flex items-center gap-5">
         {/* Theme toggle */}
-        <Toggle
-          aria-label="Toggle theme"
-          pressed={theme === "dark"}
-          onPressedChange={() => dispatch(toggleTheme())}
+        <ThemeToggle
+          isMobile={false}
           className="bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800"
-        >
-          {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-        </Toggle>
+        />
 
         {/* Language switcher */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center justify-center bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full">
-            <Globe size={20} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="bg-white dark:bg-gray-900"
-          >
-            {languages.map((lang) => (
-              <DropdownMenuItem
-                key={lang.code}
-                onClick={() => setLanguage(lang.code as "en" | "ru" | "uz")}
-                className={`flex items-center gap-2 ${
-                  language === lang.code ? "bg-gray-100 dark:bg-gray-800" : ""
-                }`}
-              >
-                <span>{lang.flag}</span>
-                <span>{lang.name}</span>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <LanguageDropdown
+          isMobile={false}
+          className="inline-flex items-center justify-center bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full"
+        />
         {/* User Account - Using UserDropdown component */}
         <UserDropdown user={user} isLoggedIn={isLoggedIn} avatar={avatar} />
 
