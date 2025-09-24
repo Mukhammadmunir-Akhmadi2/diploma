@@ -6,15 +6,15 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
-import { Avatar, AvatarImage, AvatarFallback } from "../components/ui/avatar";
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import { UserRound, LogOut, User, Settings } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { useLanguage } from "../hooks/useLanguage";
-import { type UserDTO } from "../types/user";
-import { useAppDispatch } from "../store/hooks";
-import { logout } from "../slices/authSlice";
-import type { ImageDTO } from "../types/image";
+import { Button } from "../ui/button";
+import { useLanguage } from "../../hooks/useLanguage";
+import { type UserDTO } from "../../types/user";
+import { useAppDispatch } from "../../store/hooks";
+import { logout } from "../../slices/authSlice";
+import type { ImageDTO } from "../../types/image";
 
 interface UserDropdownProps {
   user: UserDTO | null;

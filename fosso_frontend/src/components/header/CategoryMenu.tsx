@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLanguage } from "../hooks/useLanguage";
+import { useLanguage } from "../../hooks/useLanguage";
 import { ChevronRight, Search } from "lucide-react";
-import { Input } from "../components/ui/input";
-import { type Category } from "../types/category";
-import { listHierarchicalCategories } from "../api/Category";
-import { useToast } from "../hooks/useToast";
+import { Input } from "../ui/input";
+import { type Category } from "../../types/category";
+import { listHierarchicalCategories } from "../../api/Category";
+import { useToast } from "../../hooks/useToast";
 
 // Example hierarchical category data
 interface CategoryMenuProps {

@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLanguage } from "../hooks/useLanguage";
+import { useLanguage } from "../../hooks/useLanguage";
 import { ChevronRight, Search } from "lucide-react";
-import { Input } from "../components/ui/input";
-import { useToast } from "../hooks/useToast";
-import type { BrandDTO } from "../types/brand";
-import { listAllBrands } from "../api/Brand";
+import { Input } from "../ui/input";
+import { useToast } from "../../hooks/useToast";
+import type { BrandDTO } from "../../types/brand";
+import { listAllBrands } from "../../api/Brand";
 interface BrandMenuProps {
   selectedGender?: "men" | "women" | null;
   onClick?: () => void;

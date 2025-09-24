@@ -1,21 +1,22 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { logout } from "../slices/authSlice";
-import { Button } from "./ui/button";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import { logout } from "../../slices/authSlice";
+import { Button } from "../ui/button";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import { Heart, Sun, Moon, Globe, Search } from "lucide-react";
-import { useLanguage } from "../hooks/useLanguage";
-import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { toggleTheme } from "../slices/themeSlice";
-import type { UserDTO } from "../types/user";
-import type { ImageDTO } from "../types/image";
+import { useLanguage } from "../../hooks/useLanguage";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { toggleTheme } from "../../slices/themeSlice";
+import type { UserDTO } from "../../types/user";
+import type { ImageDTO } from "../../types/image";
+import { Toggle } from "../ui/toggle";
 
 interface MobileMenuProps {
   user: UserDTO | null;
@@ -39,7 +40,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   isLoggedIn,
 }) => {
   const navigate = useNavigate();
-  const theme = useAppSelector((state) => state.theme);
+  const theme = useAppSelector((state) => state.theme.theme);
   const dispatch = useAppDispatch();
   const { language, setLanguage, t } = useLanguage();
 
@@ -175,24 +176,24 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
         </Link>
 
         {isLoggedIn && (
-          <button
+          <Button
             onClick={(e) => {
               e.preventDefault();
-              logout();
+              dispatch(logout());
             }}
-            className="text-gray-800 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-2 py-2"
           >
             {t("account.logout")}
-          </button>
+          </Button>
         )}
 
         <div className="h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
 
         {/* Theme and Language */}
         <div className="flex justify-between border-t dark:border-gray-800 pt-3">
-          <Button
-            variant="ghost"
-            onClick={() => dispatch(toggleTheme())}
+          <Toggle
+            aria-label="Toggle theme"
+            pressed={theme === "dark"}
+            onPressedChange={() => dispatch(toggleTheme())}
             className="flex items-center gap-2 text-gray-800 dark:text-gray-300"
           >
             {theme === "dark" ? (
@@ -202,12 +203,12 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               </>
             ) : (
               <>
+                {" "}
                 <Moon size={18} />
                 <span>{t("theme.dark")}</span>
               </>
             )}
-          </Button>
-
+          </Toggle>
           <DropdownMenu>
             <DropdownMenuTrigger className="inline-flex items-center gap-2 text-gray-800 dark:text-gray-300">
               <Globe size={18} />
