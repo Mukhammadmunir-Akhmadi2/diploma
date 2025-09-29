@@ -1,5 +1,5 @@
 import React from "react";
-import { useLanguage } from "../hooks/useLanguage";
+import { useLanguage } from "../../hooks/useLanguage";
 import {
   Table,
   TableBody,
@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
+} from "../../components/ui/table";
 import {
   Pagination,
   PaginationContent,
@@ -15,15 +15,15 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "./ui/pagination";
-import type { PaginatedResponse } from "../types/paginatedResponse";
-import type { ProductMerchantDTO } from "../types/product";
+} from "../../components/ui/pagination";
+import type { PaginatedResponse } from "../../types/paginatedResponse";
+import type { ProductMerchantDTO } from "../../types/product";
 import {
   updateProduct,
   updateProductEnabledStatus,
-} from "../api/merchant/MerchantProduct";
+} from "../../api/merchant/MerchantProduct";
 import ProductRow from "./ProductRow";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "../../components/ui/use-toast";
 
 const ProductsList: React.FC<{
   paginatedProducts: PaginatedResponse<ProductMerchantDTO>;

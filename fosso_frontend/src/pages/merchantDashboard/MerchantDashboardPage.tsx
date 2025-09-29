@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useToast } from "../hooks/useToast";
-import { useLanguage } from "../hooks/useLanguage";
-import ProductStats from "../components/ProductStats";
-import ProductsList from "../components/ProductsList";
-import { Button } from "../components/ui/button";
+import { useToast } from "../../hooks/useToast";
+import { useLanguage } from "../../hooks/useLanguage";
+import ProductStats from "./ProductStats";
+import ProductsList from "./ProductsList";
+import { Button } from "../../components/ui/button";
 import { Plus, ShoppingCart } from "lucide-react";
-import { useAppSelector } from "../store/hooks";
-import { getMerchantProducts } from "../api/merchant/MerchantProduct";
-import type { PaginatedResponse } from "../types/paginatedResponse";
-import type { ProductMerchantDTO } from "../types/product";
+import { useAppSelector } from "../../store/hooks";
+import { getMerchantProducts } from "../../api/merchant/MerchantProduct";
+import type { PaginatedResponse } from "../../types/paginatedResponse";
+import type { ProductMerchantDTO } from "../../types/product";
 import { Spin } from "antd";
-import type { ErrorResponse } from "../types/error";
-
-// This is a mock function that would be replaced by real auth
+import type { ErrorResponse } from "../../types/error";
 
 const MerchantDashboardPage: React.FC = () => {
   const { t } = useLanguage();

@@ -26,7 +26,7 @@ import BrandListingPage from "./pages/BrandListingPage";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
 import CreateProductPage from "./pages/productCreate/CreateProductPage";
 import LoginPage from "./pages/LoginPage";
-import MerchantDashboardPage from "./pages/MerchantDashboardPage";
+import MerchantDashboardPage from "./pages/merchantDashboard/MerchantDashboardPage";
 import MerchantOrderedProductsPage from "./pages/merchantOrderedProducts/MerchantOrderedProductsPage";
 import NewInPage from "./pages/NewInPage";
 import NotFoundPage from "./pages/NotFoundPage";
