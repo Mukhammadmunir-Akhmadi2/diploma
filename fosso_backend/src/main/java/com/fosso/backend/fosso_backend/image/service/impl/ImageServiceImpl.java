@@ -32,15 +32,8 @@ public class ImageServiceImpl implements ImageService {
     @Loggable(action = "UPLOAD", entity = "Image", message = "Uploaded the image")
     public Image uploadImage(MultipartFile file, String ownerId, ImageType type) {
         try {
-            Image image = new Image();
-            image.setImageId(UUID.randomUUID().toString());
-            image.setContentType(file.getContentType());
-            image.setFilename(file.getOriginalFilename());
-            image.setData(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-            image.setOwnerId(ownerId);
-            image.setType(type);
-
-            Image savedImage = imageRepository.save(image);
+            Image savedImage = imageRepository
+                    .save( buildImage(ownerId, type, file));
 
             ImageOwnerHandler handler = handlerFactory.getHandler(type);
             handler.handleImageAssociation(ownerId, savedImage.getImageId());
@@ -96,20 +89,23 @@ public class ImageServiceImpl implements ImageService {
     public String uploadMainImages(String productId, MultipartFile[] mainImages, ImageType type) {
         for (MultipartFile file : mainImages) {
             try {
-                Image image = new Image();
-                image.setImageId(UUID.randomUUID().toString());
-                image.setContentType(file.getContentType());
-                image.setFilename(file.getOriginalFilename());
-                image.setData(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
-                image.setOwnerId(productId);
-                image.setType(type);
-
-                imageRepository.save(image);
+                imageRepository.save(buildImage(productId, type, file));
             } catch (IOException | MongoException | IllegalArgumentException e) {
                 throw new ImageStorageException("Failed to store image", e);
             }
         }
 
         return "Main images uploaded successfully";
+    }
+
+    private Image buildImage(String ownerId, ImageType type, MultipartFile file) throws IOException {
+        Image image = new Image();
+        image.setImageId(UUID.randomUUID().toString());
+        image.setContentType(file.getContentType());
+        image.setFilename(file.getOriginalFilename());
+        image.setData(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+        image.setOwnerId(ownerId);
+        image.setType(type);
+        return image;
     }
 }
