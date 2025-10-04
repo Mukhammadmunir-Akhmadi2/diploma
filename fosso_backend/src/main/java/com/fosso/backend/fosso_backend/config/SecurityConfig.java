@@ -3,7 +3,6 @@ package com.fosso.backend.fosso_backend.config;
 import com.fosso.backend.fosso_backend.security.filters.JwtAuthenticationFilter;
 import com.fosso.backend.fosso_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
