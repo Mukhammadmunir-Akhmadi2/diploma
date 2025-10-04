@@ -24,8 +24,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,6 +72,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilet, AuthenticationProvider authenticationProvider) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors
+                        .configurationSource(request -> {
+                        CorsConfiguration corsConfig = new CorsConfiguration();
+                        corsConfig.setAllowedOriginPatterns(List.of("*"));
+                        corsConfig.setAllowCredentials(true);
+                        corsConfig.setAllowedHeaders(Arrays.asList(
+                                HttpHeaders.AUTHORIZATION,
+                                HttpHeaders.ACCEPT,
+                                HttpHeaders.CONTENT_TYPE,
+                                HttpHeaders.ORIGIN ));
+                        corsConfig.setAllowedMethods(Arrays.asList(
+                                HttpMethod.GET.name(),
+                                HttpMethod.POST.name(),
+                                HttpMethod.PUT.name(),
+                                HttpMethod.DELETE.name()
+                        ));
+                        corsConfig.setMaxAge(MAX_AGE);
+                        return corsConfig;
+                    })
+                )
                 .authorizeHttpRequests(requset ->
                         requset.requestMatchers("/auth/**",
                                         "/categories",
@@ -106,34 +124,5 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilet, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-
-    @Bean
-    public FilterRegistrationBean corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = getCorsConfiguration();
-        source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        // should be set order to -100 because we need to CorsFilter before SpringSecurityFilter
-        bean.setOrder(CORS_FILTER_ORDER);
-        return bean;
-    }
-
-    private static CorsConfiguration getCorsConfiguration() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedHeaders(Arrays.asList(
-                HttpHeaders.AUTHORIZATION,
-                HttpHeaders.CONTENT_TYPE,
-                HttpHeaders.ACCEPT,
-                HttpHeaders.ORIGIN));
-        config.setAllowedMethods(Arrays.asList(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name()));
-        config.setMaxAge(MAX_AGE);
-        return config;
     }
 }
