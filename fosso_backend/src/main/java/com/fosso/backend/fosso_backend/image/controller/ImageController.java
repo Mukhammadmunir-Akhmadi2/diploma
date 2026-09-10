@@ -19,12 +19,13 @@ import java.util.List;
 public class ImageController {
 
     private final ImageService imageService;
+    private final ImageMapper imageMapper;
 
     @GetMapping("/user/{imageId}")
     public ResponseEntity<ImageDTO> getImageById(@PathVariable String imageId,
                                                  @RequestParam ImageType imageType) {
         Image image = imageService.getImageById(imageId, imageType);
-        return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
+        return ResponseEntity.ok().body(imageMapper.convertToDTO(image));
     }
 
     @GetMapping("/user/owner/{ownerId}")
@@ -32,7 +33,7 @@ public class ImageController {
             @PathVariable String ownerId,
             @RequestParam ImageType imageType) {
         Image image = imageService.getOwnerImage(ownerId, imageType);
-        return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
+        return ResponseEntity.ok().body(imageMapper.convertToDTO(image));
     }
 
     @PostMapping("/merchant/products/{productId}")
@@ -49,7 +50,7 @@ public class ImageController {
             @PathVariable String ownerId,
             @RequestParam ImageType imageType,
             @RequestParam("image") MultipartFile image) {
-        return ResponseEntity.ok(ImageMapper.convertToDTO(imageService.uploadImage(image, ownerId, imageType)));
+        return ResponseEntity.ok(imageMapper.convertToDTO(imageService.uploadImage(image, ownerId, imageType)));
     }
 
     @DeleteMapping("/merchant/{ownerId}/{imageId}/delete")
@@ -65,6 +66,6 @@ public class ImageController {
             @PathVariable String ownerId,
             @RequestParam ImageType imageType) {
         List<Image> images = imageService.getAllImagesForOwner(ownerId, imageType);
-        return ResponseEntity.ok(images.stream().map(ImageMapper::convertToDTO).toList());
+        return ResponseEntity.ok(images.stream().map(imageMapper::convertToDTO).toList());
     }
 }

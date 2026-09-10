@@ -13,5 +13,5 @@ public class ImageDTO {
     private String imageId;
     private String contentType;
     private String filename;
-    private String base64Data;
+    private String url;
 }

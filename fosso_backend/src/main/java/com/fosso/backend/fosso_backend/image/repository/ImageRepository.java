@@ -19,6 +19,4 @@ public interface ImageRepository extends MongoRepository<Image, String> {
 
     @Query("{'ownerId': ?0, 'imageId': ?1, 'type': ?2}")
     Image deleteByOwnerIdAndImageIdAndType(String ownerId, String imageId, ImageType type);
-
-    Boolean existsByOwnerIdAndImageIdAndType(String ownerId, String imageId, ImageType type);
 }

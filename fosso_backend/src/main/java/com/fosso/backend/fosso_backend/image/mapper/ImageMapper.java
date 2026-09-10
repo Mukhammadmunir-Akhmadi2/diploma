@@ -2,18 +2,24 @@ package com.fosso.backend.fosso_backend.image.mapper;
 
 import com.fosso.backend.fosso_backend.image.dto.ImageDTO;
 import com.fosso.backend.fosso_backend.image.model.Image;
+import com.fosso.backend.fosso_backend.image.storage.ObjectStorageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import java.util.Base64;
-
+@Component
+@RequiredArgsConstructor
 public class ImageMapper {
-    public static ImageDTO convertToDTO(Image image) {
+
+    private final ObjectStorageService objectStorageService;
+
+    public ImageDTO convertToDTO(Image image) {
         if (image == null) return null;
 
         return ImageDTO.builder()
                 .imageId(image.getImageId())
                 .contentType(image.getContentType())
                 .filename(image.getFilename())
-                .base64Data(Base64.getEncoder().encodeToString(image.getData().getData()))
+                .url(objectStorageService.buildPublicUrl(image.getObjectKey()))
                 .build();
     }
 }

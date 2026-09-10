@@ -30,6 +30,7 @@ public class UserController {
     private final UserServiceImpl userService;
     private final AuthenticatedUserProvider userProvider;
     private final ImageServiceImpl imageService;
+    private final ImageMapper imageMapper;
 
     @GetMapping("/{userId}/profile")
     public ResponseEntity<UserDetailedDTO> getUserProfileById(@PathVariable String userId) {
@@ -93,7 +94,7 @@ public class UserController {
     public ResponseEntity<ImageDTO> getAvatar() {
         User currentUser = userProvider.getAuthenticatedUser();
         Image image = imageService.getImageById(currentUser.getImageId(), ImageType.USER_AVATAR);
-        return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
+        return ResponseEntity.ok().body(imageMapper.convertToDTO(image));
     }
 
     @PostMapping("/me/avatar")
@@ -104,7 +105,7 @@ public class UserController {
         }
         Image image = imageService.uploadImage(file, currentUser.getUserId(), ImageType.USER_AVATAR);
 
-        return ResponseEntity.ok().body(ImageMapper.convertToDTO(image));
+        return ResponseEntity.ok().body(imageMapper.convertToDTO(image));
     }
 
     @PutMapping("/me/password")

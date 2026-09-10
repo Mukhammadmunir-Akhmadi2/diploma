@@ -7,17 +7,15 @@ import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundExceptio
 import com.fosso.backend.fosso_backend.image.model.Image;
 import com.fosso.backend.fosso_backend.image.repository.ImageRepository;
 import com.fosso.backend.fosso_backend.image.service.ImageService;
+import com.fosso.backend.fosso_backend.image.storage.ObjectStorageService;
 import com.fosso.backend.fosso_backend.image.strategy.ImageDeletionHandler;
 import com.fosso.backend.fosso_backend.image.strategy.ImageOwnerHandler;
 import com.fosso.backend.fosso_backend.image.strategy.ImageOwnerHandlerFactory;
 import com.mongodb.MongoException;
 import lombok.RequiredArgsConstructor;
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,21 +25,17 @@ public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
     private final ImageOwnerHandlerFactory handlerFactory;
+    private final ObjectStorageService objectStorageService;
 
     @Override
     @Loggable(action = "UPLOAD", entity = "Image", message = "Uploaded the image")
     public Image uploadImage(MultipartFile file, String ownerId, ImageType type) {
-        try {
-            Image savedImage = imageRepository
-                    .save( buildImage(ownerId, type, file));
+        Image savedImage = imageRepository.save(buildImage(ownerId, type, file));
 
-            ImageOwnerHandler handler = handlerFactory.getHandler(type);
-            handler.handleImageAssociation(ownerId, savedImage.getImageId());
+        ImageOwnerHandler handler = handlerFactory.getHandler(type);
+        handler.handleImageAssociation(ownerId, savedImage.getImageId());
 
-            return savedImage;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to store image", e);
-        }
+        return savedImage;
     }
 
     @Override
@@ -61,12 +55,14 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Loggable(action = "DELETE", entity = "Image", message = "Deleted the image")
     public String deleteImage(String ownerId, String imageId, ImageType type) {
-        if (!imageRepository.existsByOwnerIdAndImageIdAndType(ownerId, imageId, type)) {
-            throw new ResourceNotFoundException("Image not found");
-        }
-        ImageDeletionHandler deletionHandler = handlerFactory.getDeletionHandler(type);
+        Image image = imageRepository.findByImageIdAndType(imageId, type)
+                .filter(existing -> existing.getOwnerId().equals(ownerId))
+                .orElseThrow(() -> new ResourceNotFoundException("Image not found"));
 
+        ImageDeletionHandler deletionHandler = handlerFactory.getDeletionHandler(type);
         deletionHandler.handleImageDeletion(ownerId, imageId);
+
+        objectStorageService.delete(image.getObjectKey());
         imageRepository.deleteByOwnerIdAndImageIdAndType(ownerId, imageId, type);
 
         return "Image deleted successfully";
@@ -90,7 +86,7 @@ public class ImageServiceImpl implements ImageService {
         for (MultipartFile file : mainImages) {
             try {
                 imageRepository.save(buildImage(productId, type, file));
-            } catch (IOException | MongoException | IllegalArgumentException e) {
+            } catch (MongoException | IllegalArgumentException e) {
                 throw new ImageStorageException("Failed to store image", e);
             }
         }
@@ -98,12 +94,16 @@ public class ImageServiceImpl implements ImageService {
         return "Main images uploaded successfully";
     }
 
-    private Image buildImage(String ownerId, ImageType type, MultipartFile file) throws IOException {
+    private Image buildImage(String ownerId, ImageType type, MultipartFile file) {
+        String imageId = UUID.randomUUID().toString();
+        String objectKey = type.name().toLowerCase() + "/" + imageId;
+        objectStorageService.upload(objectKey, file);
+
         Image image = new Image();
-        image.setImageId(UUID.randomUUID().toString());
+        image.setImageId(imageId);
         image.setContentType(file.getContentType());
         image.setFilename(file.getOriginalFilename());
-        image.setData(new Binary(BsonBinarySubType.BINARY, file.getBytes()));
+        image.setObjectKey(objectKey);
         image.setOwnerId(ownerId);
         image.setType(type);
         return image;
