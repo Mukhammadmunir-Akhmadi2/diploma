@@ -1,9 +1,7 @@
 package com.fosso.backend.fosso_backend.image.strategy;
 
 import com.fosso.backend.fosso_backend.common.enums.ImageType;
-import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
-import com.fosso.backend.fosso_backend.product.model.Product;
-import com.fosso.backend.fosso_backend.product.repository.ProductRepository;
+import com.fosso.backend.fosso_backend.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProductImageHandler implements ImageOwnerHandler {
 
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @Override
     public boolean supports(ImageType type) {
@@ -20,10 +18,6 @@ public class ProductImageHandler implements ImageOwnerHandler {
 
     @Override
     public void handleImageAssociation(String ownerId, String imageId) {
-        Product product = productRepository.findById(ownerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-        product.setImageId(imageId);
-
-        productRepository.save(product);
+        productService.addProductImage(ownerId, imageId);
     }
 }

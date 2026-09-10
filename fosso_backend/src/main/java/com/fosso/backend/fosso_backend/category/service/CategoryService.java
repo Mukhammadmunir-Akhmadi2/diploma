@@ -16,4 +16,6 @@ public interface CategoryService {
     boolean isNameUnique(String name, String categoryId);
     List<Category> getRootCategories();
     List<Category> getAboveCategories(String parentId);
+    void attachImage(String categoryId, String imageId);
+    void clearImage(String categoryId);
 }

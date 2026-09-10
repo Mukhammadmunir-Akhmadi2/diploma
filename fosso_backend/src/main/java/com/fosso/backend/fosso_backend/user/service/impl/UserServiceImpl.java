@@ -210,4 +210,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
+    public void attachAvatar(String userId, String imageId) {
+        User user = getUserById(userId);
+        user.setImageId(imageId);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void clearAvatar(String userId) {
+        User user = getUserById(userId);
+        user.setImageId(null);
+        userRepository.save(user);
+    }
+
 }

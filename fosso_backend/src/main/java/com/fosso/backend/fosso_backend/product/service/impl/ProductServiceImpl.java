@@ -181,4 +181,38 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
         return "success";
     }
+
+    @Override
+    public void addProductImage(String productId, String imageId) {
+        Product product = getProductById(productId);
+        product.setImageId(imageId);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void removeProductImage(String productId, String imageId) {
+        Product product = getProductById(productId);
+        List<String> updatedImages = product.getImagesId().stream()
+                .filter(id -> !id.equals(imageId))
+                .toList();
+        product.setImagesId(updatedImages);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void addMainImage(String productId, String imageId) {
+        Product product = getProductById(productId);
+        product.setMainImageId(imageId);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void removeMainImage(String productId, String imageId) {
+        Product product = getProductById(productId);
+        List<String> updatedMainImages = product.getMainImagesId().stream()
+                .filter(id -> !id.equals(imageId))
+                .toList();
+        product.setMainImagesId(updatedMainImages);
+        productRepository.save(product);
+    }
 }

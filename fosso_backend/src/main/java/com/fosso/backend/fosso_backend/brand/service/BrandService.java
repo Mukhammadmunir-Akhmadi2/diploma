@@ -15,4 +15,6 @@ public interface BrandService {
     Brand saveBrand(Brand brand);
     String addCategory(String brandId, String categoryId);
     boolean isNameUnique(String name, String brandId);
+    void attachLogoImage(String brandId, String imageId);
+    void clearLogoImage(String brandId);
 }

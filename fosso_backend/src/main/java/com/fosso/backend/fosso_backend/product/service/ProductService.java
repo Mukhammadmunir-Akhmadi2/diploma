@@ -22,4 +22,8 @@ public interface ProductService {
     Page<Product> getMarchantProducts(Pageable pageable);
     Product getMarchantProductsById(String productId);
     String incrementReviewCount(String productId);
+    void addProductImage(String productId, String imageId);
+    void removeProductImage(String productId, String imageId);
+    void addMainImage(String productId, String imageId);
+    void removeMainImage(String productId, String imageId);
 }

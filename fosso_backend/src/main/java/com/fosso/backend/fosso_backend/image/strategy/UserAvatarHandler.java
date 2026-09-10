@@ -1,9 +1,7 @@
 package com.fosso.backend.fosso_backend.image.strategy;
 
 import com.fosso.backend.fosso_backend.common.enums.ImageType;
-import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
-import com.fosso.backend.fosso_backend.user.model.User;
-import com.fosso.backend.fosso_backend.user.repository.UserRepository;
+import com.fosso.backend.fosso_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserAvatarHandler implements ImageOwnerHandler {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public boolean supports(ImageType type) {
@@ -20,9 +18,6 @@ public class UserAvatarHandler implements ImageOwnerHandler {
 
     @Override
     public void handleImageAssociation(String ownerId, String imageId) {
-        User user = userRepository.findById(ownerId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        user.setImageId(imageId);
-        userRepository.save(user);
+        userService.attachAvatar(ownerId, imageId);
     }
 }

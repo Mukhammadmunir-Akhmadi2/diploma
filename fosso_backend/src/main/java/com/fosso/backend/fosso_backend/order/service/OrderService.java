@@ -15,6 +15,7 @@ public interface OrderService {
     Order getOrder(String orderId);
     Order getByTrackingNumber(String trackingNumber);
     Page<Order> listByCustomer(String customerId, Pageable pageable);
+    List<Order> getOrdersByCustomerId(String customerId);
     Order createOrder(CheckoutRequest checkoutRequest);
     Order updateStatus(String orderId, OrderStatus status, String notes);
     Order updateProductStatus(String orderId, String productId, String color, String size, OrderStatus status, String notes);

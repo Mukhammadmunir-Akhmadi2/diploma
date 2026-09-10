@@ -1,9 +1,7 @@
 package com.fosso.backend.fosso_backend.image.strategy;
 
+import com.fosso.backend.fosso_backend.category.service.CategoryService;
 import com.fosso.backend.fosso_backend.common.enums.ImageType;
-import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
-import com.fosso.backend.fosso_backend.category.model.Category;
-import com.fosso.backend.fosso_backend.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CategoryImageHandler implements ImageOwnerHandler {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
     @Override
     public boolean supports(ImageType type) {
@@ -20,9 +18,6 @@ public class CategoryImageHandler implements ImageOwnerHandler {
 
     @Override
     public void handleImageAssociation(String ownerId, String imageId) {
-        Category category = categoryRepository.findById(ownerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-        category.setImageId(imageId);
-        categoryRepository.save(category);
+        categoryService.attachImage(ownerId, imageId);
     }
 }

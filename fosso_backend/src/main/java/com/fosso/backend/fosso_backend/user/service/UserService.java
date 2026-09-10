@@ -26,4 +26,6 @@ public interface UserService {
     String deleteUserAddress(String addressId);
     String softDeleteUser();
     String changePassword(PasswordChangeRequest changeRequest);
+    void attachAvatar(String userId, String imageId);
+    void clearAvatar(String userId);
 }

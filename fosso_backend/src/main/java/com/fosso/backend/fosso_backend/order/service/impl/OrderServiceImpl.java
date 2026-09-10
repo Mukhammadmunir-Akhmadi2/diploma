@@ -75,6 +75,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> getOrdersByCustomerId(String customerId) {
+        return orderRepository.findByCustomerId(customerId);
+    }
+
+    @Override
     @Loggable(action = "CREATE", entity = "Order", message = "Created a new order")
     public Order createOrder(CheckoutRequest checkoutRequest) {
         User customer = userProvider.getAuthenticatedUser();

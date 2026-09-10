@@ -5,6 +5,7 @@ import com.fosso.backend.fosso_backend.category.repository.CategoryRepository;
 import com.fosso.backend.fosso_backend.category.service.CategoryService;
 import com.fosso.backend.fosso_backend.category.service.CategoryValidator;
 import com.fosso.backend.fosso_backend.common.aop.Loggable;
+import com.fosso.backend.fosso_backend.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -92,6 +93,22 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return ancestors;
+    }
+
+    @Override
+    public void attachImage(String categoryId, String imageId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + categoryId));
+        category.setImageId(imageId);
+        categoryRepository.save(category);
+    }
+
+    @Override
+    public void clearImage(String categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + categoryId));
+        category.setImageId(null);
+        categoryRepository.save(category);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.fosso.backend.fosso_backend.config;
 
 import com.fosso.backend.fosso_backend.security.filters.JwtAuthenticationFilter;
-import com.fosso.backend.fosso_backend.user.repository.UserRepository;
+import com.fosso.backend.fosso_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private static final Long MAX_AGE = 3600L;
     private static final int CORS_FILTER_ORDER = -102;
 
@@ -44,7 +44,7 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return userEmail ->
-                userRepository.findByEmail(userEmail)
+                userService.getUserByEmail(userEmail)
                         .orElseThrow(() ->
                                 new UsernameNotFoundException("User not found with email: " + userEmail)
                         );

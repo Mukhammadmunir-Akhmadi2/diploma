@@ -84,4 +84,18 @@ public class BrandServiceImpl implements BrandService {
         Brand brandByName = brandRepository.findByName(name).orElse(null);
         return brandByName == null || brandByName.getBrandId().equals(brandId);
     }
+
+    @Override
+    public void attachLogoImage(String brandId, String imageId) {
+        Brand brand = getByBrandId(brandId);
+        brand.setLogoImageId(imageId);
+        brandRepository.save(brand);
+    }
+
+    @Override
+    public void clearLogoImage(String brandId) {
+        Brand brand = getByBrandId(brandId);
+        brand.setLogoImageId(null);
+        brandRepository.save(brand);
+    }
 }

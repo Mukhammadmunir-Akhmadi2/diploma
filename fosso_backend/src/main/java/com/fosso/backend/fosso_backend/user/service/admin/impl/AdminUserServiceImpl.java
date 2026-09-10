@@ -2,7 +2,7 @@ package com.fosso.backend.fosso_backend.user.service.admin.impl;
 
 import com.fosso.backend.fosso_backend.common.aop.Loggable;
 import com.fosso.backend.fosso_backend.order.model.Order;
-import com.fosso.backend.fosso_backend.order.repository.OrderRepository;
+import com.fosso.backend.fosso_backend.order.service.OrderService;
 import com.fosso.backend.fosso_backend.user.dto.AddressDTO;
 import com.fosso.backend.fosso_backend.user.dto.UserUpdateDTO;
 import com.fosso.backend.fosso_backend.common.enums.Role;
@@ -35,7 +35,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final AuthenticatedUserProvider userProvider;
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
     @Override
     @Loggable(action = "DELETE", entity = "User", message = "Hard deleted the user")
@@ -198,7 +198,7 @@ public class AdminUserServiceImpl implements AdminUserService {
    }
 
     private List<Order> fetchUserOrders(User user) {
-        List<Order> orders =orderRepository.findByCustomerId(user.getUserId());
+        List<Order> orders = orderService.getOrdersByCustomerId(user.getUserId());
         if (orders.isEmpty()) {
             return Collections.emptyList();
         }
